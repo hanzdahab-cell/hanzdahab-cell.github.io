@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { FadeUp } from '../ui/MotionKit';
 import { coreCoursePhotoById, courseCardArtworkById, coursePhotoById } from '../../data/courseMedia';
 import { CoursePhotoCarousel, CourseStorySlide } from './CoursePhotoCarousel';
-import { SSICertificates } from '../ssi/SSICertificates';
 
 interface CoursesSectionProps {
   onOpenBooking: (courseId?: string) => void;
@@ -58,7 +57,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
   }));
 
   return (
-    <section id="courses" className="relative bg-[#0E3453] pb-28 sm:pb-36 film-grain">
+    <section id="courses" className="relative bg-[#0E3453] pb-20 sm:pb-28 film-grain">
       <div className="relative isolate overflow-hidden bg-[#081F35]">
         <img
           src="/courses/uploaded/dahab-reef-fish.jpg"
@@ -71,31 +70,29 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
           className="absolute inset-0 bg-gradient-to-r from-[#081F35]/95 via-[#081F35]/75 to-[#081F35]/35"
           aria-hidden="true"
         />
-        <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-10 px-6 pb-14 pt-32 sm:gap-12 sm:pb-20 sm:pt-36 lg:grid-cols-[0.82fr_1.18fr]">
-          <div className="max-w-xl space-y-5">
+        <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-8 px-6 pb-8 pt-28 sm:gap-10 sm:pb-10 sm:pt-32 lg:grid-cols-[0.82fr_1.18fr]">
+          <div className="max-w-xl space-y-4">
             <p className="flex items-center gap-3 text-sm text-ocean-pale">
               <span className="h-px w-8 bg-ocean-light" aria-hidden="true" />
-              Freediving in Dahab, Red Sea
+              SSI Freediving · Dahab, South Sinai, Egypt
             </p>
-            <h1 className="font-bebas text-6xl leading-[0.92] tracking-[0.025em] text-white sm:text-7xl lg:text-[clamp(5rem,7vw,7.5rem)]">
-              Find your
+            <h1 className="font-bebas text-5xl leading-[0.95] tracking-[0.025em] text-white sm:text-6xl lg:text-7xl">
+              SSI Freediving
               <br />
-              depth.
+              <span className="text-cyan-300">Courses</span>
             </h1>
-            <p className="max-w-lg text-base leading-relaxed text-slate-200 sm:text-lg">
-              Begin with your first calm breath-hold or progress toward 40 metres. Train with
-              experienced SSI instructors, small groups and the clear-water dive sites of Dahab.
+            <p className="max-w-lg text-sm leading-relaxed text-slate-200 sm:text-base">
+              Learn with SSI—internationally recognized freediving courses built around progressive
+              skills, attentive coaching and safety in Dahab’s Red Sea.
             </p>
-            <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-white/90">
-              <span>Small-group coaching</span>
-              <span>Courses for every level</span>
-              <span>Red Sea line training</span>
-            </div>
+            <p className="text-xs text-[#A9D2EC]">
+              Beginners welcome <span aria-hidden="true">·</span> Small groups <span aria-hidden="true">·</span> Lighthouse Bay
+            </p>
             <a
               href="#chapter-core"
-              className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-[#081F35] transition-colors hover:bg-[#DCEFFC] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+              className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-[#081F35] transition-colors hover:bg-[#DCEFFC] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
-              Explore core courses
+              Explore courses
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </a>
           </div>
@@ -109,9 +106,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
         </div>
       </div>
 
-      <SSICertificates variant="compact" />
-
-      <nav aria-label="Course sections" className="mx-auto max-w-7xl px-6 pt-8">
+      <nav aria-label="Course sections" className="mx-auto max-w-7xl px-6 pt-4">
         <ul className="flex flex-wrap gap-x-7 gap-y-2 border-b border-white/10 pb-4 text-sm text-slate-300">
           <li>
             <a

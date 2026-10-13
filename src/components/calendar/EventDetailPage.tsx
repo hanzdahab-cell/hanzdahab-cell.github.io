@@ -10,7 +10,6 @@ import {
   ExternalLink,
   Shield,
   Award,
-  Sparkles,
   MapPin,
   Send,
   AlertCircle,
@@ -521,7 +520,7 @@ export function EventDetailPage({
             
             <div className="text-center max-w-2xl mx-auto space-y-3">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-xs font-mono uppercase tracking-widest font-semibold">
-                <Sparkles className="w-3.5 h-3.5" />
+                <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
                 <span>CUSTOM DATES ALL YEAR ROUND</span>
               </div>
 

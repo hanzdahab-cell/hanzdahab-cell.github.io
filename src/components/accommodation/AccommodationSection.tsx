@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { roomTypes } from '../../data/accommodation';
-import { Wifi, Check, Users, Home, ArrowRight, ShoppingBag, ShieldCheck, Sparkles, Tag } from 'lucide-react';
+import { Wifi, Check, Users, Home, ArrowRight, ShoppingBag, ShieldCheck, Tag } from 'lucide-react';
 import storeImg from '../../assets/images/dahab_freedive_store_1789742281859.jpg';
 import { PageType } from '../../types';
 import { PhotoCarousel } from '../ui/PhotoCarousel';

@@ -12,35 +12,35 @@ const STORY_SLIDES = [
     title: 'Lighthouse Bay',
     alt: 'Freedivers entering the clear water at Dahab’s Lighthouse Bay',
     detail:
-      'Sheltered shallows make Lighthouse Bay a welcoming place to learn. Instructors build each session around calm technique and safe buddy practice.',
+      'On Dahab’s waterfront, Lighthouse Bay pairs easy shore access with sheltered training water. Sessions progress at a calm pace with instructor guidance and buddy checks.',
   },
   {
     src: '/images/dahab-story/blue-hole-training.jpg',
     title: 'The Blue Hole',
     alt: 'Freedivers preparing for a supervised session at the Blue Hole',
     detail:
-      'The Blue Hole is a coastal sinkhole reaching roughly 92 metres. Depth training is planned around each diver’s level and conducted with trained supervision.',
+      'Just north of Dahab in South Sinai, the Blue Hole opens from the Gulf of Aqaba into dramatic deep blue. Local guides help visitors explore it with a plan suited to their experience.',
   },
   {
     src: '/images/dahab-story/lighthouse-sunset.jpg',
     title: 'A town beside the sea',
     alt: 'Freedivers sharing the water at sunset along Dahab’s shore',
     detail:
-      'Dahab’s shoreline brings the water close to town. Training, cafés and local life sit side by side along the Gulf of Aqaba.',
+      'Dahab is a relaxed Red Sea town in South Sinai, Egypt, where a walkable waterfront, mountain desert and reef-lined water meet along the Gulf of Aqaba.',
   },
   {
     src: '/images/dahab-story/line-coaching.jpg',
     title: 'Progress, one session at a time',
     alt: 'An instructor guiding a freediver beside the training line',
     detail:
-      'Line sessions give divers a clear reference for controlled descents. Coaching focuses on equalisation, relaxation and a safe return to the surface.',
+      'At the training line, divers work on relaxed technique, equalisation and steady returns to the surface. Each session follows personal readiness—not a target depth.',
   },
   {
     src: '/images/dahab-story/freediver-ascent.jpg',
     title: 'A different perspective',
     alt: 'A freediver moving slowly through the blue water in Dahab',
     detail:
-      'The Red Sea’s clear water reveals the reef as divers move through the depth. Every dive is paced to the individual, not a number.',
+      'Clear Red Sea water brings the reef into view. Take time to notice its life, move gently around coral and enjoy the blue at your own pace.',
   },
 ];
 
@@ -85,17 +85,15 @@ export function DahabBlueHoleSection({ onNavigate }: DahabBlueHoleSectionProps) 
         <div className="max-w-lg">
           <p className="mb-5 flex items-center gap-2 text-sm text-[#A9D2EC]">
             <MapPin className="h-4 w-4 text-cyan-300" aria-hidden="true" />
-            Dahab, South Sinai · Red Sea
+            Dahab, South Sinai, Egypt · Gulf of Aqaba
           </p>
           <h2 className="font-bebas text-5xl leading-[0.98] tracking-wide text-white sm:text-6xl lg:text-7xl">
             Dahab and
             <br />
-            the Blue Hole
+            <span className="text-cyan-300">the Blue Hole</span>
           </h2>
           <p className="mt-6 max-w-md text-base leading-relaxed text-slate-300 sm:text-lg">
-            A Bedouin town on the Gulf of Aqaba, with the coral-framed Blue Hole to the north and
-            Lighthouse Bay at the heart of local freediving. Move through the places, people and
-            training that make Dahab a place to return to.
+            {slide.detail}
           </p>
           <button
             type="button"
@@ -139,11 +137,14 @@ export function DahabBlueHoleSection({ onNavigate }: DahabBlueHoleSectionProps) 
                 aria-hidden="true"
                 className="absolute inset-0 bg-gradient-to-t from-[#061A2B]/95 via-[#061A2B]/10 to-transparent"
               />
+              <img
+                src="/logo-freedive-dahab.png"
+                alt=""
+                aria-hidden="true"
+                className="absolute right-5 top-5 z-10 h-10 w-12 object-contain opacity-75 drop-shadow-lg sm:right-7 sm:top-7"
+              />
               <figcaption className="absolute inset-x-0 bottom-0 p-5 sm:p-8">
                 <p className="text-sm font-semibold text-[#A9D2EC]">{slide.title}</p>
-                <p className="mt-2 max-w-xl text-sm leading-relaxed text-white sm:text-base">
-                  {slide.detail}
-                </p>
               </figcaption>
             </div>
           </figure>

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { ArrowRight, Sparkles, BookOpen, Award } from 'lucide-react';
+import { ArrowRight, BookOpen, Award } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { PageType } from '../../types';
@@ -81,7 +81,7 @@ export function StoryTeaserBanner({ onNavigate }: StoryTeaserBannerProps) {
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-8 border-b border-white/10">
           <div className="space-y-4 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-300 text-xs font-alata tracking-widest uppercase">
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+              <BookOpen className="w-3.5 h-3.5 text-cyan-400" aria-hidden="true" />
               <span>Sanctuary Heritage • Est. 2003</span>
             </div>
 

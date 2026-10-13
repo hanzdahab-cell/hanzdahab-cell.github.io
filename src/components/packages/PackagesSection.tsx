@@ -1,5 +1,5 @@
 import { packagesData } from '../../data/packages';
-import { CheckCircle2, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
+import { CheckCircle2, ArrowRight, ShieldCheck, Waves } from 'lucide-react';
 import { PageType } from '../../types';
 import { freedivingGalleryPhotos } from '../../data/courseMedia';
 import { PhotoCarousel } from '../ui/PhotoCarousel';
@@ -24,7 +24,7 @@ export function PackagesSection({ onOpenBooking, currency, onNavigate }: Package
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
           <div className="inline-flex items-center gap-2 text-xs font-alata tracking-[0.3em] uppercase text-cyan-400">
-            <Sparkles className="w-4 h-4" />
+            <Waves className="w-4 h-4" aria-hidden="true" />
             <span>FREEDIVING PROGRAMS &amp; TRAINING WEEKS</span>
           </div>
           <h2 className="font-bebas text-5xl sm:text-6xl md:text-7xl text-white tracking-[0.05em] leading-tight">

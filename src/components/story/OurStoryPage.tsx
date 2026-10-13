@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { X, ChevronLeft, ChevronRight, Sparkles, BookOpen, Compass, Waves, MessageSquare, Calendar, Award } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, BookOpen, Compass, Waves, MessageSquare, Calendar, Award } from 'lucide-react';
 import { PageType } from '../../types';
 import { LuxuryStory } from '../home/LuxuryStory';
 import { DescentStats } from '../home/DescentStats';
@@ -387,7 +387,7 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
           {/* Section Header */}
           <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20 space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-300 text-xs font-alata tracking-widest uppercase">
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+              <Compass className="w-3.5 h-3.5 text-cyan-400" aria-hidden="true" />
               <span>Visionaries of the Blue</span>
             </div>
             <h2 className="font-bebas text-5xl sm:text-6xl md:text-7xl text-white tracking-[0.05em] leading-tight">

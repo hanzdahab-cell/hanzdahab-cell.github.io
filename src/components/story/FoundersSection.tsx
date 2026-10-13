@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { storyConfig } from '../../config/storyConfig';
 import { ImageWithFallback } from './ImageWithFallback';
-import { X, ChevronLeft, ChevronRight, Play, Sparkles, Volume2, ArrowRight } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Play, Volume2, ArrowRight } from 'lucide-react';
 
 interface TiltState {
   rotateX: number;

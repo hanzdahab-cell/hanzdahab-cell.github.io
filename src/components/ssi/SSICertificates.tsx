@@ -15,22 +15,29 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
     {
       id: 'freediving-center',
       title: t.certificates?.card1Title || 'SSI Freediving Center',
-      desc: t.certificates?.card1Desc || 'Official SSI Partner — certified instructors, dedicated depth buoys, and world-standard freediving education.',
-      src: '/badges/ssi-freediving-center.png',
+      desc: t.certificates?.card1Desc || 'Official SSI status for our freediving school and its certified training programs.',
+      src: '/badges/ssi-freediving-center-official.png',
       alt: 'SSI Official Partner — Freediving Center badge',
     },
     {
       id: 'mermaid-center',
       title: t.certificates?.card2Title || 'SSI Mermaid Center',
-      desc: t.certificates?.card2Desc || 'Official SSI Partner — magical mermaid programs, monofin technique, and underwater artistry for all ages.',
-      src: '/badges/ssi-mermaid-center.png',
+      desc: t.certificates?.card2Desc || 'Official SSI recognition for mermaid education, monofin skills and underwater performance.',
+      src: '/badges/ssi-mermaid-center-official.png',
       alt: 'SSI Official Partner — Mermaid Center badge',
     },
     {
+      id: 'classified-diving-center',
+      title: 'SSI Classified Diving Center',
+      desc: 'A classified SSI dive center with professional standards for training, service and diver support.',
+      src: '/badges/ssi-classified-diving-center-official.png',
+      alt: 'SSI Classified Diving Center badge',
+    },
+    {
       id: 'instructor-training-center',
-      title: t.certificates?.card3Title || 'SSI Freediving Instructor Training Center',
-      desc: t.certificates?.card3Desc || 'Official SSI Partner — our pro academy trains and certifies the next generation of freediving instructors.',
-      src: '/badges/instructor-training-center-official.png',
+      title: t.certificates?.card3Title || 'SSI Instructor Training Center',
+      desc: t.certificates?.card3Desc || 'An official SSI center preparing qualified instructors to teach the next generation of freedivers.',
+      src: '/badges/ssi-instructor-training-center-official.jpg',
       alt: 'SSI Official Partner — Freediving Instructor Training Center badge',
     },
   ];
@@ -42,7 +49,7 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
         aria-label="Official SSI training center badges"
         className="border-b border-white/10 bg-[#081F35] px-6 py-8"
       >
-        <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-5 sm:grid-cols-3">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 items-center gap-5 sm:grid-cols-4">
           {badges.map((badge) => (
             <div key={badge.id} className="flex min-h-20 items-center justify-center px-4">
               <img
@@ -76,26 +83,6 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
         <p className="font-alata text-slate-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
           {t.certificates?.subtitle || 'An authorized SSI Freediving School in the heart of Dahab — dedicated instructor trainers, professional counter-ballast buoys, and a 100% safety record since 2003.'}
         </p>
-      </div>
-
-      <div
-        aria-label="SSI and SSI Freediving official marks"
-        className="relative mx-auto mb-10 flex max-w-6xl flex-wrap items-center justify-center gap-5 px-6"
-      >
-        <img
-          src="/badges/ssi-logo-black.png"
-          alt="Scuba Schools International"
-          loading="lazy"
-          decoding="async"
-          className="h-10 w-auto rounded bg-white px-3 py-1 object-contain"
-        />
-        <img
-          src="/badges/freediving-white.png"
-          alt="SSI Freediving"
-          loading="lazy"
-          decoding="async"
-          className="h-10 w-auto max-w-[190px] object-contain"
-        />
       </div>
 
       {/* ============================================================
@@ -139,7 +126,7 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
               absolute top-0 h-px w-32
               bg-gradient-to-r
               from-transparent
-              via-red-400/70
+              via-cyan-300/70
               to-transparent
               animate-[badgeLine_5s_ease-in-out_infinite]
             "
@@ -150,11 +137,10 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
         <div
           className="
             grid grid-cols-1
-            gap-x-8 gap-y-16
+            gap-x-6 gap-y-12
             sm:grid-cols-2
-            lg:grid-cols-3
-            lg:gap-x-6
-            xl:gap-x-10
+            xl:grid-cols-4
+            xl:gap-x-8
           "
         >
           {badges.map((badge, index) => (
@@ -176,11 +162,11 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
                   -translate-x-1/2
                   -translate-y-1/2
                   rounded-full
-                  bg-red-500/[0.025]
+                  bg-cyan-500/[0.025]
                   blur-3xl
                   transition-all
                   duration-700
-                  group-hover:bg-red-500/[0.08]
+                  group-hover:bg-cyan-500/[0.08]
                   group-hover:scale-125
                 "
               />
@@ -208,7 +194,7 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
                     border border-white/[0.025]
                     transition-all
                     duration-700
-                    group-hover:border-red-400/20
+                    group-hover:border-cyan-300/20
                     group-hover:scale-110
                   "
                 />
@@ -233,8 +219,8 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
                       h-1.5 w-1.5
                       -translate-x-1/2
                       rounded-full
-                      bg-red-400
-                      shadow-[0_0_12px_rgba(248,113,113,0.8)]
+                      bg-cyan-300
+                      shadow-[0_0_12px_rgba(103,232,249,0.8)]
                     "
                   />
                 </div>
@@ -270,8 +256,8 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
                   font-mono text-[9px]
                   text-slate-500
                   transition-all duration-500
-                  group-hover:border-red-400/40
-                  group-hover:text-red-400
+                  group-hover:border-cyan-300/40
+                  group-hover:text-cyan-300
                 "
               >
                 0{index + 1}
@@ -296,7 +282,7 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
                     transition-colors
                     duration-300
                     sm:text-base
-                    group-hover:text-red-400
+                    group-hover:text-cyan-300
                   "
                 >
                   {badge.title}

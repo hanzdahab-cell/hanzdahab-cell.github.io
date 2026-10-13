@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, Calendar, Sparkles, MessageCircle, ShieldCheck, Send } from 'lucide-react';
+import { X, Calendar, MessageCircle, ShieldCheck, Send, CheckCircle2 } from 'lucide-react';
 import { ssiCourses, specialtyCourses, instructorCourses } from '../../data/courses';
 import { packagesData } from '../../data/packages';
 import { roomTypes } from '../../data/accommodation';
@@ -106,7 +106,7 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
         {isSuccess ? (
           <div className="py-12 text-center space-y-6 animate-in zoom-in-95 duration-300">
             <div className="w-20 h-20 rounded-full bg-cyan-500/20 border border-cyan-400 flex items-center justify-center mx-auto text-cyan-300 shadow-[0_0_30px_rgba(34,211,238,0.4)]">
-              <Sparkles className="w-10 h-10 animate-spin" />
+              <CheckCircle2 className="w-10 h-10" aria-hidden="true" />
             </div>
             <div className="space-y-2">
               <span className="text-xs font-mono tracking-widest text-cyan-400 uppercase">

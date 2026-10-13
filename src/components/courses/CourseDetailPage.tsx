@@ -7,7 +7,6 @@ import {
   CheckCircle,
   Shield,
   ChevronRight,
-  Sparkles,
   Users,
   Share2,
   Check,
@@ -304,7 +303,7 @@ export function CourseDetailPage({
             {/* Skills / highlights / modules */}
             <FadeUp id="course-skills" className="scroll-mt-32 space-y-5">
               <h2 className="font-bebas text-3xl sm:text-4xl text-white tracking-[0.05em] flex items-center gap-3">
-                <Sparkles className="w-5 h-5 text-cyan-400" />
+                <Waves className="w-5 h-5 text-cyan-400" aria-hidden="true" />
                 {skillsTitle}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

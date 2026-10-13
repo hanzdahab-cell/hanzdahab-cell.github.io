@@ -7,7 +7,7 @@ import {
   ArrowRight,
   Clock,
   MapPin,
-  Sparkles,
+  Waves,
   Download,
   CalendarCheck,
   Grid,
@@ -133,7 +133,7 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
         <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-cyan-950/70 via-[#0E3453] to-cyan-950/70 border border-cyan-400/40 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-start gap-3.5">
             <div className="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center shrink-0 text-cyan-300">
-              <Sparkles className="w-5 h-5" />
+              <Waves className="w-5 h-5" aria-hidden="true" />
             </div>
             <div className="space-y-1">
               <span className="text-[11px] font-mono uppercase tracking-widest text-cyan-400 font-bold">

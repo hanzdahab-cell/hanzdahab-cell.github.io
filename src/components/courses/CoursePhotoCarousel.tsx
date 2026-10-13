@@ -78,7 +78,7 @@ export function CoursePhotoCarousel({
       aria-label={showStory ? 'Freediving course highlights' : `${activeSlide.title} photo gallery`}
       aria-roledescription="carousel"
       className={`group relative isolate overflow-hidden bg-[#081F35] ${
-        showStory ? 'min-h-[390px] sm:min-h-[500px]' : 'aspect-[4/3] min-h-[280px]'
+        showStory ? 'h-[340px] sm:h-[360px] lg:h-[380px]' : 'aspect-[4/3] min-h-[280px]'
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -117,7 +117,7 @@ export function CoursePhotoCarousel({
       {showStory && (
         <div className="absolute inset-x-0 bottom-0 z-10 space-y-3 p-5 sm:p-8">
           <p className="text-sm font-medium text-white/90">{activeSlide.subtitle}</p>
-          <h2 className="max-w-xl font-bebas text-4xl leading-none text-white sm:text-6xl">
+          <h2 className="max-w-xl font-bebas text-3xl leading-none text-white sm:text-5xl">
             <button
               type="button"
               onClick={() => onView(activeSlide.courseSlug)}
@@ -126,7 +126,7 @@ export function CoursePhotoCarousel({
               {activeSlide.title}
             </button>
           </h2>
-          <p className="max-w-lg text-sm leading-relaxed text-white/85 sm:text-base">
+          <p className="max-w-lg text-xs leading-relaxed text-white/85 sm:text-sm">
             {activeSlide.detail}
           </p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-white/90">

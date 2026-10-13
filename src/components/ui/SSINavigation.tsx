@@ -14,7 +14,6 @@ import {
   BookOpen,
   HelpCircle,
   ArrowRight,
-  Sparkles,
   Globe,
   Check,
 } from 'lucide-react';
@@ -53,27 +52,6 @@ interface NavSectionConfig {
   items: DropdownItem[];
 }
 
-// Map section DOM IDs to corresponding navSection IDs
-const SECTION_TO_NAV: Record<string, string> = {
-  home: 'home',
-  certificates: 'story',
-  philosophy: 'story',
-  story: 'story',
-  founders: 'story',
-  timeline: 'story',
-  courses: 'courses',
-  'training-modules': 'training',
-  training: 'training',
-  safaris: 'experience',
-  experience: 'experience',
-  accommodation: 'accommodation',
-  packages: 'packages',
-  calendar: 'calendar',
-  'dates-section': 'calendar',
-  blog: 'blog',
-  faq: 'faq',
-};
-
 export function SSINavigation({
   currentPage,
   onNavigate,
@@ -94,7 +72,7 @@ export function SSINavigation({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const langMenuRef = useRef<HTMLDivElement>(null);
 
-  // SCROLL-SPY STATE: Tracks which section is currently active based on viewport position
+  // Keep the selected nav item tied to the current page, not scroll position.
   const [activeNavId, setActiveNavId] = useState<string>(() => {
     if (currentPage === 'home') return 'home';
     if (currentPage.startsWith('event-')) return 'calendar';
@@ -151,80 +129,6 @@ export function SSINavigation({
         ? 'courses'
         : currentPage
     );
-  }, [currentPage]);
-
-  // =========================================================================
-  // SCROLL-SPY IMPLEMENTATION
-  // Monitors viewport scroll position and updates active menu item dynamically
-  // =========================================================================
-  useEffect(() => {
-    let ticking = false;
-
-    const handleScrollSpy = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          // 1. Top of page threshold: activate top-most item
-          if (window.scrollY < 90) {
-            setActiveNavId(currentPage === 'home' ? 'home' : currentPage);
-            ticking = false;
-            return;
-          }
-
-          // 2. Bottom of page threshold: activate last visible section (e.g. FAQ)
-          const isAtBottom =
-            window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 70;
-
-          // 3. Detect all sections present in the DOM that map to navigation items
-          const sectionKeys = Object.keys(SECTION_TO_NAV);
-          const sections: { id: string; top: number; navId: string }[] = [];
-
-          sectionKeys.forEach((id) => {
-            const el = document.getElementById(id);
-            if (el) {
-              const rect = el.getBoundingClientRect();
-              const top = rect.top + window.scrollY;
-              sections.push({ id, top, navId: SECTION_TO_NAV[id] });
-            }
-          });
-
-          if (sections.length === 0) {
-            ticking = false;
-            return;
-          }
-
-          // Sort sections in ascending order by vertical document offset
-          sections.sort((a, b) => a.top - b.top);
-
-          if (isAtBottom) {
-            setActiveNavId(sections[sections.length - 1].navId);
-            ticking = false;
-            return;
-          }
-
-          // 4. Calculate active section with header clearance offset (150px)
-          const scrollRef = window.scrollY + 150;
-          let currentNavId = sections[0].navId;
-
-          for (let i = 0; i < sections.length; i++) {
-            if (sections[i].top <= scrollRef) {
-              currentNavId = sections[i].navId;
-            } else {
-              break;
-            }
-          }
-
-          setActiveNavId(currentNavId);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener('scroll', handleScrollSpy, { passive: true });
-    // Execute on initial render
-    handleScrollSpy();
-
-    return () => window.removeEventListener('scroll', handleScrollSpy);
   }, [currentPage]);
 
   // Keep active button visible in scrollContainerRef if horizontally constrained
@@ -306,7 +210,6 @@ export function SSINavigation({
       } else {
         window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
       }
-      setActiveNavId(section.id);
       return;
     }
 
@@ -1075,7 +978,7 @@ export function SSINavigation({
               }}
               className="w-full py-3 rounded-xl bg-white text-[#0E3453] font-semibold text-center flex items-center justify-center gap-2 cursor-pointer hover:bg-slate-100"
             >
-              <Sparkles className="w-4 h-4" />
+              <Waves className="w-4 h-4" aria-hidden="true" />
               <span>{t('ui.bookNow')}</span>
             </button>
           </div>
