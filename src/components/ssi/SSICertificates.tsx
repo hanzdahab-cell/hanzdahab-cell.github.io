@@ -14,31 +14,35 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
   const badges = [
     {
       id: 'freediving-center',
-      title: t.certificates?.card1Title || 'SSI Freediving Center',
-      desc: t.certificates?.card1Desc || 'Official SSI status for our freediving school and its certified training programs.',
-      src: '/badges/ssi-freediving-center-official.png',
+      title: 'SSI Freediving Center',
+      desc: 'Official SSI recognition for Freedive Dahab’s certified freediving school and courses.',
+      src: '/badges/ssi-freediving-center-official.pdf',
       alt: 'SSI Official Partner — Freediving Center badge',
+      format: 'pdf' as const,
     },
     {
       id: 'mermaid-center',
-      title: t.certificates?.card2Title || 'SSI Mermaid Center',
-      desc: t.certificates?.card2Desc || 'Official SSI recognition for mermaid education, monofin skills and underwater performance.',
-      src: '/badges/ssi-mermaid-center-official.png',
+      title: 'SSI Mermaid Center',
+      desc: 'Official SSI recognition for mermaid education, monofin skills and underwater performance.',
+      src: '/badges/ssi-mermaid-center-official.pdf',
       alt: 'SSI Official Partner — Mermaid Center badge',
+      format: 'pdf' as const,
     },
     {
       id: 'classified-diving-center',
       title: 'SSI Classified Diving Center',
       desc: 'A classified SSI dive center with professional standards for training, service and diver support.',
-      src: '/badges/ssi-classified-diving-center-official.png',
+      src: '/badges/ssi-classified-diving-center-official.pdf',
       alt: 'SSI Classified Diving Center badge',
+      format: 'pdf' as const,
     },
     {
       id: 'instructor-training-center',
-      title: t.certificates?.card3Title || 'SSI Instructor Training Center',
-      desc: t.certificates?.card3Desc || 'An official SSI center preparing qualified instructors to teach the next generation of freedivers.',
-      src: '/badges/ssi-instructor-training-center-official.jpg',
+      title: 'SSI Instructor Training Center',
+      desc: 'An official SSI center preparing qualified instructors to teach the next generation of freedivers.',
+      src: '/badges/ssi-instructor-training-center-transparent.png',
       alt: 'SSI Official Partner — Freediving Instructor Training Center badge',
+      format: 'image' as const,
     },
   ];
 
@@ -52,13 +56,28 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
         <div className="mx-auto grid max-w-6xl grid-cols-2 items-center gap-5 sm:grid-cols-4">
           {badges.map((badge) => (
             <div key={badge.id} className="flex min-h-20 items-center justify-center px-4">
-              <img
-                src={badge.src}
-                alt={badge.alt}
-                loading="lazy"
-                decoding="async"
-                className="max-h-20 w-full max-w-[190px] object-contain"
-              />
+              {badge.format === 'pdf' ? (
+                <div className="aspect-square h-24 max-w-full overflow-hidden rounded-full">
+                  <object
+                    data={`${badge.src}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`}
+                    type="application/pdf"
+                    aria-label={badge.alt}
+                    className="h-full w-full border-0 bg-transparent"
+                  >
+                    <a href={badge.src} className="text-sm text-cyan-300 underline">
+                      View {badge.title}
+                    </a>
+                  </object>
+                </div>
+              ) : (
+                <img
+                  src={badge.src}
+                  alt={badge.alt}
+                  loading="lazy"
+                  decoding="async"
+                  className="max-h-24 w-full max-w-[190px] object-contain"
+                />
+              )}
             </div>
           ))}
         </div>
@@ -73,7 +92,7 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
 
       {/* Header */}
       <div className="relative max-w-4xl mx-auto text-center mb-16 md:mb-20">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-red-500/20 bg-red-500/10 text-red-400 text-xs tracking-wider uppercase font-alata mb-4">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-300/20 bg-cyan-400/10 text-cyan-300 text-xs tracking-wider uppercase font-alata mb-4">
           <ShieldCheck className="w-3.5 h-3.5" />
           <span>{t.certificates?.badge || 'SSI Official Partner • Facility #720079 • ISO 24801 & 24802'}</span>
         </div>
@@ -226,22 +245,33 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
                 </div>
 
                 {/* OFFICIAL BADGE — DO NOT MODIFY */}
-                <img
-                  src={badge.src}
-                  alt={badge.alt}
-                  loading="eager"
-                  decoding="async"
-                  referrerPolicy="no-referrer"
-                  className="
-                    relative z-20
-                    block h-auto w-full
-                    max-w-[210px]
-                    object-contain
-                    sm:max-w-[220px]
-                    lg:max-w-[205px]
-                    xl:max-w-[220px]
-                  "
-                />
+                {badge.format === 'pdf' ? (
+                  <div className="relative z-20 aspect-square h-[210px] max-w-full overflow-hidden rounded-full">
+                    <object
+                      data={`${badge.src}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`}
+                      type="application/pdf"
+                      aria-label={badge.alt}
+                      className="h-full w-full border-0 bg-transparent"
+                    >
+                      <a href={badge.src} className="text-sm text-cyan-300 underline">
+                        View {badge.title}
+                      </a>
+                    </object>
+                  </div>
+                ) : (
+                  <img
+                    src={badge.src}
+                    alt={badge.alt}
+                    loading="eager"
+                    decoding="async"
+                    className="
+                      relative z-20
+                      block h-[210px] w-full
+                      max-w-[220px]
+                      object-contain
+                    "
+                  />
+                )}
               </div>
 
               {/* Small numbered indicator */}
