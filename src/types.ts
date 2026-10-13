@@ -197,6 +197,10 @@ export interface Testimonial {
   quote: string;
   course: string;
   rating: number;
+  source?: 'Tripadvisor' | 'Google';
+  reviewUrl?: string;
+  reviewPhoto?: string;
+  reviewPhotoAlt?: string;
 }
 
 export type EventTypeId =

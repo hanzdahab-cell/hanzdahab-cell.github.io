@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { FadeUp } from '../ui/MotionKit';
 import { coreCoursePhotoById, courseCardArtworkById, coursePhotoById } from '../../data/courseMedia';
 import { CoursePhotoCarousel, CourseStorySlide } from './CoursePhotoCarousel';
+import { SSICertificates } from '../ssi/SSICertificates';
 
 interface CoursesSectionProps {
   onOpenBooking: (courseId?: string) => void;
@@ -107,6 +108,8 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
           />
         </div>
       </div>
+
+      <SSICertificates variant="compact" />
 
       <div className="relative mx-auto max-w-7xl px-6 pt-16 sm:pt-20">
         <div className="absolute inset-0 architectural-grid-fine opacity-10 pointer-events-none" />

@@ -5,9 +5,10 @@ import { ShieldCheck, ArrowRight } from 'lucide-react';
 export interface SSICertificatesProps {
   onOpenBooking?: () => void;
   onNavigate?: (page: PageType) => void;
+  variant?: 'compact' | 'full';
 }
 
-export function SSICertificates({ onOpenBooking, onNavigate }: SSICertificatesProps) {
+export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }: SSICertificatesProps) {
   const { t } = useLanguage();
 
   const badges = [
@@ -29,10 +30,34 @@ export function SSICertificates({ onOpenBooking, onNavigate }: SSICertificatesPr
       id: 'instructor-training-center',
       title: t.certificates?.card3Title || 'SSI Freediving Instructor Training Center',
       desc: t.certificates?.card3Desc || 'Official SSI Partner — our pro academy trains and certifies the next generation of freediving instructors.',
-      src: '/badges/ssi-instructor-training-center.png',
+      src: '/badges/instructor-training-center-official.png',
       alt: 'SSI Official Partner — Freediving Instructor Training Center badge',
     },
   ];
+
+  if (variant === 'compact') {
+    return (
+      <section
+        id="course-certifications"
+        aria-label="Official SSI training center badges"
+        className="border-b border-white/10 bg-[#081F35] px-6 py-8"
+      >
+        <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-5 sm:grid-cols-3">
+          {badges.map((badge) => (
+            <div key={badge.id} className="flex min-h-20 items-center justify-center px-4">
+              <img
+                src={badge.src}
+                alt={badge.alt}
+                loading="lazy"
+                decoding="async"
+                className="max-h-20 w-full max-w-[190px] object-contain"
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="certificates" className="relative py-20 md:py-28 px-6 bg-transparent overflow-hidden">
@@ -51,6 +76,26 @@ export function SSICertificates({ onOpenBooking, onNavigate }: SSICertificatesPr
         <p className="font-alata text-slate-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
           {t.certificates?.subtitle || 'An authorized SSI Freediving School in the heart of Dahab — dedicated instructor trainers, professional counter-ballast buoys, and a 100% safety record since 2003.'}
         </p>
+      </div>
+
+      <div
+        aria-label="SSI and SSI Freediving official marks"
+        className="relative mx-auto mb-10 flex max-w-6xl flex-wrap items-center justify-center gap-5 px-6"
+      >
+        <img
+          src="/badges/ssi-logo-black.png"
+          alt="Scuba Schools International"
+          loading="lazy"
+          decoding="async"
+          className="h-10 w-auto rounded bg-white px-3 py-1 object-contain"
+        />
+        <img
+          src="/badges/freediving-white.png"
+          alt="SSI Freediving"
+          loading="lazy"
+          decoding="async"
+          className="h-10 w-auto max-w-[190px] object-contain"
+        />
       </div>
 
       {/* ============================================================
