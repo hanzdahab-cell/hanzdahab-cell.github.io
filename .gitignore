@@ -1,0 +1,30 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+
+# local archives & dev logs
+*.zip
+/Calender info/
+/Courses info/
+/Desert experince/
+/Freedive dahab Last version/
+/metadata.json
+/Classified Diving Center.pdf
+/Diamond Center.pdf
+/Freediving Center.png
+/Instructor Training Center.png
+/tidal-astral-grotesk-regular.ttf
+/public/Classified Diving Center.pdf
+/public/Diamond Center.pdf
+/public/Freediving Center.png
+/public/Instructor Training Center.png
+
+# design source material (huge PSD/PDF originals)
+Web matrial/
+
+# user raw material dropped in public (not site assets)
+public/The videos and Pngs/
