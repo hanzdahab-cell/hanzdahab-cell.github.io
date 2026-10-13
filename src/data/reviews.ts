@@ -1,17 +1,3 @@
-/**
- * Review sources + review cards for the footer carousel.
- *
- * The platform links below are the center's REAL, verified pages:
- *   - TripAdvisor: attraction page for Freedive Dahab (Dahab, South Sinai)
- *   - Google:      Maps place page with the review section (1b1 param opens reviews)
- *
- * IMPORTANT: the `reviews` array entries below are PLACEHOLDERS showing the
- * card design. Replace the text/name/date fields with real review excerpts
- * copied from the two linked pages before going live — publishing invented
- * customer quotes is a legal risk (fake reviews). Avatars fall back to
- * initials when no photo URL is given.
- */
-
 export type ReviewPlatform = 'tripadvisor' | 'google';
 
 export interface ReviewSource {
@@ -23,47 +9,82 @@ export interface ReviewSource {
 export const REVIEW_SOURCES: ReviewSource[] = [
   {
     platform: 'tripadvisor',
-    label: 'TripAdvisor — Freedive Dahab',
+    label: 'TripAdvisor',
     url: 'https://www.tripadvisor.com/Attraction_Review-g297547-d2536562-Reviews-Freedive_Dahab-Dahab_South_Sinai_Red_Sea_and_Sinai.html',
   },
   {
     platform: 'google',
-    label: 'Google — Freedive Dahab reviews',
+    label: 'Google',
     url: 'https://www.google.com/maps/place/Freedive+Dahab/@28.500013,34.5146068,17z/data=!4m12!1m2!2m1!1sfreedive+dahab+r!3m8!1s0x15ab4b2f95e43b47:0x959de4c6f4da9708!8m2!3d28.500013!4d34.5193704!9m1!1b1!16s%2Fg%2F1hc8wq6h4',
   },
 ];
 
 export interface Review {
+  id: string;
   platform: ReviewPlatform;
   name: string;
-  rating: number; // 1–5
-  date: string;
   text: string;
-  avatarUrl?: string;
+  sourceUrl: string;
+  date?: string;
+  photo?: {
+    src: string;
+    alt: string;
+  };
 }
 
-// TODO(owner): replace these three placeholder cards with real review excerpts
-// from the TripAdvisor / Google pages linked above (keep the shape identical).
 export const reviews: Review[] = [
   {
+    id: 'tripadvisor-lam',
     platform: 'tripadvisor',
-    name: 'TripAdvisor traveler',
-    rating: 5,
-    date: 'Replace with real review',
-    text: 'Placeholder card — paste a real TripAdvisor review excerpt here (from the linked page), with the reviewer name and date.',
+    name: 'Lam',
+    date: 'Nov 2019',
+    text: 'All the instructors are very professional and attentive to answer my questions and adjust the training suitable for my level and my needs.',
+    sourceUrl: 'https://www.tripadvisor.com/Attraction_Review-g297547-d2536562-Reviews-Freedive_Dahab-Dahab_South_Sinai_Red_Sea_and_Sinai.html#/media-atf/2536562/436620352:p/?albumid=-160&type=0&category=-160',
   },
   {
+    id: 'tripadvisor-ting',
+    platform: 'tripadvisor',
+    name: 'Ting',
+    date: 'Jan 2019',
+    text: 'Carlos remained patient and kind. I felt safe in every dive and never felt forced to do things that I wasn’t ready for.',
+    sourceUrl: 'https://www.tripadvisor.com/Attraction_Review-g297547-d2536562-Reviews-Freedive_Dahab-Dahab_South_Sinai_Red_Sea_and_Sinai.html#/media-atf/2536562/371748783:p/?albumid=-160&type=0&category=-160',
+  },
+  {
+    id: 'tripadvisor-diego',
+    platform: 'tripadvisor',
+    name: 'Diego F',
+    date: 'Nov 2016',
+    text: 'Under the experienced guidance of senior instructor Hussein, I improved my FI PB by over 10m in just a few days.',
+    sourceUrl: 'https://www.tripadvisor.com/Attraction_Review-g297547-d2536562-Reviews-Freedive_Dahab-Dahab_South_Sinai_Red_Sea_and_Sinai.html#/media-atf/2536562/230051324:p/?albumid=-160&type=0&category=-160',
+  },
+  {
+    id: 'tripadvisor-huebschi',
+    platform: 'tripadvisor',
+    name: 'huebschi_hung',
+    date: 'Jul 2015',
+    text: 'It’s all about that feeling when you’re in the water and you are with and within yourself, enjoying every second of it.',
+    sourceUrl: 'https://www.tripadvisor.com/Attraction_Review-g297547-d2536562-Reviews-Freedive_Dahab-Dahab_South_Sinai_Red_Sea_and_Sinai.html#/media-atf/2536562/139734774:p/?albumid=-160&type=0&category=-160',
+  },
+  {
+    id: 'google-lita',
     platform: 'google',
-    name: 'Google reviewer',
-    rating: 5,
-    date: 'Replace with real review',
-    text: 'Placeholder card — paste a real Google review excerpt here (from the linked Maps page), with the reviewer name and date.',
+    name: 'Lita Nguyen',
+    text: 'The instructors were very attentive and adapted well to each of us. They clearly care about both safety and comfort in the water.',
+    sourceUrl: 'https://share.google/ISlfdhmNStBrtiXry',
+    photo: {
+      src: '/images/reviews/google-review-1.webp',
+      alt: 'Freediver descending above a coral reef',
+    },
   },
   {
-    platform: 'tripadvisor',
-    name: 'TripAdvisor traveler',
-    rating: 5,
-    date: 'Replace with real review',
-    text: 'Placeholder card — one more real review excerpt. Keep 4–6 cards total for the best carousel rhythm.',
+    id: 'google-carole',
+    platform: 'google',
+    name: 'Carole Chambrette',
+    text: 'Very professional instructors and great equipment. My friend and I got our freediving certification and felt really comfortable.',
+    sourceUrl: 'https://share.google/YSsP5IDe1YrXRd7aW',
+    photo: {
+      src: '/images/reviews/google-review-2.webp',
+      alt: 'Freediver moving through deep blue water',
+    },
   },
 ];

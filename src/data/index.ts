@@ -6,4 +6,3 @@ export * from './activities';
 export * from './blog';
 export * from './calendar';
 export * from './faq';
-export * from './testimonials';

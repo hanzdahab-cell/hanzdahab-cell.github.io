@@ -189,20 +189,6 @@ export interface FAQItem {
   category: 'booking' | 'courses' | 'travel' | 'equipment' | 'general';
 }
 
-export interface Testimonial {
-  id: string;
-  name: string;
-  role: string;
-  avatar: string;
-  quote: string;
-  course: string;
-  rating: number;
-  source?: 'Tripadvisor' | 'Google';
-  reviewUrl?: string;
-  reviewPhoto?: string;
-  reviewPhotoAlt?: string;
-}
-
 export type EventTypeId =
   | 'beginner-week'
   | 'advanced-week'

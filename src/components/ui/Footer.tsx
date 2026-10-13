@@ -1,11 +1,11 @@
 import { Phone, Mail, MapPin, ArrowUp, ArrowRight, Instagram, Facebook } from 'lucide-react';
 import { PageType } from '../../types';
 import { useLanguage } from '../../context/LanguageContext';
-import { ReviewsCarousel, PlatformMark } from '../footer/ReviewsCarousel';
+import { PlatformMark } from '../footer/ReviewsCarousel';
 import { siteConfig } from '../../data/site';
 
 /* ==========================================================================
-   FOOTER — photo-led course inquiry, white contact area, reviews, and a
+   FOOTER — photo-led course inquiry, contact area, and a
    three-layer blue wave band with the copyright and back-to-top control.
    ========================================================================== */
 
@@ -197,9 +197,6 @@ export function Footer({ onOpenBooking, onNavigate }: FooterProps) {
           </div>
         </div>
       </div>
-
-      {/* REVIEWS — TripAdvisor & Google carousel (white section) */}
-      <ReviewsCarousel />
 
       {/* ========================================================== */}
       {/* THREE-LAYER WAVE BAND — copyright inside, round top btn    */}
