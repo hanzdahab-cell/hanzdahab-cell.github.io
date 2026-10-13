@@ -136,7 +136,7 @@ export function ReviewsCarousel() {
               </a>
             ))}
           </div>
-        </div>
+        </header>
 
         <div
           ref={trackRef}

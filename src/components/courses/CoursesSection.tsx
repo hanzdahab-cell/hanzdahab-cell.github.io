@@ -111,6 +111,35 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
 
       <SSICertificates variant="compact" />
 
+      <nav aria-label="Course sections" className="mx-auto max-w-7xl px-6 pt-8">
+        <ul className="flex flex-wrap gap-x-7 gap-y-2 border-b border-white/10 pb-4 text-sm text-slate-300">
+          <li>
+            <a
+              href="#chapter-core"
+              className="inline-flex min-h-11 items-center transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              Core courses
+            </a>
+          </li>
+          <li>
+            <a
+              href="#chapter-try"
+              className="inline-flex min-h-11 items-center transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              Specialty courses
+            </a>
+          </li>
+          <li>
+            <a
+              href="#chapter-pro"
+              className="inline-flex min-h-11 items-center transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              Professional training
+            </a>
+          </li>
+        </ul>
+      </nav>
+
       <div className="relative mx-auto max-w-7xl px-6 pt-16 sm:pt-20">
         <div className="absolute inset-0 architectural-grid-fine opacity-10 pointer-events-none" />
         {/* ========================================================== */}
