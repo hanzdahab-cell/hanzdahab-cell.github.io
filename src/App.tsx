@@ -34,6 +34,7 @@ export default function App() {
   const [currency, setCurrency] = useState<'EUR' | 'USD' | 'EGP'>('EUR');
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [bookingOfferingId, setBookingOfferingId] = useState<string | undefined>();
+  const [showQuickActions, setShowQuickActions] = useState(false);
 
   // Determine initial page from URL hash, default to 'home'
   const validPages = ['home', 'courses', 'training', 'experience', 'accommodation', 'packages', 'blog', 'faq', 'calendar', 'story'];
@@ -68,6 +69,16 @@ export default function App() {
       window.scrollTo({ top: 0 });
     }
   };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowQuickActions(window.scrollY > 320);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Listen to browser forward/backward buttons and external hash changes
   useEffect(() => {
@@ -129,6 +140,26 @@ export default function App() {
         />
 
         <main className="relative z-10">
+          {showQuickActions && (
+            <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center px-4 sm:justify-end sm:px-6 lg:px-8">
+              <div className="pointer-events-auto flex items-center gap-2 rounded-full border border-cyan-300/30 bg-[#0E3453]/85 p-1.5 shadow-[0_18px_45px_rgba(6,16,28,0.55)] backdrop-blur-xl ring-1 ring-white/10">
+                <button
+                  type="button"
+                  onClick={scrollToSurface}
+                  className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-[10px] font-alata uppercase tracking-[0.14em] text-slate-200 transition-all hover:border-cyan-300/50 hover:bg-cyan-500/10 hover:text-white"
+                >
+                  Top
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleOpenBooking()}
+                  className="rounded-full bg-cyan-300 px-3 py-2 text-[10px] font-alata uppercase tracking-[0.14em] text-[#0E3453] transition-all hover:bg-cyan-200 hover:shadow-[0_0_18px_rgba(103,232,249,0.45)]"
+                >
+                  Book now
+                </button>
+              </div>
+            </div>
+          )}
         
         {/* ========================================================= */}
         {/* 1. INDIVIDUAL PAGE: HOME SANCTUARY                        */}

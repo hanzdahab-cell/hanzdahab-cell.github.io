@@ -1,4 +1,9 @@
 @import "tailwindcss";
+@import "@heroui/styles/utilities";
+@import "@heroui/styles/variants";
+@import "@heroui/styles/themes/default" layer(theme);
+@import "@heroui/styles/components/calendar.css" layer(components);
+@import "@heroui/styles/components/calendar-year-picker.css" layer(components);
 
 /* ==========================================================================
    BRAND PALETTE (2026-10-06 redesign)
@@ -37,6 +42,10 @@
   --font-mono: 'Alata', sans-serif;
 }
 
+.dahab-calendar {
+  --accent: #4E8CB8;
+  --accent-foreground: #081F35;
+}
 
 /* ==========================================================================
    FREEDIVE DAHAB - TYPOGRAPHY SYSTEM
@@ -785,4 +794,3 @@ html[dir="rtl"] .font-arabic-body {
     opacity: 0.25;
   }
 }
-

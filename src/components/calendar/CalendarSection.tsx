@@ -17,6 +17,10 @@ import {
   Compass,
   Award,
 } from 'lucide-react';
+import { Calendar } from '@heroui/react';
+import { CalendarDate, parseDate } from '@internationalized/date';
+import { I18nProvider } from 'react-aria-components/I18nProvider';
+import { useTranslation } from 'react-i18next';
 import {
   MONTHS_2026,
   SCHEDULE_2026_EVENTS,
@@ -46,8 +50,12 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
   // Default to September 2026 (the current simulated active month)
   const [selectedMonthIndex, setSelectedMonthIndex] = useState<number>(8); // 8 = September (0-indexed)
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('All');
-  const [viewMode, setViewMode] = useState<'cards' | 'calendar'>('cards');
+  const [viewMode, setViewMode] = useState<'cards' | 'calendar'>('calendar');
   const [selectedCalendarDay, setSelectedCalendarDay] = useState<number | null>(null);
+  const [calendarFocusedDate, setCalendarFocusedDate] = useState<CalendarDate>(() =>
+    parseDate('2026-09-01')
+  );
+  const { i18n } = useTranslation();
 
   const currentMonth = MONTHS_2026[selectedMonthIndex];
 
@@ -58,32 +66,61 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
   };
 
   const handlePrevMonth = () => {
-    setSelectedMonthIndex((prev) => (prev > 0 ? prev - 1 : 11));
+    const previousDate = calendarFocusedDate.subtract({ months: 1 }).set({ day: 1 });
+    setSelectedMonthIndex(previousDate.month - 1);
+    setCalendarFocusedDate(previousDate);
     setSelectedCalendarDay(null);
   };
 
   const handleNextMonth = () => {
-    setSelectedMonthIndex((prev) => (prev < 11 ? prev + 1 : 0));
+    const nextDate = calendarFocusedDate.add({ months: 1 }).set({ day: 1 });
+    setSelectedMonthIndex(nextDate.month - 1);
+    setCalendarFocusedDate(nextDate);
     setSelectedCalendarDay(null);
   };
 
   // Filter events for current month and active category
   const currentMonthEvents = useMemo(() => {
     return SCHEDULE_2026_EVENTS.filter((ev) => {
-      const matchMonth = ev.monthNum === currentMonth.num;
+      const matchMonth = ev.year === calendarFocusedDate.year && ev.monthNum === currentMonth.num;
       const matchCategory = selectedCategory === 'All' || ev.category === selectedCategory;
       return matchMonth && matchCategory;
     });
-  }, [currentMonth.num, selectedCategory]);
+  }, [calendarFocusedDate.year, currentMonth.num, selectedCategory]);
 
-  // Overall count across all of 2026 per category
+  // Count events in the selected year so filters stay accurate when browsing years.
   const categoryCounts = useMemo(() => {
-    const counts: Record<string, number> = { All: SCHEDULE_2026_EVENTS.length };
-    SCHEDULE_2026_EVENTS.forEach((e) => {
+    const eventsInYear = SCHEDULE_2026_EVENTS.filter((event) => event.year === calendarFocusedDate.year);
+    const counts: Record<string, number> = { All: eventsInYear.length };
+    eventsInYear.forEach((e) => {
       counts[e.category] = (counts[e.category] || 0) + 1;
     });
     return counts;
-  }, []);
+  }, [calendarFocusedDate.year]);
+
+  const eventsForDate = (date: CalendarDate) => {
+    const dateIso = date.toString();
+    return SCHEDULE_2026_EVENTS.filter((event) => {
+      const matchesDate = dateIso >= event.startIso && dateIso <= event.endIso;
+      const matchesCategory = selectedCategory === 'All' || event.category === selectedCategory;
+      return matchesDate && matchesCategory;
+    });
+  };
+
+  const handleCalendarFocusChange = (date: CalendarDate) => {
+    if (date.month !== calendarFocusedDate.month || date.year !== calendarFocusedDate.year) {
+      setSelectedCalendarDay(null);
+    }
+    setCalendarFocusedDate(date);
+    setSelectedMonthIndex(date.month - 1);
+  };
+
+  const selectMonth = (monthIndex: number) => {
+    const date = calendarFocusedDate.set({ month: monthIndex + 1, day: 1 });
+    setSelectedMonthIndex(monthIndex);
+    setCalendarFocusedDate(date);
+    setSelectedCalendarDay(null);
+  };
 
   // Category badge colors
   const getCategoryColor = (cat: string) => {
@@ -102,6 +139,25 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
         return 'bg-rose-500/10 text-rose-300 border-rose-500/30';
       default:
         return 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30';
+    }
+  };
+
+  const getCategoryDotColor = (category: string) => {
+    switch (category) {
+      case 'Beginner':
+        return 'bg-emerald-400';
+      case 'Advanced':
+        return 'bg-blue-400';
+      case 'Training':
+        return 'bg-amber-400';
+      case 'Ras Mohamed trip':
+        return 'bg-teal-400';
+      case 'Zero to Hero':
+        return 'bg-purple-400';
+      case 'Instructor Course':
+        return 'bg-rose-400';
+      default:
+        return 'bg-cyan-300';
     }
   };
 
@@ -197,35 +253,41 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             
             <div className="flex items-center gap-3">
-              <button
-                onClick={handlePrevMonth}
-                className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white border border-white/10 transition-colors cursor-pointer"
-                title="Previous month"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
+              {viewMode === 'cards' && (
+                <button
+                  onClick={handlePrevMonth}
+                  className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white border border-white/10 transition-colors cursor-pointer"
+                  title="Previous month"
+                  aria-label="Previous month"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+              )}
 
               <div className="flex items-baseline gap-2.5">
                 <h3 className="font-serif text-2xl sm:text-3xl font-bold text-white">
                   {currentMonth.name}
                 </h3>
                 <span className="font-mono text-cyan-400 text-base sm:text-lg font-bold">
-                  2026
+                  {calendarFocusedDate.year}
                 </span>
-                {currentMonth.name === 'September' && (
+                {currentMonth.name === 'September' && calendarFocusedDate.year === 2026 && (
                   <span className="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-mono text-[10px] uppercase font-bold tracking-wider">
                     Current Season
                   </span>
                 )}
               </div>
 
-              <button
-                onClick={handleNextMonth}
-                className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white border border-white/10 transition-colors cursor-pointer"
-                title="Next month"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
+              {viewMode === 'cards' && (
+                <button
+                  onClick={handleNextMonth}
+                  className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white border border-white/10 transition-colors cursor-pointer"
+                  title="Next month"
+                  aria-label="Next month"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              )}
             </div>
 
             {/* View Mode Toggle: Cards vs Calendar Grid */}
@@ -258,20 +320,19 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
 
           </div>
 
-          {/* 12-Month Quick Selector Tabs */}
-          <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-12 gap-1.5 pt-2 border-t border-white/5">
+          {/* Quick month shortcuts for the list view */}
+          {viewMode === 'cards' && <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-12 gap-1.5 pt-2 border-t border-white/5">
             {MONTHS_2026.map((m, idx) => {
               const isSelected = idx === selectedMonthIndex;
-              const hasEvents = SCHEDULE_2026_EVENTS.some((e) => e.monthNum === m.num);
-              const isCurrentSim = m.name === 'September';
+              const hasEvents =
+                calendarFocusedDate.year === 2026 &&
+                SCHEDULE_2026_EVENTS.some((e) => e.monthNum === m.num);
+              const isCurrentSim = m.name === 'September' && calendarFocusedDate.year === 2026;
 
               return (
                 <button
                   key={m.num}
-                  onClick={() => {
-                    setSelectedMonthIndex(idx);
-                    setSelectedCalendarDay(null);
-                  }}
+                  onClick={() => selectMonth(idx)}
                   className={`py-2 px-1 rounded-xl text-center font-mono text-xs transition-all relative cursor-pointer ${
                     isSelected
                       ? 'bg-ocean text-white font-bold shadow-md shadow-cyan-500/25'
@@ -291,7 +352,7 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
                 </button>
               );
             })}
-          </div>
+          </div>}
 
           {/* ======================================================== */}
           {/* EVENT CATEGORY FILTER PILLS                              */}
@@ -336,7 +397,7 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
           <div className="space-y-4">
             <div className="flex items-center justify-between text-xs font-mono text-slate-400 px-1">
               <span>
-                Showing {currentMonthEvents.length} scheduled events for {currentMonth.name} 2026
+                Showing {currentMonthEvents.length} scheduled events for {currentMonth.name} {calendarFocusedDate.year}
                 {selectedCategory !== 'All' ? ` in "${selectedCategory}"` : ''}
               </span>
               <span>All departures include SSI gear, buoy lines &amp; certification</span>
@@ -501,158 +562,222 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
         )}
 
         {/* ======================================================== */}
-        {/* VIEW 2: INTERACTIVE MONTHLY CALENDAR GRID VIEW           */}
+        {/* VIEW 2: HEROUI ACCESSIBLE CALENDAR AND SELECTED-DAY AGENDA */}
         {/* ======================================================== */}
         {viewMode === 'calendar' && (
-          <div className="p-6 sm:p-8 rounded-3xl bg-[#0E3453] border border-white/10 space-y-6">
-            
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+          <div className="grid grid-cols-1 items-start gap-5 rounded-3xl border border-white/10 bg-[#0B2C4A] p-4 shadow-2xl sm:p-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.9fr)] lg:gap-8">
+            <div className="space-y-4">
               <div>
                 <h4 className="font-serif text-xl font-bold text-white">
-                  {currentMonth.name} 2026 Interactive Calendar
+                  Scheduled departures
                 </h4>
-                <p className="text-xs text-slate-400 font-sans">
-                  Click any active day block to reveal scheduled departures and click into their dedicated pages.
+                <p className="mt-1 text-xs leading-relaxed text-slate-400">
+                  Select a highlighted day to see departures. Use the month arrows or year selector to browse.
                 </p>
               </div>
-            </div>
-
-            {/* Day of week headers */}
-            <div className="grid grid-cols-7 gap-2 text-center font-mono text-xs uppercase text-slate-400 font-semibold">
-              <span>Mon</span>
-              <span>Tue</span>
-              <span>Wed</span>
-              <span>Thu</span>
-              <span>Fri</span>
-              <span>Sat</span>
-              <span>Sun</span>
-            </div>
-
-            {/* Calendar Days Matrix */}
-            <div className="grid grid-cols-7 gap-2">
-              {Array.from({ length: currentMonth.days }).map((_, dIdx) => {
-                const dayNum = dIdx + 1;
-                const dayStr = dayNum < 10 ? `0${dayNum}` : `${dayNum}`;
-                const dateIso = `2026-${currentMonth.num < 10 ? `0${currentMonth.num}` : currentMonth.num}-${dayStr}`;
-                
-                // Find events active on this date
-                const dayEvents = SCHEDULE_2026_EVENTS.filter((e) => {
-                  return dateIso >= e.startIso && dateIso <= e.endIso;
-                });
-
-                const isSelectedDay = selectedCalendarDay === dayNum;
-                const hasEvents = dayEvents.length > 0;
-
-                return (
-                  <div
-                    key={dayNum}
-                    onClick={() => hasEvents && setSelectedCalendarDay(dayNum)}
-                    className={`min-h-[85px] sm:min-h-[105px] p-2 rounded-xl border transition-all flex flex-col justify-between ${
-                      hasEvents ? 'cursor-pointer hover:border-cyan-400/50' : 'cursor-default opacity-40'
-                    } ${
-                      isSelectedDay
-                        ? 'bg-cyan-950/60 border-cyan-400 ring-2 ring-cyan-400/40'
-                        : hasEvents
-                        ? 'bg-[#0E3453] border-white/10'
-                        : 'bg-black/20 border-white/5'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between text-xs font-mono">
-                      <span className={`font-bold ${hasEvents ? 'text-white' : 'text-slate-600'}`}>
-                        {dayNum}
-                      </span>
-                      {hasEvents && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+              <I18nProvider locale={i18n.resolvedLanguage || i18n.language || 'en'}>
+                <Calendar
+                  aria-label="Scheduled freediving events"
+                  className="dahab-calendar dark w-full max-w-none rounded-2xl border border-white/10 bg-[#0E3453] p-4 text-slate-100 sm:p-6"
+                  focusedValue={calendarFocusedDate}
+                  value={
+                    selectedCalendarDay === null
+                      ? null
+                      : calendarFocusedDate.set({ day: selectedCalendarDay })
+                  }
+                  onChange={(date) => {
+                    if (date) handleCalendarFocusChange(date);
+                    setSelectedCalendarDay(date?.day ?? null);
+                  }}
+                  onFocusChange={handleCalendarFocusChange}
+                >
+                  <Calendar.Header className="flex items-center gap-2 pb-5">
+                    <Calendar.YearPickerTrigger className="min-h-10 rounded-xl px-2 text-left transition-colors hover:bg-white/5">
+                      <Calendar.YearPickerTriggerHeading className="font-display text-xl tracking-wide text-white sm:text-2xl" />
+                      <Calendar.YearPickerTriggerIndicator className="text-cyan-300" />
+                    </Calendar.YearPickerTrigger>
+                    <Calendar.NavButton
+                      slot="previous"
+                      className="size-10 shrink-0 rounded-full border border-white/10 bg-white/5 text-cyan-100 transition-colors hover:bg-white/10"
+                      aria-label="Previous month"
+                    />
+                    <Calendar.NavButton
+                      slot="next"
+                      className="size-10 shrink-0 rounded-full border border-white/10 bg-white/5 text-cyan-100 transition-colors hover:bg-white/10"
+                      aria-label="Next month"
+                    />
+                  </Calendar.Header>
+                  <Calendar.Grid className="w-full" weekdayStyle="short">
+                    <Calendar.GridHeader>
+                      {(day) => (
+                        <Calendar.HeaderCell className="pb-3 text-[10px] font-mono uppercase tracking-wider text-slate-400 sm:text-xs">
+                          {day}
+                        </Calendar.HeaderCell>
                       )}
-                    </div>
-
-                    {/* Mini event tags */}
-                    <div className="space-y-1 mt-1">
-                      {dayEvents.slice(0, 2).map((ev) => (
-                        <div
-                          key={ev.id}
-                          className="px-1.5 py-0.5 rounded text-[9px] font-mono truncate bg-cyan-500/20 text-cyan-200 border border-cyan-400/30"
-                          title={`${ev.eventTitle}: ${ev.dateLabel}`}
-                        >
-                          {ev.eventTitle}
-                        </div>
-                      ))}
-                      {dayEvents.length > 2 && (
-                        <div className="text-[9px] font-mono text-cyan-400 font-bold pl-1">
-                          +{dayEvents.length - 2} more
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Selected Day Details Panel */}
-            {selectedCalendarDay && (
-              <div className="p-5 rounded-2xl bg-[#0E3453] border border-cyan-400/40 space-y-4 animate-in fade-in">
-                <div className="flex items-center justify-between">
-                  <div className="font-serif font-bold text-white text-lg">
-                    Events Active on {currentMonth.name} {selectedCalendarDay}, 2026
-                  </div>
-                  <button
-                    onClick={() => setSelectedCalendarDay(null)}
-                    className="text-xs font-mono text-slate-400 hover:text-white"
-                  >
-                    Close Day
-                  </button>
-                </div>
-
-                {(() => {
-                  const dayStr = selectedCalendarDay < 10 ? `0${selectedCalendarDay}` : `${selectedCalendarDay}`;
-                  const dateIso = `2026-${currentMonth.num < 10 ? `0${currentMonth.num}` : currentMonth.num}-${dayStr}`;
-                  const activeOnDay = SCHEDULE_2026_EVENTS.filter(
-                    (e) => dateIso >= e.startIso && dateIso <= e.endIso
-                  );
-
-                  return (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                      {activeOnDay.map((e) => (
-                        <div
-                          key={e.id}
-                          className="p-4 rounded-xl bg-black/40 border border-white/10 space-y-2"
-                        >
-                          <span
-                            className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider ${getCategoryColor(
-                              e.category
-                            )}`}
+                    </Calendar.GridHeader>
+                    <Calendar.GridBody>
+                      {(date) => {
+                        const dayEvents = eventsForDate(date);
+                        return (
+                          <Calendar.Cell
+                            date={date}
+                            className={`relative mx-auto min-h-10 w-full rounded-xl pb-3 text-xs text-slate-200 sm:min-h-12 sm:text-sm ${
+                              dayEvents.length
+                                ? 'bg-white/[0.035] text-white hover:bg-white/10'
+                                : 'text-slate-500'
+                            }`}
                           >
-                            {e.category}
-                          </span>
-                          <h5 className="font-serif font-bold text-white text-base">
-                            {e.eventTitle}
-                          </h5>
-                          <div className="text-xs font-mono text-cyan-300">
-                            {e.dateLabel} ({e.durationDays} Days)
-                          </div>
-                          <div className="pt-2 flex items-center justify-between">
-                            <button
-                              onClick={() => onNavigate && onNavigate(`event-${e.eventTypeId}` as PageType)}
-                              className="text-xs font-mono text-cyan-400 hover:underline flex items-center gap-1 cursor-pointer"
-                            >
-                              <span>Dedicated Page</span>
-                              <ExternalLink className="w-3 h-3" />
-                            </button>
-                            <button
-                              onClick={() => onOpenBooking(e.id)}
-                              className="px-3 py-1 rounded-lg bg-ocean text-white text-xs font-mono font-bold uppercase cursor-pointer"
-                            >
-                              Book
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  );
-                })()}
+                            {({ formattedDate }) => (
+                              <>
+                                <span>{formattedDate}</span>
+                                {dayEvents.length > 0 && (
+                                  <span
+                                    aria-hidden="true"
+                                    className="absolute bottom-1 flex items-center justify-center gap-0.5"
+                                  >
+                                    {dayEvents.slice(0, 3).map((event) => (
+                                      <span
+                                        key={event.id}
+                                        className={`size-1 rounded-full ${getCategoryDotColor(event.category)}`}
+                                      />
+                                    ))}
+                                    {dayEvents.length > 3 && (
+                                      <span className="pl-0.5 text-[8px] leading-none text-cyan-200">
+                                        +{dayEvents.length - 3}
+                                      </span>
+                                    )}
+                                  </span>
+                                )}
+                              </>
+                            )}
+                          </Calendar.Cell>
+                        );
+                      }}
+                    </Calendar.GridBody>
+                  </Calendar.Grid>
+                  <Calendar.YearPickerGrid className="rounded-xl bg-[#0B2C4A] p-2">
+                    <Calendar.YearPickerGridBody>
+                      {({ year }) => (
+                        <Calendar.YearPickerCell
+                          year={year}
+                          className="rounded-xl text-slate-200 hover:text-white"
+                        />
+                      )}
+                    </Calendar.YearPickerGridBody>
+                  </Calendar.YearPickerGrid>
+                </Calendar>
+              </I18nProvider>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px] font-mono text-slate-400">
+                {categories.slice(1).map((category) => (
+                  <span key={category} className="flex items-center gap-1.5">
+                    <span className={`size-1.5 rounded-full ${getCategoryDotColor(category)}`} />
+                    {category}
+                  </span>
+                ))}
               </div>
-            )}
+            </div>
 
+            <div className="min-h-[22rem] rounded-2xl border border-white/10 bg-[#0E3453]/70 p-4 sm:p-5">
+              {selectedCalendarDay === null ? (
+                <div className="flex h-full min-h-[20rem] flex-col items-center justify-center text-center">
+                  <CalendarIcon className="mb-4 h-10 w-10 text-cyan-300/70" />
+                  <h5 className="font-serif text-lg font-bold text-white">
+                    Choose a highlighted day
+                  </h5>
+                  <p className="mt-2 max-w-xs text-sm leading-relaxed text-slate-400">
+                    {calendarFocusedDate.year === 2026
+                      ? `${currentMonthEvents.length} scheduled departures in ${currentMonth.name}. Select a date to see what is running.`
+                      : `The published schedule currently covers 2026. Contact us to plan dates in ${calendarFocusedDate.year}.`}
+                  </p>
+                  {calendarFocusedDate.year !== 2026 && (
+                    <button
+                      onClick={() => onOpenBooking()}
+                      className="mt-5 rounded-xl bg-ocean px-4 py-2.5 text-xs font-mono font-bold uppercase tracking-wider text-white transition-colors hover:bg-ocean-light"
+                    >
+                      Ask about custom dates
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-4">
+                    <div>
+                      <p className="text-[10px] font-mono uppercase tracking-widest text-cyan-300">
+                        Selected date
+                      </p>
+                      <h5 className="mt-1 font-serif text-lg font-bold text-white">
+                        {currentMonth.name} {selectedCalendarDay}, {calendarFocusedDate.year}
+                      </h5>
+                    </div>
+                    <button
+                      onClick={() => setSelectedCalendarDay(null)}
+                      className="rounded-lg px-2 py-1 text-xs text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                  {(() => {
+                    const selectedDate = calendarFocusedDate.set({ day: selectedCalendarDay });
+                    const activeOnDay = eventsForDate(selectedDate);
+
+                    if (activeOnDay.length === 0) {
+                      return (
+                        <div className="py-8 text-center">
+                          <p className="text-sm font-medium text-white">No scheduled events on this day</p>
+                          <p className="mt-2 text-xs leading-relaxed text-slate-400">
+                            Scheduled groups are only part of the story. Ask us about a private course or a date that suits you.
+                          </p>
+                          <button
+                            onClick={() => onOpenBooking()}
+                            className="mt-4 rounded-xl bg-ocean px-4 py-2.5 text-xs font-mono font-bold uppercase tracking-wider text-white transition-colors hover:bg-ocean-light"
+                          >
+                            Request custom dates
+                          </button>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div className="space-y-3">
+                        {activeOnDay.map((event) => (
+                          <article
+                            key={event.id}
+                            className="rounded-xl border border-white/10 bg-black/20 p-4"
+                          >
+                            <span
+                              className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider ${getCategoryColor(event.category)}`}
+                            >
+                              {event.category}
+                            </span>
+                            <h6 className="mt-2 font-serif text-base font-bold text-white">
+                              {event.eventTitle}
+                            </h6>
+                            <p className="mt-1 text-xs text-cyan-200">
+                              {event.dateLabel} · {event.durationDays} {event.durationDays === 1 ? 'day' : 'days'}
+                            </p>
+                            <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/10 pt-3">
+                              <button
+                                onClick={() => onNavigate?.(`event-${event.eventTypeId}` as PageType)}
+                                className="inline-flex items-center gap-1.5 text-xs font-mono text-cyan-300 transition-colors hover:text-white"
+                              >
+                                <span>Event details</span>
+                                <ExternalLink className="h-3 w-3" />
+                              </button>
+                              <button
+                                onClick={() => onOpenBooking(event.id)}
+                                className="rounded-lg bg-ocean px-3 py-2 text-[10px] font-mono font-bold uppercase tracking-wider text-white transition-colors hover:bg-ocean-light"
+                              >
+                                Book
+                              </button>
+                            </div>
+                          </article>
+                        ))}
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
+            </div>
           </div>
         )}
 
