@@ -78,7 +78,7 @@ export function CoursePhotoCarousel({
       aria-label={showStory ? 'Freediving course highlights' : `${activeSlide.title} photo gallery`}
       aria-roledescription="carousel"
       className={`group relative isolate overflow-hidden bg-[#081F35] ${
-        showStory ? 'h-[340px] sm:h-[360px] lg:h-[380px]' : 'aspect-[4/3] min-h-[280px]'
+        showStory ? 'h-[250px] sm:h-[280px] lg:h-[310px]' : 'aspect-[4/3] min-h-[280px]'
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

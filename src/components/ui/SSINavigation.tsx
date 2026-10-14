@@ -16,18 +16,20 @@ import {
   ArrowRight,
   Globe,
   Check,
+  Search,
 } from 'lucide-react';
 import { hydroAudio } from '../../utils/audio';
 import { PageType, EventTypeId, Language } from '../../types';
 import { LANGUAGES } from '../../utils/i18n';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTranslation } from 'react-i18next';
-import { ssiCourses, instructorCourses } from '../../data/courses';
+import { ssiCourses, specialtyCourses, instructorCourses } from '../../data/courses';
 
 interface SSINavigationProps {
   currentPage: PageType;
   onNavigate: (page: PageType) => void;
   onOpenBooking: (courseId?: string) => void;
+  onNavigateToSection?: (page: PageType, sectionId: string) => void;
   currency?: 'EUR' | 'USD' | 'EGP';
   setCurrency?: (c: 'EUR' | 'USD' | 'EGP') => void;
   isTransparent?: boolean;
@@ -56,6 +58,7 @@ export function SSINavigation({
   currentPage,
   onNavigate,
   onOpenBooking,
+  onNavigateToSection,
   currency = 'EUR',
   setCurrency,
   isTransparent = false,
@@ -68,9 +71,12 @@ export function SSINavigation({
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [expandedMobile, setExpandedMobile] = useState<string | null>(null);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const langMenuRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Keep the selected nav item tied to the current page, not scroll position.
   const [activeNavId, setActiveNavId] = useState<string>(() => {
@@ -117,6 +123,23 @@ export function SSINavigation({
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (isSearchOpen) searchInputRef.current?.focus();
+  }, [isSearchOpen]);
+
+  useEffect(() => {
+    const handleSearchKeys = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        setIsSearchOpen(true);
+      } else if (event.key === 'Escape' && isSearchOpen) {
+        setIsSearchOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleSearchKeys);
+    return () => window.removeEventListener('keydown', handleSearchKeys);
+  }, [isSearchOpen]);
 
   // Sync activeNavId when currentPage changes externally
   useEffect(() => {
@@ -179,8 +202,29 @@ export function SSINavigation({
   const handleNavigate = (page: PageType) => {
     setOpenDropdown(null);
     setIsMobileMenuOpen(false);
+    setIsSearchOpen(false);
     onNavigate(page);
     scrollToTopInstant();
+  };
+
+  const navigateToCourseSection = (sectionId: string) => {
+    setOpenDropdown(null);
+    setIsMobileMenuOpen(false);
+    if (onNavigateToSection) {
+      onNavigateToSection('courses', sectionId);
+    } else {
+      handleNavigate('courses');
+    }
+  };
+
+  const navigateToReviews = () => {
+    setOpenDropdown(null);
+    setIsMobileMenuOpen(false);
+    if (onNavigateToSection) {
+      onNavigateToSection('home', 'testimonials');
+    } else {
+      handleNavigate('home');
+    }
   };
 
   // Click handler: every header item opens its own dedicated page.
@@ -245,7 +289,7 @@ export function SSINavigation({
         {
           title: t('dropdowns.home.reviewsTitle'),
           desc: t('dropdowns.home.reviewsDesc'),
-          action: () => handleNavigate('home'),
+          action: navigateToReviews,
         },
         {
           title: t('dropdowns.home.startTitle'),
@@ -290,7 +334,14 @@ export function SSINavigation({
           image: c.image.url,
           action: () => handleNavigate(`course-${c.slug}` as PageType),
           badge: c.id === 'ssi-level-1' ? t('ui.mostPopular') : undefined,
-          group: 'Recreational Courses',
+          group: 'Core Courses',
+        })),
+        ...specialtyCourses.map((c) => ({
+          title: c.title,
+          desc: `${c.durationDays} day${c.durationDays > 1 ? 's' : ''} • €${c.priceEur}`,
+          image: c.image.url,
+          action: () => handleNavigate(`course-${c.slug}` as PageType),
+          group: 'Specialty Courses',
         })),
         ...instructorCourses.map((c) => ({
           title: c.title,
@@ -298,7 +349,7 @@ export function SSINavigation({
           image: c.image.url,
           action: () => handleNavigate(`course-${c.slug}` as PageType),
           badge: c.id === 'ssi-itc' ? t('ui.proAcademy') : undefined,
-          group: 'Professional Academy',
+          group: 'Professional Training',
         })),
       ],
     },
@@ -499,6 +550,31 @@ export function SSINavigation({
   ];
 
   const coursesMenu = navSections.find((s) => s.id === 'courses');
+  const normalizedSearchQuery = searchQuery.trim().toLocaleLowerCase();
+  const searchResults = normalizedSearchQuery
+    ? navSections
+        .flatMap((section) => [
+          {
+            key: `page-${section.id}`,
+            title: section.label,
+            description: `Open ${section.label}`,
+            action: () => handleNavigate(section.pageTarget),
+          },
+          ...section.items.map((item, index) => ({
+            key: `${section.id}-${index}`,
+            title: item.title,
+            description: item.desc ?? section.label,
+            action: () => {
+              setIsSearchOpen(false);
+              item.action();
+            },
+          })),
+        ])
+        .filter((item) =>
+          `${item.title} ${item.description}`.toLocaleLowerCase().includes(normalizedSearchQuery)
+        )
+        .slice(0, 8)
+    : [];
 
   return (
     <header
@@ -552,10 +628,16 @@ export function SSINavigation({
                   className="relative group"
                   onMouseEnter={() => handleMouseEnter(section.id)}
                   onMouseLeave={handleMouseLeave}
+                  onBlur={(event) => {
+                    if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                      handleMouseLeave();
+                    }
+                  }}
                 >
                   <button
                     data-nav-id={section.id}
                     onClick={() => handleNavItemClick(section)}
+                    onFocus={() => handleMouseEnter(section.id)}
                     className={`px-3 py-1.5 rounded-full text-xs font-alata font-normal tracking-[0.06em] flex items-center gap-1.5 whitespace-nowrap transition-all duration-300 cursor-pointer ${
                       isCurrent
                         ? 'text-white bg-white/15 ring-1 ring-cyan-400/40 shadow-[0_0_12px_rgba(6,182,212,0.25)] font-semibold'
@@ -754,6 +836,18 @@ export function SSINavigation({
             )}
           </button>
 
+          <button
+            type="button"
+            onClick={() => setIsSearchOpen((open) => !open)}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-black/30 text-slate-200 transition-colors hover:border-cyan-300/60 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200"
+            aria-label={isSearchOpen ? 'Close search' : 'Search pages and courses'}
+            aria-expanded={isSearchOpen}
+            aria-controls="site-search-panel"
+            title="Search (Ctrl+K)"
+          >
+            {isSearchOpen ? <X className="h-4 w-4" /> : <Search className="h-4 w-4" />}
+          </button>
+
           {/* Start Journey / Book CTA Button */}
           <button
             onClick={() => onOpenBooking()}
@@ -767,8 +861,9 @@ export function SSINavigation({
           {/* Mobile Hamburger Toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 rounded-lg bg-black/40 text-slate-300 hover:text-white lg:hidden cursor-pointer"
-            aria-label="Open Navigation Menu"
+            className="rounded-lg bg-black/40 p-2 text-slate-300 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200 lg:hidden"
+            aria-expanded={isMobileMenuOpen}
+            aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
           >
             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -776,6 +871,44 @@ export function SSINavigation({
         </div>
 
       </div>
+
+      {isSearchOpen && (
+        <section
+          id="site-search-panel"
+          aria-label="Site search"
+          className="absolute left-4 right-4 top-full z-[60] rounded-xl border border-white/15 bg-[#0E3453]/98 p-3 shadow-2xl backdrop-blur-2xl sm:left-auto sm:right-6 sm:w-[min(24rem,calc(100vw-2rem))]"
+        >
+          <label htmlFor="site-search-input" className="sr-only">
+            Search pages and courses
+          </label>
+          <input
+            ref={searchInputRef}
+            id="site-search-input"
+            type="search"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            placeholder="Search pages and courses…"
+            className="min-h-11 w-full rounded-lg border border-white/15 bg-black/25 px-3 text-sm text-white placeholder:text-slate-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200"
+          />
+          <div aria-live="polite" className="mt-2 max-h-72 overflow-y-auto">
+            {normalizedSearchQuery && searchResults.length === 0 && (
+              <p className="px-3 py-4 text-sm text-slate-300">No matching pages or courses.</p>
+            )}
+            {searchResults.map((result) => (
+              <button
+                key={result.key}
+                type="button"
+                onClick={result.action}
+                className="block min-h-11 w-full rounded-lg px-3 py-2 text-left transition-colors hover:bg-white/[0.08] focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-cyan-200"
+              >
+                <span className="block truncate text-sm font-medium text-white">{result.title}</span>
+                <span className="block truncate text-xs text-slate-400">{result.description}</span>
+              </button>
+            ))}
+          </div>
+          <p className="mt-2 px-3 text-[10px] text-slate-400">Press Esc to close</p>
+        </section>
+      )}
 
       {/* ======================================================== */}
       {/* COURSES MEGA MENU — horizontal card layout with the      */}
@@ -789,10 +922,10 @@ export function SSINavigation({
           onMouseLeave={handleMouseLeave}
         >
           <div className="border-b border-white/10 bg-[#0E3453]/97 backdrop-blur-2xl shadow-[0_30px_80px_rgba(0,0,0,0.85)]">
-            <div className="max-w-7xl mx-auto px-8 py-5">
+            <div className="mx-auto max-w-7xl px-6 py-4 sm:px-8">
 
               {/* Panel header */}
-              <div className="px-1 pb-3 flex items-center justify-between">
+              <div className="flex items-center justify-between px-1 pb-2">
                 <span className="text-[11px] tracking-[0.16em] uppercase text-cyan-300/90">
                   {coursesMenu.label}
                 </span>
@@ -805,57 +938,63 @@ export function SSINavigation({
                 </button>
               </div>
 
-              {/* Horizontal card rows, grouped like the template */}
-              {['Recreational Courses', 'Professional Academy'].map((groupName) => (
-                <div key={groupName} className="mb-3 last:mb-0">
-                  <div className="px-1 pb-1.5 text-[9px] font-mono uppercase tracking-[0.22em] text-cyan-400/70">
-                    {groupName}
-                  </div>
-                  <div
-                    className={`grid gap-3 ${
-                      groupName === 'Recreational Courses' ? 'grid-cols-4' : 'grid-cols-5'
-                    }`}
+              <nav aria-label="Course sections" className="mb-3 grid grid-cols-3 gap-2">
+                {[
+                  { label: 'Core courses', target: 'chapter-core' },
+                  { label: 'Specialty courses', target: 'chapter-try' },
+                  { label: 'Professional training', target: 'chapter-pro' },
+                ].map((section) => (
+                  <button
+                    key={section.target}
+                    type="button"
+                    onClick={() => navigateToCourseSection(section.target)}
+                    className="min-h-10 rounded-lg border border-white/10 bg-white/[0.035] px-3 text-left text-[11px] font-medium text-slate-200 transition-colors hover:border-cyan-300/45 hover:text-cyan-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200"
                   >
-                    {coursesMenu.items
-                      .filter((item) => item.group === groupName)
-                      .map((item, idx) => (
+                    {section.label}
+                  </button>
+                ))}
+              </nav>
+
+              {['Core Courses', 'Specialty Courses', 'Professional Training'].map((groupName) => {
+                const groupItems = coursesMenu.items.filter((item) => item.group === groupName);
+                if (groupItems.length === 0) return null;
+                return (
+                  <div key={groupName} className="mb-2 last:mb-0">
+                    <div className="px-1 pb-1 text-[9px] font-mono uppercase tracking-[0.18em] text-cyan-300/75">
+                      {groupName}
+                    </div>
+                    <div className="grid max-h-32 grid-cols-2 gap-1.5 overflow-y-auto overscroll-contain pr-1 custom-scrollbar sm:grid-cols-3 xl:grid-cols-4">
+                      {groupItems.map((item, idx) => (
                         <button
-                          key={idx}
+                          key={`${groupName}-${idx}`}
+                          type="button"
                           onClick={item.action}
-                          className="group/card text-left rounded-xl overflow-hidden border border-white/10 hover:border-cyan-400/60 bg-white/[0.03] transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                          className="group/card flex min-h-12 min-w-0 items-center gap-2 rounded-lg border border-white/10 bg-white/[0.025] p-1.5 text-left transition-colors hover:border-cyan-300/45 hover:bg-white/[0.07] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-cyan-200"
                         >
-                          {/* Original SSI card artwork at full card width */}
-                          <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
-                            {item.image && (
-                              <img
-                                src={item.image}
-                                alt={item.title}
-                                loading="lazy"
-                                className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500"
-                              />
-                            )}
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#0E3453]/60 via-transparent to-transparent" />
+                          {item.image && (
+                            <img
+                              src={item.image}
+                              alt=""
+                              loading="lazy"
+                              className="h-9 w-9 shrink-0 rounded-md object-cover"
+                            />
+                          )}
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate text-[10px] font-medium leading-tight text-slate-100 group-hover/card:text-cyan-100">
+                              {item.title}
+                            </span>
                             {item.badge && (
-                              <span className="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[8px] font-mono bg-cyan-500/25 text-cyan-100 border border-cyan-400/40 backdrop-blur-sm">
+                              <span className="mt-0.5 block truncate text-[9px] text-cyan-200/75">
                                 {item.badge}
                               </span>
                             )}
-                          </div>
-                          <div className="p-2.5 space-y-0.5">
-                            <div className="text-xs font-medium text-slate-100 group-hover/card:text-cyan-200 transition-colors leading-tight line-clamp-2">
-                              {item.title}
-                            </div>
-                            {item.desc && (
-                              <div className="text-[10px] font-mono text-cyan-300/90">
-                                {item.desc}
-                              </div>
-                            )}
-                          </div>
+                          </span>
                         </button>
                       ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -925,7 +1064,7 @@ export function SSINavigation({
                 <div className="flex items-center justify-between py-2">
                   <button
                     onClick={() => handleNavItemClick(section)}
-                    className={`text-left font-medium transition-colors flex items-center gap-2 ${
+                    className={`flex items-center gap-2 text-left font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200 ${
                       isCurrent ? 'text-cyan-300 font-semibold' : 'text-slate-200 hover:text-white'
                     }`}
                   >
@@ -936,8 +1075,9 @@ export function SSINavigation({
                   </button>
                   <button
                     onClick={() => setExpandedMobile(isExpanded ? null : section.id)}
-                    className="p-1.5 text-slate-400 hover:text-white"
-                    aria-label={`Expand ${section.label}`}
+                    className="rounded p-1.5 text-slate-400 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-200"
+                    aria-expanded={isExpanded}
+                    aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${section.label}`}
                   >
                     <ChevronDown
                       className={`w-4 h-4 transition-transform duration-200 ${
@@ -949,15 +1089,43 @@ export function SSINavigation({
 
                 {isExpanded && (
                   <div className="pl-3 pr-1 py-2 space-y-2 bg-white/[0.02] rounded-lg mb-2">
+                    {section.id === 'courses' && (
+                      <div className="grid grid-cols-3 gap-1.5 pb-1">
+                        {[
+                          { label: 'Core', target: 'chapter-core' },
+                          { label: 'Specialties', target: 'chapter-try' },
+                          { label: 'Professional', target: 'chapter-pro' },
+                        ].map((item) => (
+                          <button
+                            key={item.target}
+                            type="button"
+                            onClick={() => navigateToCourseSection(item.target)}
+                            className="min-h-10 rounded-md border border-white/10 px-2 text-[10px] text-cyan-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-200"
+                          >
+                            {item.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                     {section.items.map((item, idx) => (
                       <button
                         key={idx}
                         onClick={item.action}
-                        className="w-full text-left py-1.5 flex items-center justify-between text-xs text-slate-300 hover:text-cyan-300 cursor-pointer"
+                        className="flex min-h-11 w-full items-center justify-between gap-2 rounded-md py-1.5 text-left text-xs text-slate-300 hover:text-cyan-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-200"
                       >
-                        <span>{item.title}</span>
+                        <span className="flex min-w-0 items-center gap-2">
+                          {item.image && (
+                            <img
+                              src={item.image}
+                              alt=""
+                              loading="lazy"
+                              className="h-9 w-9 shrink-0 rounded-md object-cover"
+                            />
+                          )}
+                          <span className="truncate">{item.title}</span>
+                        </span>
                         {item.badge && (
-                          <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300">
+                          <span className="shrink-0 rounded bg-cyan-500/20 px-1.5 py-0.5 text-[9px] text-cyan-300">
                             {item.badge}
                           </span>
                         )}

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { X, ChevronLeft, ChevronRight, BookOpen, Compass, Waves, MessageSquare, Calendar, Award } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, BookOpen, Compass, Waves, MessageSquare, Calendar } from 'lucide-react';
 import { PageType } from '../../types';
 import { LuxuryStory } from '../home/LuxuryStory';
 import { DescentStats } from '../home/DescentStats';
@@ -35,24 +35,10 @@ export interface GalleryItemConfig {
 }
 
 export const OUR_STORY_CONFIG = {
-  // Page meta & header
+  // Page meta
   pageTitle: 'Our Story – Freedive Dahab',
-  pageBadge: 'SSI Diamond ITC Facility #720079 • Established 2003',
 
-  // 1) HERO SECTION
-  hero: {
-    title: 'Why Freedive Dahab?',
-    // Media manifest filename
-    image: '/images/school-team.webp',
-    fallbackCandidates: [
-      '/images/school-team.webp',
-      'school-team.webp',
-      '/hero-lighthouse-bay.jpg',
-    ],
-    alt: 'The Freedive Dahab school team at our center in Dahab',
-  },
-
-  // 2) INTRO SECTION (verbatim from brief)
+  // 1) INTRO SECTION (verbatim from brief)
   intro: {
     paragraphs: [
       'Discover why Freedive Dahab is a world-renowned destination for freediving enthusiasts of all levels. Founded in 2003, Freedive Dahab holds the title of being one of the very first freediving centres globally and the first SSI Freediving Instructor Training Center in the world since 2010.',
@@ -279,54 +265,9 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
     <div className="relative min-h-screen bg-[#0E3453] text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200">
       
       {/* ==================================================================== */}
-      {/* 1) HERO SECTION: Full-width hero image with overlay & title          */}
-      {/* ==================================================================== */}
-      <section className="relative w-full min-h-[60vh] sm:min-h-[70vh] flex items-center justify-center pt-24 pb-16 px-6 overflow-hidden border-b border-white/10 select-none">
-        
-        {/* Full-width Hero Background Image */}
-        <div className="absolute inset-0 z-0">
-          <SmartImage
-            primarySrc={OUR_STORY_CONFIG.hero.image}
-            fallbackCandidates={OUR_STORY_CONFIG.hero.fallbackCandidates}
-            alt={OUR_STORY_CONFIG.hero.alt}
-            className="w-full h-full object-cover transition-transform duration-1000 ease-out"
-            loading="eager"
-          />
-
-          {/* Light/Dark Overlay for text readability (preserving oceanic depth) */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0E3453]/90 via-[#0E3453]/75 to-[#0E3453] backdrop-blur-[1px]" />
-          <div className="absolute inset-0 architectural-grid opacity-20 pointer-events-none" />
-        </div>
-
-        {/* Ambient Oceanic Lighting */}
-        <div className="absolute top-1/4 right-1/4 w-[500px] h-[300px] bg-cyan-500/[0.08] blur-[140px] pointer-events-none rounded-full" />
-        <div className="absolute bottom-10 left-1/4 w-[450px] h-[250px] bg-sky-600/[0.06] blur-[120px] pointer-events-none rounded-full" />
-
-        {/* Hero Title & Breadcrumb Content */}
-        <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6 animate-in fade-in duration-500">
-          
-          {/* Breadcrumb / Sub-badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-300 text-xs font-alata tracking-widest uppercase">
-            <Award className="w-3.5 h-3.5 text-cyan-400" />
-            <span>{OUR_STORY_CONFIG.pageBadge}</span>
-          </div>
-
-          {/* Main Title: "Why Freedive Dahab?" */}
-          <h1 className="font-bebas text-5xl sm:text-7xl md:text-8xl tracking-[0.06em] leading-[1.05] text-white">
-            Why <span className="text-cyan-300 drop-shadow-[0_0_30px_rgba(34,211,238,0.4)]">Freedive Dahab?</span>
-          </h1>
-
-          <p className="text-slate-300 text-sm sm:text-base md:text-lg font-alata font-light max-w-2xl mx-auto leading-relaxed">
-            Founded in 2003 at the heart of Lighthouse Bay. The world&apos;s first SSI Freediving Instructor Training Center.
-          </p>
-
-        </div>
-      </section>
-
-      {/* ==================================================================== */}
       {/* 2) INTRO SECTION: Verbatim narrative text from the brief              */}
       {/* ==================================================================== */}
-      <section className="relative py-20 sm:py-28 px-6 bg-[#0E3453] border-b border-white/5">
+      <section id="story-intro" className="relative py-20 sm:py-28 px-6 bg-[#0E3453] border-b border-white/5">
         <div className="absolute inset-0 architectural-grid-fine opacity-10 pointer-events-none" />
 
         <div className="max-w-4xl mx-auto relative z-10 space-y-8 text-left">

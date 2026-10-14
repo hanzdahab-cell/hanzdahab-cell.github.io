@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { ArrowRight, BookOpen, Award } from 'lucide-react';
+import { ArrowRight, BookOpen, MessageSquareQuote } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { PageType } from '../../types';
@@ -10,9 +10,10 @@ if (typeof window !== 'undefined') {
 
 interface StoryTeaserBannerProps {
   onNavigate: (page: PageType) => void;
+  onViewReviews: () => void;
 }
 
-export function StoryTeaserBanner({ onNavigate }: StoryTeaserBannerProps) {
+export function StoryTeaserBanner({ onNavigate, onViewReviews }: StoryTeaserBannerProps) {
   const gridRef = useRef<HTMLDivElement>(null);
 
   // Motion: perpetual slow "underwater drift" zoom on portraits.
@@ -94,13 +95,21 @@ export function StoryTeaserBanner({ onNavigate }: StoryTeaserBannerProps) {
             </p>
           </div>
 
-          <div className="flex items-center">
+          <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => onNavigate('story')}
               className="px-7 py-3.5 rounded-full bg-white text-[#0E3453] hover:bg-slate-100 font-alata text-xs sm:text-sm font-semibold uppercase tracking-[0.08em] transition-all duration-200 flex items-center gap-2 cursor-pointer hover:shadow-[0_0_25px_rgba(255,255,255,0.3)] hover:scale-105"
             >
               <span>Explore Our Story</span>
               <ArrowRight className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={onViewReviews}
+              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/30 px-5 py-3.5 font-alata text-xs font-semibold text-white transition-colors hover:border-cyan-200 hover:bg-white/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:text-sm"
+            >
+              <MessageSquareQuote className="h-4 w-4 text-cyan-200" aria-hidden="true" />
+              Read diver reviews
             </button>
           </div>
         </div>
@@ -161,30 +170,6 @@ export function StoryTeaserBanner({ onNavigate }: StoryTeaserBannerProps) {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Bottom Teaser Strip */}
-        <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-cyan-950/30 via-slate-900/40 to-slate-950/50 border border-cyan-500/20 flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-4 text-left">
-            <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center shrink-0">
-              <Award className="w-6 h-6 text-cyan-400" />
-            </div>
-            <div>
-              <h4 className="font-bebas text-2xl text-white tracking-wide">
-                First SSI Freediving Instructor Training Center in the World
-              </h4>
-              <p className="text-xs sm:text-sm font-alata text-slate-300">
-                Pioneering freediving education since 2003 with certified facilities in Dahab.
-              </p>
-            </div>
-          </div>
-
-          <button
-            onClick={() => onNavigate('story')}
-            className="shrink-0 px-6 py-3 rounded-full bg-cyan-400 hover:bg-cyan-300 text-[#0E3453] font-semibold text-xs font-alata tracking-wider uppercase transition-all shadow-[0_0_20px_rgba(56,189,248,0.25)] hover:shadow-[0_0_25px_rgba(56,189,248,0.45)] cursor-pointer"
-          >
-            Read Our Full Story
-          </button>
         </div>
 
       </div>

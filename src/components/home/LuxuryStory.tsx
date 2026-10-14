@@ -1,4 +1,3 @@
-import { useState, useEffect, useRef } from 'react';
 import { Award, Users } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -6,89 +5,8 @@ interface LuxuryStoryProps {
   onOpenBooking: () => void;
 }
 
-function DynamicCounter({ end, suffix = '', duration = 1800 }: { end: number; suffix?: string; duration?: number }) {
-  const [count, setCount] = useState(0);
-  const [started, setStarted] = useState(false);
-  const ref = useRef<HTMLSpanElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !started) {
-          setStarted(true);
-          const startTime = performance.now();
-          const frame = (now: number) => {
-            const elapsed = now - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const ease = 1 - Math.pow(1 - progress, 3);
-            const current = Math.floor(ease * end);
-            setCount(current);
-            if (progress < 1) {
-              requestAnimationFrame(frame);
-            } else {
-              setCount(end);
-            }
-          };
-          requestAnimationFrame(frame);
-        }
-      },
-      { threshold: 0.15 }
-    );
-
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-    return () => observer.disconnect();
-  }, [end, duration, started]);
-
-  return (
-    <span ref={ref}>
-      {count.toLocaleString()}{suffix}
-    </span>
-  );
-}
-
 export function LuxuryStory({ onOpenBooking }: LuxuryStoryProps) {
   const { t } = useLanguage();
-
-  const stats = [
-    {
-      num: 24,
-      suffix: "+",
-      label: t.story.stat1Label,
-      desc: "Pioneering freediving on the Lighthouse reef since 2002.",
-    },
-    {
-      num: 12,
-      suffix: "",
-      label: t.story.stat2Label,
-      desc: "From Try Freedive to Master & International Instructor ITC.",
-    },
-    {
-      num: 570,
-      suffix: "+",
-      label: t.story.stat3Label,
-      desc: "Graduates now teaching in over 35 countries globally.",
-    },
-    {
-      num: 4800,
-      suffix: "+",
-      label: t.story.stat4Label,
-      desc: "100% individual coach attention and personal milestones.",
-    },
-    {
-      num: 100,
-      suffix: "%",
-      label: "Safety Record",
-      desc: "24 years with zero decompression accidents on our lines.",
-    },
-    {
-      num: 92,
-      suffix: "m",
-      label: "Blue Hole Access",
-      desc: "Daily private training lines in Dahab",
-    },
-  ];
 
   return (
     <section id="philosophy" className="relative py-32 md:py-44 px-6 bg-transparent overflow-hidden border-t border-white/5">
@@ -197,40 +115,6 @@ export function LuxuryStory({ onOpenBooking }: LuxuryStoryProps) {
               </button>
             </div>
 
-          </div>
-        </div>
-
-        {/* SECTION 3: 24 YEARS SHAPING CONFIDENT WORLD-CLASS FREEDIVERS */}
-        <div className="mt-28 pt-16 border-t border-white/10">
-          
-          {/* Section Heading & Subtitle */}
-          <div className="text-center max-w-3xl mx-auto mb-14 space-y-4">
-            <h3 className="font-bebas text-4xl sm:text-5xl md:text-6xl text-white tracking-[0.05em] leading-tight">
-              {t.story.statsSectionTitle} <span className="text-cyan-300 drop-shadow-[0_0_20px_rgba(34,211,238,0.4)]">{t.story.statsSectionTitleAccent}</span>
-            </h3>
-            <p className="text-sm sm:text-base text-slate-300 font-alata font-normal leading-relaxed max-w-2xl mx-auto">
-              {t.story.statsSectionDesc}
-            </p>
-          </div>
-
-          {/* 6 Dynamic Counting Stat Boxes */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {stats.map((stat, i) => (
-              <div 
-                key={i} 
-                className="text-left space-y-3 p-6 sm:p-7 rounded-2xl bg-slate-900/40 border border-white/10 hover:border-cyan-400/40 hover:bg-slate-900/60 transition-all duration-300 shadow-xl group"
-              >
-                <div className="font-bebas text-5xl sm:text-6xl text-white tracking-wide group-hover:text-cyan-300 transition-colors">
-                  <DynamicCounter end={stat.num} suffix={stat.suffix} />
-                </div>
-                <div className="text-xs uppercase tracking-[0.2em] text-cyan-400 font-alata font-medium">
-                  {stat.label}
-                </div>
-                <div className="text-xs text-slate-400 font-alata leading-relaxed">
-                  {stat.desc}
-                </div>
-              </div>
-            ))}
           </div>
         </div>
 

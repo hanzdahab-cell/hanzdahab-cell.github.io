@@ -37,11 +37,9 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
     onNavigate(`course-${slug}` as PageType);
   };
 
-  const tryFreediving = ssiCourses.find((c) => c.id === 'ssi-basic-freediver');
   const coreCourses = ssiCourses.filter((c) => c.id !== 'ssi-basic-freediver');
 
-  // Categorized card collections
-  const coreCards = tryFreediving ? [tryFreediving, ...coreCourses] : coreCourses;
+  const coreCards = coreCourses;
   const specialtyCards = specialtyCourses.filter((c) => c.id !== 'master-freediver');
   const masterCourse = specialtyCourses.find((c) => c.id === 'master-freediver');
   const storySlides: CourseStorySlide[] = coreCards.map((course) => ({
@@ -70,18 +68,18 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
           className="absolute inset-0 bg-gradient-to-r from-[#081F35]/95 via-[#081F35]/75 to-[#081F35]/35"
           aria-hidden="true"
         />
-        <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-8 px-6 pb-8 pt-28 sm:gap-10 sm:pb-10 sm:pt-32 lg:grid-cols-[0.82fr_1.18fr]">
-          <div className="max-w-xl space-y-4">
+        <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-6 px-6 pb-6 pt-24 sm:gap-8 sm:pb-8 sm:pt-28 lg:grid-cols-[0.82fr_1.18fr]">
+          <div className="max-w-xl space-y-3">
             <p className="flex items-center gap-3 text-sm text-ocean-pale">
               <span className="h-px w-8 bg-ocean-light" aria-hidden="true" />
               SSI Freediving · Dahab, South Sinai, Egypt
             </p>
-            <h1 className="font-bebas text-5xl leading-[0.95] tracking-[0.025em] text-white sm:text-6xl lg:text-7xl">
+            <h1 className="font-bebas text-4xl leading-[0.95] tracking-[0.025em] text-white sm:text-5xl lg:text-6xl">
               SSI Freediving
               <br />
               <span className="text-cyan-300">Courses</span>
             </h1>
-            <p className="max-w-lg text-sm leading-relaxed text-slate-200 sm:text-base">
+            <p className="max-w-lg text-sm leading-relaxed text-slate-200">
               Learn with SSI—internationally recognized freediving courses built around progressive
               skills, attentive coaching and safety in Dahab’s Red Sea.
             </p>
@@ -106,36 +104,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
         </div>
       </div>
 
-      <nav aria-label="Course sections" className="mx-auto max-w-7xl px-6 pt-4">
-        <ul className="flex flex-wrap gap-x-7 gap-y-2 border-b border-white/10 pb-4 text-sm text-slate-300">
-          <li>
-            <a
-              href="#chapter-core"
-              className="inline-flex min-h-11 items-center transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-            >
-              Core courses
-            </a>
-          </li>
-          <li>
-            <a
-              href="#chapter-try"
-              className="inline-flex min-h-11 items-center transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-            >
-              Specialty courses
-            </a>
-          </li>
-          <li>
-            <a
-              href="#chapter-pro"
-              className="inline-flex min-h-11 items-center transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-            >
-              Professional training
-            </a>
-          </li>
-        </ul>
-      </nav>
-
-      <div className="relative mx-auto max-w-7xl px-6 pt-16 sm:pt-20">
+      <div className="relative mx-auto max-w-7xl px-6 pt-12 sm:pt-16">
         <div className="absolute inset-0 architectural-grid-fine opacity-10 pointer-events-none" />
         {/* ========================================================== */}
         {/* CORE COURSE CARDS                                          */}
@@ -143,7 +112,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
         <div id="chapter-core" className="relative z-10 scroll-mt-28 mb-24 sm:mb-32">
           <GroupHeading title="Core courses" />
 
-          {/* Course cards — the full core path: Try + Level 1/2/3 */}
+          {/* Core SSI Freediver certifications */}
           <div className="grid grid-cols-1 items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-4">
           {coreCards.map((course, idx) => (
             <FadeUp

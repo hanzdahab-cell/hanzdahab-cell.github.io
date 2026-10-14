@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowRight, ArrowUpRight } from 'lucide-react';
+import { Facebook, Instagram } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { WaterCaustics } from '../story/WaterCaustics';
 import { LetterReveal } from '../ui/LetterReveal';
-import { PageType } from '../../types';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTranslation } from 'react-i18next';
+import { PlatformMark } from '../footer/ReviewsCarousel';
+import { siteConfig } from '../../data/site';
 
 // Register GSAP Plugin
 if (typeof window !== 'undefined') {
@@ -29,17 +30,7 @@ const BUBBLES = Array.from({ length: 22 }, (_, i) => {
   };
 });
 
-interface HeroSurfaceProps {
-  onDescend: () => void;
-  onNavigate?: (page: PageType) => void;
-  currency?: 'EUR' | 'USD' | 'EGP';
-  setCurrency?: (c: 'EUR' | 'USD' | 'EGP') => void;
-}
-
-export function HeroSurface({
-  onDescend,
-  onNavigate,
-}: HeroSurfaceProps) {
+export function HeroSurface() {
   const { t } = useTranslation();
   const { isRtl } = useLanguage();
 
@@ -194,23 +185,6 @@ export function HeroSurface({
       ctx.revert();
     };
   }, []);
-
-  const handleStartJourney = () => {
-    if (onNavigate) {
-      onNavigate('courses');
-    } else {
-      const el = document.getElementById('courses');
-      el?.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const handleOpenCalendar = () => {
-    if (onNavigate) {
-      onNavigate('calendar');
-    } else {
-      window.location.hash = '#calendar';
-    }
-  };
 
   return (
     <div
@@ -442,26 +416,41 @@ export function HeroSurface({
                 />
               </div>
 
-              {/* CTAs */}
+              {/* Social links */}
               <div
                 className="animate-in fade-in duration-1000 flex flex-row items-center justify-center gap-3 sm:gap-5 mb-4 sm:mb-5"
                 style={{ animationDelay: '650ms' }}
               >
-                <button
-                  onClick={handleStartJourney}
-                  className="px-6 sm:px-8 py-3 sm:py-3.5 rounded-full bg-white text-[#0E3453] font-alata text-xs font-semibold uppercase tracking-[0.1em] hover:bg-slate-100 transition-all flex items-center gap-2 cursor-pointer shadow-2xl hover:scale-105 active:scale-95"
+                <a
+                  href={siteConfig.social.instagram}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Instagram — @freedive_dahab"
+                  title="Instagram"
+                  className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/50 bg-[#081F35]/50 text-white backdrop-blur-sm transition-colors hover:border-white hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                 >
-                  <span>{t('hero.exploreCourses')}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-
-                <button
-                  onClick={handleOpenCalendar}
-                  className="px-5 sm:px-7 py-3 sm:py-3.5 rounded-full bg-black/40 backdrop-blur-md border border-white/20 hover:border-cyan-400/60 text-slate-200 hover:text-white font-alata text-xs font-normal uppercase tracking-[0.1em] flex items-center gap-2 transition-all cursor-pointer hover:bg-white/[0.08]"
+                  <Instagram className="h-5 w-5" aria-hidden="true" />
+                </a>
+                <a
+                  href={siteConfig.social.facebook}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Facebook — Freedive Dahab"
+                  title="Facebook"
+                  className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/50 bg-[#081F35]/50 text-white backdrop-blur-sm transition-colors hover:border-white hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                 >
-                  <span>{t('hero.bookInquireNow')}</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-cyan-300" />
-                </button>
+                  <Facebook className="h-5 w-5" aria-hidden="true" />
+                </a>
+                <a
+                  href={siteConfig.social.tripadvisor}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="TripAdvisor — Freedive Dahab reviews"
+                  title="TripAdvisor reviews"
+                  className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/50 bg-[#081F35]/50 text-white backdrop-blur-sm transition-colors hover:border-white hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                >
+                  <PlatformMark platform="tripadvisor" />
+                </a>
               </div>
 
               {/* Trust Microcopy */}
@@ -527,14 +516,7 @@ export function HeroSurface({
         {/* ======================================================== */}
         {/* 4. BOTTOM BAR: SCROLL INVITATION & DEPTH STATUS          */}
         {/* ======================================================== */}
-        <footer className="relative z-20 pb-6 sm:pb-8 px-6 sm:px-12 flex items-center justify-between text-slate-400 text-xs font-alata">
-          <div className="hidden sm:flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-            <span className="text-[11px] uppercase tracking-widest text-slate-400">
-              Dahab, South Sinai, Egypt
-            </span>
-          </div>
-
+        <footer className="relative z-20 flex items-center justify-end px-6 pb-6 text-xs font-alata text-slate-400 sm:px-12 sm:pb-8">
           <div className="hidden sm:block text-[11px] font-alata text-slate-400">
             <span>{Math.round(scrollProgress * 100)}% Immersion</span>
           </div>

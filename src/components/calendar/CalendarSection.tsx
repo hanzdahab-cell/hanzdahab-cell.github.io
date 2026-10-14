@@ -136,9 +136,21 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
               <Waves className="w-5 h-5" aria-hidden="true" />
             </div>
             <div className="space-y-1">
-              <span className="text-[11px] font-mono uppercase tracking-widest text-cyan-400 font-bold">
-                YEAR-ROUND FLEXIBILITY NOTE
-              </span>
+              <div className="flex flex-wrap items-center gap-2.5">
+                <span className="text-[11px] font-mono uppercase tracking-widest text-cyan-400 font-bold">
+                  YEAR-ROUND FLEXIBILITY NOTE
+                </span>
+                <span
+                  role="status"
+                  className="inline-flex min-h-6 items-center gap-2 rounded-full border border-emerald-300/30 bg-emerald-400/10 px-2.5 text-[9px] font-mono font-semibold uppercase tracking-wider text-emerald-200"
+                >
+                  <span className="relative flex h-2 w-2" aria-hidden="true">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-60 motion-reduce:animate-none" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-300" />
+                  </span>
+                  2026 dates published
+                </span>
+              </div>
               <p className="text-sm sm:text-base font-serif italic text-white leading-snug">
                 &ldquo;This is only the calendar for our scheduled events. We run all other courses all year round on request, just let us know your dates!&rdquo;
               </p>

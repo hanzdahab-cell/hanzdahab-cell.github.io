@@ -208,13 +208,6 @@ export interface TranslationDictionary {
     itcDesc: string;
     ctaCourses: string;
     ctaRetreat: string;
-    statsSectionTitle: string;
-    statsSectionTitleAccent: string;
-    statsSectionDesc: string;
-    stat1Label: string;
-    stat2Label: string;
-    stat3Label: string;
-    stat4Label: string;
   };
   portal: {
     eyebrow: string;
@@ -386,7 +379,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       home: 'Home',
       courses: 'Courses',
       training: 'Training',
-      experience: 'Experience',
+      experience: 'Activities',
       accommodation: 'Accommodation',
       packages: 'Packages',
       calendar: 'Calendar',
@@ -582,13 +575,6 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       itcDesc: 'Over 450 professional instructors trained since 2003. Recognized internationally as Egypt’s leading SSI instructor academy.',
       ctaCourses: 'DISCOVER OUR COURSES',
       ctaRetreat: 'REQUEST CUSTOM RETREAT',
-      statsSectionTitle: '24 YEARS SHAPING CONFIDENT,',
-      statsSectionTitleAccent: 'WORLD-CLASS FREEDIVERS',
-      statsSectionDesc: 'South Sinai’s premier SSI Instructor Training Center right on the Lighthouse promenade. Built on safety, equalisation science, and life-changing student milestones.',
-      stat1Label: 'Years in Dahab',
-      stat2Label: 'Certified Freedivers',
-      stat3Label: 'Safety Record',
-      stat4Label: 'Deepest Sanctuary Dive',
     },
     portal: {
       eyebrow: 'SANCTUARY DIMENSIONS',
@@ -611,7 +597,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
         desc: 'Beachfront recovery suites, desert garden villas, gear drying lockers, and oceanfront yoga shala.',
       },
       packages: {
-        title: 'Experiences Packages',
+        title: 'Activity Packages',
         tag: 'All-Inclusive Expeditions',
         desc: 'Curated 7 to 28-day retreats combining depth training, camel safaris, accommodation, and equipment.',
       },
@@ -621,7 +607,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
         desc: 'Explore upcoming expedition dates, course tickets, available spots, and reserve your place in advance.',
       },
       experience: {
-        title: 'Experiences & Safaris',
+        title: 'Activities & Safaris',
         tag: 'Red Sea Expeditions',
         desc: 'Ras Mohamed marine park drop-offs, Blue Hole arch safaris, bioluminescent night dives, and desert camps.',
       },
@@ -646,7 +632,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
         ctaText: 'Check Availability',
       },
       packages: {
-        title: 'Expeditions & Experiences Packages',
+        title: 'Expeditions & Activity Packages',
         subtitle: 'All-inclusive freediving residencies combining certified SSI courses, coached Blue Hole line training, oceanfront accommodation, and Red Sea desert safaris.',
         badge: 'All-Inclusive Immersions • 7 to 28 Days',
         ctaText: 'Book Package',
@@ -691,7 +677,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
     footer: {
       desc: 'The premier freediving training center and SSI Instructor Training Center in Dahab, Egypt. Pioneering diaphragmatic relaxation, equalisation mechanics, and deep line training on the Red Sea Blue Hole since 2002.',
       certifiedCenter: 'SSI ITC FACILITY #720079',
-      allRightsReserved: 'All rights reserved. Professional SSI Freediving Education.',
+      allRightsReserved: 'All rights reserved.',
       academyCol: 'SSI Courses',
       trainingCol: 'Training & Buoys',
       sanctuaryCol: 'Sanctuary & Stays',
@@ -757,7 +743,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       home: 'الرئيسية',
       courses: 'الدورات',
       training: 'التدريب',
-      experience: 'التجارب والرحلات',
+      experience: 'الأنشطة',
       accommodation: 'الإقامة',
       packages: 'الباقات',
       calendar: 'الجدول السنوي',
@@ -953,13 +939,6 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       itcDesc: 'قمنا بتخريج أكثر من 450 مدرباً محترفاً منذ عام 2003، ونفخر بكوننا الأكاديمية الرائدة لإعداد المدربين في مصر والشرق الأوسط.',
       ctaCourses: 'استكشف دوراتنا المعتمدة',
       ctaRetreat: 'اطلب برنامجاً خاصاً',
-      statsSectionTitle: '24 عاماً في صقل وإعداد',
-      statsSectionTitleAccent: 'غواصين واثقين بمعايير عالمية',
-      statsSectionDesc: 'المركز الرائد لتدريب مدربي الغوص الحر في جنوب سيناء على ممشى اللايتهاوس مباشرة. تاريخ مبني على السلامة، وعلم المعادلة، ولحظات التحول الفارقة لطلابنا.',
-      stat1Label: 'عاماً من التميز في دهب',
-      stat2Label: 'غواصاً حراً معتمداً',
-      stat3Label: 'سجل أمان وسلامة تام',
-      stat4Label: 'أعمق نزول في ملاذنا',
     },
     portal: {
       eyebrow: 'أبعاد الملاذ',
@@ -1062,7 +1041,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
     footer: {
       desc: 'المركز الرائد لتدريب الغوص الحر وتأهيل المدربين الدوليين من منظمة SSI في دهب، مصر. رواد استرخاء الحجاب الحاجز، وميكانيكا المعادلة، وتدريب الأعماق في الثقب الأزرق منذ عام 2002.',
       certifiedCenter: 'مركز تدريب مدربين معتمد #720079',
-      allRightsReserved: 'جميع الحقوق محفوظة. تعليم احترافي معتمد للغوص الحر SSI.',
+      allRightsReserved: 'جميع الحقوق محفوظة.',
       academyCol: 'دورات SSI',
       trainingCol: 'التدريب والعوامات',
       sanctuaryCol: 'الملاذ والإقامة',
@@ -1128,7 +1107,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       home: 'Inicio',
       courses: 'Cursos',
       training: 'Entrenamiento',
-      experience: 'Experiencias',
+      experience: 'Actividades',
       accommodation: 'Alojamiento',
       packages: 'Paquetes',
       calendar: 'Calendario',
@@ -1324,13 +1303,6 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       itcDesc: 'Más de 450 instructores profesionales formados desde 2003. Reconocida como la academia de instructores SSI líder en Egipto y Oriente Medio.',
       ctaCourses: 'DESCUBRE NUESTROS CURSOS',
       ctaRetreat: 'SOLICITAR RETIRO A MEDIDA',
-      statsSectionTitle: '24 AÑOS FORMANDO APNEÍSTAS',
-      statsSectionTitleAccent: 'CONFIADOS Y DE CLASE MUNDIAL',
-      statsSectionDesc: 'El centro líder en formación de instructores del Sinaí, ubicado directamente en el paseo de Lighthouse. Creado sobre pilares de seguridad, ciencia de ecualización e hitos que transforman vidas.',
-      stat1Label: 'Años en Dahab',
-      stat2Label: 'Apneístas Certificados',
-      stat3Label: 'Récord de Seguridad',
-      stat4Label: 'Inmersión Más Profunda',
     },
     portal: {
       eyebrow: 'DIMENSIONES DEL SANTUARIO',
@@ -1433,7 +1405,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
     footer: {
       desc: 'El centro premier de entrenamiento y formación de instructores SSI en Dahab, Egipto. Pioneros en relajación diafragmática, mecánica de ecualización y entrenamiento profundo en el Blue Hole desde 2002.',
       certifiedCenter: 'INSTALACIÓN SSI ITC #720079',
-      allRightsReserved: 'Todos los derechos reservados. Formación Profesional de Apnea SSI.',
+      allRightsReserved: 'Todos los derechos reservados.',
       academyCol: 'Cursos SSI',
       trainingCol: 'Entrenamiento y Boyas',
       sanctuaryCol: 'Santuario y Estancias',
@@ -1499,7 +1471,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       home: 'Startseite',
       courses: 'Kurse',
       training: 'Training',
-      experience: 'Erlebnisse',
+      experience: 'Aktivitäten',
       accommodation: 'Unterkunft',
       packages: 'Pakete',
       calendar: 'Kalender',
@@ -1695,13 +1667,6 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       itcDesc: 'Über 450 professionelle Tauchlehrer seit 2003 ausgebildet. International anerkannt als Ägyptens führende SSI-Instruktoren-Akademie.',
       ctaCourses: 'UNSERE KURSE ENTDECKEN',
       ctaRetreat: 'INDIVIDUELLE ANFRAGE',
-      statsSectionTitle: '24 JAHRE ERFAHRUNG IN DER FORMUNG',
-      statsSectionTitleAccent: 'SELBSTBEWUSSTER FREITAUCHER',
-      statsSectionDesc: 'Südsinais führendes SSI Instructor Training Center direkt an der Strandpromenade. Basierend auf kompromissloser Sicherheit, Druckausgleichswissenschaft und lebensverändernden Momenten.',
-      stat1Label: 'Jahre in Dahab',
-      stat2Label: 'Zertifizierte Freitaucher',
-      stat3Label: 'Sicherheitsbilanz',
-      stat4Label: 'Tiefster Tauchgang',
     },
     portal: {
       eyebrow: 'SANCTUARY DIMENSIONEN',
@@ -1804,7 +1769,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
     footer: {
       desc: 'Das führende Freitauch-Ausbildungszentrum und SSI Instructor Training Center in Dahab, Ägypten. Pioniere für Zwerchfellentspannung, Druckausgleichsmechanik und Leinentraining am Blue Hole seit 2002.',
       certifiedCenter: 'SSI ITC BASIS #720079',
-      allRightsReserved: 'Alle Rechte vorbehalten. Professionelle SSI Freitauchausbildung.',
+      allRightsReserved: 'Alle Rechte vorbehalten.',
       academyCol: 'SSI Kurse',
       trainingCol: 'Training & Bojen',
       sanctuaryCol: 'Sanctuary & Wohnen',

@@ -290,7 +290,7 @@ export const EVENT_TYPES_DATA: Record<EventTypeId, EventTypeDetail> = {
     tagline: 'World-class open water safari & pelagic reef exploration',
     description: 'Exciting trips to Ras Mohamed for exploration and adventure.',
     fullOverview:
-      'Ras Mohamed National Park sits at the very tip of the Sinai Peninsula where the Gulf of Aqaba meets the Gulf of Suez, creating nutrient-rich currents that fuel Egypt’s most spectacular marine biodiversity. This full-day adventure takes you to legendary dive sites including Shark Reef, Yolanda Reef with its historic ship cargo, and the hidden mangroves. Experience breathtaking vertical walls that drop thousands of feet into the deep blue while swimming with sea turtles, eagle rays, and schooling trevally.',
+      'Ras Mohamed National Park sits at the southern tip of the Sinai Peninsula, where nutrient-rich currents support remarkable marine biodiversity. This full-day adventure takes you to dive sites including Shark Reef, Yolanda Reef with its historic ship cargo, and the hidden mangroves. Explore dramatic vertical walls and look for sea turtles, eagle rays, and schooling trevally.',
     durationText: '1 Full Day Expedition',
     maxDepth: 'Open Water Wall Exploration',
     certification: 'Expedition Certificate of Completion',
@@ -312,7 +312,7 @@ export const EVENT_TYPES_DATA: Record<EventTypeId, EventTypeDetail> = {
       {
         day: 'Morning (06:30 - 09:30)',
         title: 'Departure & Coastal Transit to Ras Mohamed',
-        summary: 'Scenic desert transit along the Gulf of Aqaba, park entry briefing, and gear prep.',
+        summary: 'Scenic desert transit through the Sinai Peninsula, park entry briefing, and gear preparation.',
       },
       {
         day: 'Mid-Morning (10:00 - 12:30)',

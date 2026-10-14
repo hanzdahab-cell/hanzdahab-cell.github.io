@@ -328,24 +328,32 @@ export function CourseDetailPage({
                   <Clock className="w-5 h-5 text-cyan-400" />
                   Day by day
                 </h2>
-                <div className="space-y-3">
+                <ol className="relative ms-3 space-y-6 border-s border-cyan-200/35">
                   {(course as Course).schedule!.map((day, i) => (
-                    <div
+                    <li
                       key={i}
-                      className="p-5 sm:p-6 rounded-xl bg-slate-900/50 border border-white/10 hover:border-cyan-400/40 transition-all duration-300"
+                      className="relative ps-7"
                     >
-                      <div className="flex flex-wrap items-center gap-3">
-                        <span className="px-2.5 py-1 rounded-md bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-[10px] font-mono uppercase tracking-[0.2em]">
-                          {day.day}
-                        </span>
-                        <span className="text-sm font-semibold text-white">{day.title}</span>
+                      <span
+                        aria-hidden="true"
+                        className="absolute -start-[0.45rem] top-1.5 flex h-4 w-4 items-center justify-center rounded-full border border-cyan-200/80 bg-[#0E3453] shadow-[0_0_14px_rgba(103,232,249,0.28)]"
+                      >
+                        <span className="h-1.5 w-1.5 rounded-full bg-cyan-200" />
+                      </span>
+                      <div className="rounded-xl border border-white/10 bg-slate-900/45 p-5 transition-colors duration-300 hover:border-cyan-300/35 sm:p-6">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <span className="rounded-md border border-cyan-200/35 bg-cyan-500/10 px-2.5 py-1 text-[10px] font-mono uppercase tracking-[0.16em] text-cyan-100">
+                            {day.day}
+                          </span>
+                          <span className="text-sm font-semibold text-white">{day.title}</span>
+                        </div>
+                        <p className="mt-2.5 text-xs font-light leading-relaxed text-slate-300 sm:text-sm">
+                          {day.description}
+                        </p>
                       </div>
-                      <p className="mt-2.5 text-xs sm:text-sm text-slate-300 font-light leading-relaxed">
-                        {day.description}
-                      </p>
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ol>
               </FadeUp>
             )}
 

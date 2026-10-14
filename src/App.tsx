@@ -23,6 +23,7 @@ import { ChatWidget } from './components/chat/ChatWidget';
 import { EventDetailPage } from './components/calendar/EventDetailPage';
 import { CourseDetailPage } from './components/courses/CourseDetailPage';
 import { OurStoryPage } from './components/story/OurStoryPage';
+import { StoryHeroCarousel } from './components/story/StoryHeroCarousel';
 import { OfferingDetailPage } from './components/catalog/OfferingDetailPage';
 import { useSmoothScroll } from './utils/useSmoothScroll';
 import { PageType, EventTypeId } from './types';
@@ -96,18 +97,29 @@ export default function App() {
     scrollToSurface();
   };
 
+  const scrollToSection = (page: PageType, sectionId: string) => {
+    const scroll = () => {
+      const target = document.getElementById(sectionId);
+      if (!target) return;
+      const top = target.getBoundingClientRect().top + window.scrollY - 96;
+      if (window.__lenis) {
+        window.__lenis.scrollTo(top, { duration: 1.2 });
+      } else {
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    };
+
+    if (currentPage !== page) {
+      navigateTo(page);
+      window.setTimeout(scroll, 180);
+      return;
+    }
+    scroll();
+  };
+
   const handleOpenBooking = (offeringId?: string) => {
     setBookingOfferingId(offeringId);
     setIsBookingOpen(true);
-  };
-
-  const handleDescend = () => {
-    const certsElem = document.getElementById('certificates');
-    if (certsElem) {
-      certsElem.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      navigateTo('courses');
-    }
   };
 
   return (
@@ -126,6 +138,7 @@ export default function App() {
           currency={currency}
           setCurrency={setCurrency}
           isTransparent={currentPage === 'home' || currentPage === 'courses'}
+          onNavigateToSection={scrollToSection}
         />
 
         <main className="relative z-10">
@@ -136,16 +149,12 @@ export default function App() {
         {currentPage === 'home' && (
           <div className="page-dive-in">
             {/* 1. HERO: underwater vortex film + milestones + cinematic descent */}
-            <HeroSurface
-              onDescend={handleDescend}
-              onNavigate={navigateTo}
-              currency={currency}
-              setCurrency={setCurrency}
-            />
+            <HeroSurface />
 
             {/* 2. STORY TEASER — Meet Our Pioneers */}
             <StoryTeaserBanner
               onNavigate={navigateTo}
+              onViewReviews={() => scrollToSection('home', 'testimonials')}
             />
 
             {/* Immersive Coral Depth Environment (The depth of the corals across all home sections) */}
@@ -242,7 +251,7 @@ export default function App() {
         {currentPage === 'packages' && (
           <div className="page-dive-in">
             <PageHeader
-              title="Expeditions & Experiences Packages"
+              title="Expeditions & Activity Packages"
               subtitle="All-inclusive freediving residencies combining certified SSI courses, coached Blue Hole line training, oceanfront accommodation, and Red Sea desert safaris."
               badge="All-Inclusive Immersions • 7 to 28 Days"
               currentPage="packages"
@@ -408,7 +417,8 @@ export default function App() {
         {/* ========================================================= */}
         {currentPage === 'story' && (
           <div className="page-dive-in">
-            <OurStoryPage
+          <StoryHeroCarousel onNavigate={navigateTo} />
+          <OurStoryPage
               onNavigate={navigateTo}
               onOpenBooking={handleOpenBooking}
             />

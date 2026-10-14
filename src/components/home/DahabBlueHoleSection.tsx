@@ -19,14 +19,14 @@ const STORY_SLIDES = [
     title: 'The Blue Hole',
     alt: 'Freedivers preparing for a supervised session at the Blue Hole',
     detail:
-      'Just north of Dahab in South Sinai, the Blue Hole opens from the Gulf of Aqaba into dramatic deep blue. Local guides help visitors explore it with a plan suited to their experience.',
+      'Just north of Dahab in South Sinai, the Blue Hole opens into dramatic deep blue. Local guides help visitors explore it with a plan suited to their experience.',
   },
   {
     src: '/images/dahab-story/lighthouse-sunset.jpg',
     title: 'A town beside the sea',
     alt: 'Freedivers sharing the water at sunset along Dahab’s shore',
     detail:
-      'Dahab is a relaxed Red Sea town in South Sinai, Egypt, where a walkable waterfront, mountain desert and reef-lined water meet along the Gulf of Aqaba.',
+      'Dahab is a relaxed Red Sea town in South Sinai, Egypt, where a walkable waterfront, mountain desert and reef-lined water meet.',
   },
   {
     src: '/images/dahab-story/line-coaching.jpg',
@@ -85,7 +85,7 @@ export function DahabBlueHoleSection({ onNavigate }: DahabBlueHoleSectionProps) 
         <div className="max-w-lg">
           <p className="mb-5 flex items-center gap-2 text-sm text-[#A9D2EC]">
             <MapPin className="h-4 w-4 text-cyan-300" aria-hidden="true" />
-            Dahab, South Sinai, Egypt · Gulf of Aqaba
+            Dahab, South Sinai, Egypt · Red Sea
           </p>
           <h2 className="font-bebas text-5xl leading-[0.98] tracking-wide text-white sm:text-6xl lg:text-7xl">
             Dahab and
