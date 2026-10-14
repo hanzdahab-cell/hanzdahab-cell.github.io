@@ -43,8 +43,8 @@ type CategoryFilter =
   | 'Instructor Course';
 
 export function CalendarSection({ onOpenBooking, onNavigate, currency }: CalendarSectionProps) {
-  // Default to September 2026 (the current simulated active month)
-  const [selectedMonthIndex, setSelectedMonthIndex] = useState<number>(8); // 8 = September (0-indexed)
+  // Default to the current season month in 2026 so the schedule opens on the active period.
+  const [selectedMonthIndex, setSelectedMonthIndex] = useState<number>(9); // 9 = October (0-indexed)
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('All');
   const [viewMode, setViewMode] = useState<'cards' | 'calendar'>('cards');
   const [selectedCalendarDay, setSelectedCalendarDay] = useState<number | null>(null);
@@ -224,7 +224,7 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
                 <span className="font-mono text-cyan-400 text-base sm:text-lg font-bold">
                   2026
                 </span>
-                {currentMonth.name === 'September' && (
+                {currentMonth.name === 'October' && (
                   <span className="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-mono text-[10px] uppercase font-bold tracking-wider">
                     Current Season
                   </span>
