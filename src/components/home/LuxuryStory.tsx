@@ -1,5 +1,6 @@
 import { Award, Users } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
+import { InstructorSitePerspectives, PhilosophyCarousel } from './PhilosophyCarousel';
 
 interface LuxuryStoryProps {
   onOpenBooking: () => void;
@@ -27,33 +28,9 @@ export function LuxuryStory({ onOpenBooking }: LuxuryStoryProps) {
         {/* 2-Column High-Contrast Split Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
           
-          {/* Left Column: Image with Film Grain & Luxury Frame */}
+          {/* Left Column: Five-image school and training carousel */}
           <div className="lg:col-span-6 relative">
-            <div className="relative group overflow-hidden rounded-2xl aspect-[4/5] border border-white/10 shadow-2xl">
-              <img
-                src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1600&q=85"
-                alt="Freediving instructor descending in Dahab Blue Hole"
-                className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000 ease-out"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0E3453] via-transparent to-transparent opacity-80" />
-              
-              {/* Floating Architectural Badge */}
-              <div className="absolute bottom-6 left-6 right-6 p-6 rounded-xl bg-black/60 backdrop-blur-md border border-white/10">
-                <div className="text-xs font-alata tracking-widest text-cyan-400 uppercase mb-1">
-                  {t.story.established}
-                </div>
-                <div className="font-bebas text-2xl text-white tracking-wide">
-                  &ldquo;{t.story.quote}&rdquo;
-                </div>
-                <div className="text-xs font-alata text-slate-400 mt-1">
-                  — {t.story.quoteAuthor}
-                </div>
-              </div>
-            </div>
-
-            {/* Subtle decorative offset border */}
-            <div className="absolute -inset-4 border border-cyan-500/20 rounded-3xl -z-10 hidden sm:block pointer-events-none" />
+            <PhilosophyCarousel />
           </div>
 
           {/* Right Column: High-End Editorial Copy */}
@@ -118,6 +95,7 @@ export function LuxuryStory({ onOpenBooking }: LuxuryStoryProps) {
           </div>
         </div>
 
+        <InstructorSitePerspectives />
       </div>
     </section>
   );

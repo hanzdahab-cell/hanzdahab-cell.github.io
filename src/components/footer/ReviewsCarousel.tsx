@@ -1,12 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ArrowRight, Pause, Play } from 'lucide-react';
+import { InfiniteMovingCards } from '../ui/infinite-moving-cards';
 import { REVIEW_SOURCES, reviews, ReviewPlatform } from '../../data/reviews';
 import { useLanguage } from '../../context/LanguageContext';
-
-/* ==========================================================================
-   REVIEWS CAROUSEL — verified TripAdvisor & Google excerpts
-   Auto-advances, pauses on hover, arrows + dots, honors reduced motion.
-   ========================================================================== */
 
 export function PlatformMark({ platform }: { platform: ReviewPlatform }) {
   if (platform === 'tripadvisor') {
@@ -49,53 +45,54 @@ export function PlatformMark({ platform }: { platform: ReviewPlatform }) {
   );
 }
 
+function GoogleReviewsEmbed() {
+  const [scriptError, setScriptError] = useState(false);
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://widgets.sociablekit.com/google-reviews/widget.js';
+    script.defer = true;
+    script.async = true;
+    script.onerror = () => setScriptError(true);
+    document.body.appendChild(script);
+    return () => script.remove();
+  }, []);
+
+  return (
+    <div className="mt-14 border-t border-white/10 pt-10">
+      <h3 className="font-bebas text-3xl tracking-wide text-white sm:text-4xl">
+        Google reviews
+      </h3>
+      <p className="mb-5 mt-2 text-sm text-slate-300">
+        Recent reviews from our Google profile.
+      </p>
+      <div
+        className="sk-ww-google-reviews min-h-72 rounded-2xl bg-white p-3 text-slate-900"
+        data-embed-id="25722416"
+        aria-label="Google reviews widget"
+        role="region"
+      />
+      {scriptError && (
+        <p role="status" className="mt-3 text-sm text-slate-300">
+          Google reviews could not be loaded. You can still read them on{' '}
+          <a
+            href={REVIEW_SOURCES.find((source) => source.platform === 'google')?.url}
+            target="_blank"
+            rel="noreferrer"
+            className="font-semibold text-cyan-200 underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            Google
+          </a>
+          .
+        </p>
+      )}
+    </div>
+  );
+}
+
 export function ReviewsCarousel() {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [page, setPage] = useState(0);
-  const [pages, setPages] = useState(1);
-  const pausedRef = useRef(false);
+  const [isPaused, setIsPaused] = useState(false);
   const { t } = useLanguage();
-
-  const scrollToPage = (index: number) => {
-    const track = trackRef.current;
-    if (!track) return;
-    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    track.scrollTo({
-      left: Math.min(index * track.clientWidth, track.scrollWidth - track.clientWidth),
-      behavior: prefersReducedMotion ? 'auto' : 'smooth',
-    });
-  };
-
-  // Measure scrollable pages and keep the controls in sync with manual scrolling.
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    const measure = () => {
-      setPages(Math.max(1, Math.ceil((track.scrollWidth - track.clientWidth) / track.clientWidth) + 1));
-    };
-    const onScroll = () => {
-      setPage(Math.min(pages - 1, Math.round(track.scrollLeft / track.clientWidth)));
-    };
-    measure();
-    track.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', measure);
-    return () => {
-      track.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', measure);
-    };
-  }, [pages]);
-
-  // Auto-advance only when the visitor has not engaged with the carousel.
-  useEffect(() => {
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
-    const timer = setInterval(() => {
-      const track = trackRef.current;
-      if (!track || pausedRef.current) return;
-      const next = (Math.round(track.scrollLeft / track.clientWidth) + 1) % Math.max(pages, 1);
-      scrollToPage(next);
-    }, 5200);
-    return () => clearInterval(timer);
-  }, [pages]);
 
   return (
     <section
@@ -119,7 +116,7 @@ export function ReviewsCarousel() {
               {t.testimonials.subtitle}
             </p>
           </div>
-          <div className="flex items-center gap-5">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             {REVIEW_SOURCES.map((s) => (
               <a
                 key={s.platform}
@@ -138,104 +135,71 @@ export function ReviewsCarousel() {
           </div>
         </header>
 
-        <div
-          ref={trackRef}
-          className="flex gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth custom-scrollbar pb-3"
-          onMouseEnter={() => (pausedRef.current = true)}
-          onMouseLeave={(event) => {
-            if (!event.currentTarget.contains(document.activeElement)) pausedRef.current = false;
-          }}
-          onFocus={() => (pausedRef.current = true)}
-          onBlur={(event) => {
-            if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-              pausedRef.current = event.currentTarget.matches(':hover');
-            }
-          }}
-          tabIndex={0}
-          aria-roledescription="carousel"
-          aria-label="Verified TripAdvisor and Google reviews"
-        >
-          {reviews.map((r) => (
-            <article
-              key={r.id}
-              className="snap-start flex w-[86%] shrink-0 flex-col gap-5 rounded-2xl border border-white/10 bg-[#0A2943]/90 p-5 sm:w-[46%] sm:p-6 lg:w-[31.5%]"
-            >
+        <div className="mb-4 flex justify-end">
+          <button
+            type="button"
+            aria-pressed={isPaused}
+            onClick={() => setIsPaused((paused) => !paused)}
+            className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-white/30 px-3 text-sm font-semibold text-white transition-colors hover:border-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            {isPaused ? (
+              <Play className="h-4 w-4" aria-hidden="true" />
+            ) : (
+              <Pause className="h-4 w-4" aria-hidden="true" />
+            )}
+            {isPaused ? 'Play reviews' : 'Pause reviews'}
+          </button>
+        </div>
+        <InfiniteMovingCards
+          items={reviews}
+          speed="normal"
+          direction="left"
+          isPaused={isPaused}
+          className="pb-1"
+          cardClassName="flex"
+          renderItem={(review) => (
+            <article className="flex h-full min-h-64 flex-col gap-5 rounded-2xl border border-white/10 bg-[#0A2943]/90 p-5 shadow-lg sm:p-6">
               <div className="flex items-center gap-2 text-xs font-semibold text-cyan-200">
-                <PlatformMark platform={r.platform} />
-                {r.platform === 'tripadvisor' ? 'TripAdvisor' : 'Google review'}
+                <PlatformMark platform={review.platform} />
+                {review.platform === 'tripadvisor' ? 'TripAdvisor' : 'Google review'}
               </div>
-              {r.photo && (
+              {review.photo && (
                 <img
-                  src={r.photo.src}
-                  alt={r.photo.alt}
+                  src={review.photo.src}
+                  alt={review.photo.alt}
                   className="aspect-[16/9] w-full rounded-xl object-cover"
                   loading="lazy"
                   decoding="async"
                 />
               )}
               <blockquote className="flex-1 font-alata text-sm leading-relaxed text-slate-100">
-                “{r.text}”
+                “{review.text}”
               </blockquote>
               <div className="flex items-center gap-3 border-t border-white/10 pt-4">
                 <span
                   aria-hidden="true"
                   className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 text-sm font-semibold text-white"
                 >
-                  {r.name.slice(0, 1).toUpperCase()}
+                  {review.name.slice(0, 1).toUpperCase()}
                 </span>
                 <div className="min-w-0 flex-1 leading-tight">
-                  <div className="truncate text-sm font-semibold text-white">{r.name}</div>
-                  {r.date && <div className="mt-1 text-xs text-slate-400">{r.date}</div>}
+                  <div className="truncate text-sm font-semibold text-white">{review.name}</div>
+                  {review.date && <div className="mt-1 text-xs text-slate-400">{review.date}</div>}
                 </div>
                 <a
-                  href={r.sourceUrl}
+                  href={review.sourceUrl}
                   target="_blank"
                   rel="noreferrer"
-                  aria-label={`Read ${r.platform === 'tripadvisor' ? 'TripAdvisor' : 'Google'} review by ${r.name}`}
+                  aria-label={`Read ${review.platform === 'tripadvisor' ? 'TripAdvisor' : 'Google'} review by ${review.name}`}
                   className="inline-flex min-h-11 shrink-0 items-center rounded-lg px-2 text-xs font-semibold text-cyan-200 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   View review
                 </a>
               </div>
             </article>
-          ))}
-        </div>
-
-        {pages > 1 && (
-          <div className="mt-5 flex items-center justify-center gap-3">
-            <button
-              type="button"
-              onClick={() => scrollToPage(Math.max(0, page - 1))}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/30 text-white transition-colors hover:border-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-              aria-label="Previous reviews"
-            >
-              <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-            </button>
-            {Array.from({ length: pages }).map((_, i) => (
-              <button
-                type="button"
-                key={i}
-                onClick={() => scrollToPage(i)}
-                aria-label={`Go to review page ${i + 1}`}
-                aria-current={i === page ? 'true' : undefined}
-                className="flex h-11 w-11 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-              >
-                <span
-                  aria-hidden="true"
-                  className={`h-2 rounded-full transition-all motion-reduce:transition-none ${i === page ? 'w-6 bg-cyan-300' : 'w-2 bg-white/45'}`}
-                />
-              </button>
-            ))}
-            <button
-              type="button"
-              onClick={() => scrollToPage(Math.min(pages - 1, page + 1))}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/30 text-white transition-colors hover:border-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-              aria-label="Next reviews"
-            >
-              <ChevronRight className="h-4 w-4" aria-hidden="true" />
-            </button>
-          </div>
-        )}
+          )}
+        />
+        <GoogleReviewsEmbed />
       </div>
     </section>
   );

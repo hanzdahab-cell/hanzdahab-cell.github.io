@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { ArrowRight, ChevronLeft, ChevronRight, Languages, ShieldCheck } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { ArrowRight, ChevronLeft, ChevronRight, Languages, Pause, Play, ShieldCheck } from 'lucide-react';
 import { PageType } from '../../types';
 
 interface StoryHeroCarouselProps {
@@ -56,9 +56,14 @@ const SLIDES = [
 
 export function StoryHeroCarousel({ onNavigate }: StoryHeroCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
+  const [manuallyPaused, setManuallyPaused] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [videoUnavailable, setVideoUnavailable] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const slide = SLIDES[activeIndex];
+  const motionPaused = manuallyPaused || isHovered || isFocused || reducedMotion || videoUnavailable;
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -69,16 +74,33 @@ export function StoryHeroCarousel({ onNavigate }: StoryHeroCarouselProps) {
   }, []);
 
   useEffect(() => {
-    if (paused || reducedMotion) return;
+    if (motionPaused) return;
     const timer = window.setInterval(() => {
       setActiveIndex((index) => (index + 1) % SLIDES.length);
     }, 7000);
     return () => window.clearInterval(timer);
-  }, [paused, reducedMotion]);
+  }, [motionPaused]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (motionPaused) {
+      video.pause();
+      return;
+    }
+
+    const playRequest = video.play();
+    if (playRequest) {
+      void playRequest.then(
+        () => setVideoUnavailable(false),
+        () => setVideoUnavailable(true)
+      );
+    }
+  }, [motionPaused]);
 
   const showSlide = (index: number) => {
     setActiveIndex((index + SLIDES.length) % SLIDES.length);
-    setPaused(true);
+    setManuallyPaused(true);
   };
 
   return (
@@ -86,13 +108,11 @@ export function StoryHeroCarousel({ onNavigate }: StoryHeroCarouselProps) {
       aria-label="Freedive Dahab school story"
       aria-roledescription="carousel"
       className="relative isolate flex min-h-[620px] items-end overflow-hidden border-b border-white/10 bg-[#081F35] px-5 pb-10 pt-32 sm:min-h-[680px] sm:px-8 sm:pb-14 lg:min-h-[740px] lg:items-center lg:px-12"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={(event) => {
-        if (!event.currentTarget.contains(document.activeElement)) setPaused(false);
-      }}
-      onFocus={() => setPaused(true)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setIsFocused(true)}
       onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setPaused(false);
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setIsFocused(false);
       }}
       onKeyDown={(event) => {
         if (event.key === 'ArrowLeft') showSlide(activeIndex - 1);
@@ -100,25 +120,32 @@ export function StoryHeroCarousel({ onNavigate }: StoryHeroCarouselProps) {
       }}
     >
       <div className="absolute inset-0">
-        {SLIDES.map((item, index) => (
-          <img
-            key={item.image}
-            src={item.image}
-            alt={index === activeIndex ? item.alt : ''}
-            aria-hidden={index !== activeIndex}
-            className={`absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-1000 motion-reduce:transition-none ${
-              index === activeIndex
-                ? 'scale-100 opacity-100'
-                : 'scale-[1.04] opacity-0'
-            }`}
-            loading={index === 0 ? 'eager' : 'lazy'}
-            decoding="async"
-            fetchPriority={index === 0 ? 'high' : 'auto'}
-          />
-        ))}
+        <img
+          src={SLIDES[0].image}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-cover"
+          fetchPriority="high"
+          decoding="async"
+        />
+        <video
+          ref={videoRef}
+          src="/videos/why-freedive-dahab.mp4"
+          poster={SLIDES[0].image}
+          autoPlay={!reducedMotion}
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          aria-hidden="true"
+          onError={() => setVideoUnavailable(true)}
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 motion-reduce:transition-none ${
+            videoUnavailable ? 'opacity-0' : 'opacity-100'
+          }`}
+        />
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-r from-[#081F35]/95 via-[#081F35]/75 to-[#081F35]/20 lg:via-[#081F35]/65"
+          className="absolute inset-0 bg-gradient-to-r from-[#081F35]/95 via-[#081F35]/75 to-[#081F35]/35 lg:via-[#081F35]/65"
         />
         <div
           aria-hidden="true"
@@ -127,7 +154,7 @@ export function StoryHeroCarousel({ onNavigate }: StoryHeroCarouselProps) {
       </div>
 
       <div className="relative z-10 mx-auto grid w-full max-w-7xl items-end gap-10 lg:grid-cols-[1.05fr_0.55fr] lg:items-center">
-        <div className="max-w-3xl" aria-live={paused ? 'polite' : 'off'} aria-atomic="true">
+        <div className="max-w-3xl" aria-live={motionPaused ? 'polite' : 'off'} aria-atomic="true">
           <p className="mb-5 flex items-center gap-2 text-sm font-medium text-[#A9D2EC]">
             <ShieldCheck className="h-4 w-4 text-cyan-300" aria-hidden="true" />
             {slide.eyebrow}
@@ -207,6 +234,19 @@ export function StoryHeroCarousel({ onNavigate }: StoryHeroCarouselProps) {
             </button>
             <button
               type="button"
+              onClick={() => setManuallyPaused((paused) => !paused)}
+              aria-label={manuallyPaused ? 'Resume hero motion' : 'Pause hero motion'}
+              aria-pressed={manuallyPaused}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/55 bg-[#081F35]/50 text-white transition-colors hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              {manuallyPaused ? (
+                <Play className="h-4 w-4" aria-hidden="true" />
+              ) : (
+                <Pause className="h-4 w-4" aria-hidden="true" />
+              )}
+            </button>
+            <button
+              type="button"
               onClick={() => showSlide(activeIndex + 1)}
               aria-label="Next story slide"
               className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/55 bg-[#081F35]/50 text-white transition-colors hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
@@ -216,7 +256,12 @@ export function StoryHeroCarousel({ onNavigate }: StoryHeroCarouselProps) {
           </div>
         </div>
       </div>
-      <span className="sr-only" aria-live={paused ? 'polite' : 'off'}>
+      {videoUnavailable && (
+        <p role="status" className="absolute bottom-4 left-5 z-20 max-w-[min(24rem,calc(100%-2.5rem))] rounded-lg border border-white/20 bg-[#081F35]/85 px-3 py-2 text-xs text-white sm:left-8">
+          Background video is unavailable; showing a still image instead.
+        </p>
+      )}
+      <span className="sr-only" aria-live={motionPaused ? 'polite' : 'off'}>
         Story {activeIndex + 1} of {SLIDES.length}: {slide.eyebrow}
       </span>
     </section>

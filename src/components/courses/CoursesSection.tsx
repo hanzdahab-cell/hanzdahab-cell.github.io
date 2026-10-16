@@ -45,12 +45,12 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
   const storySlides: CourseStorySlide[] = coreCards.map((course) => ({
     id: course.id,
     title: course.title,
-    subtitle: `${course.level} course`,
+    subtitle: `${course.level} · ${course.certification}`,
     detail: course.highlights[0] ?? course.subtitle,
     courseId: course.id,
     courseSlug: course.slug,
     duration: `${course.durationDays} ${course.durationDays === 1 ? 'day' : 'days'}`,
-    depth: `Up to ${course.maxDepthMeters} m`,
+    depth: course.futurePerformances?.depth ?? `Up to ${course.maxDepthMeters} m`,
     ...(coreCoursePhotoById[course.id] ?? course.image),
   }));
 

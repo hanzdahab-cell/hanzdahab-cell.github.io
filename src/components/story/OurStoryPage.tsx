@@ -320,7 +320,7 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
       {/* ==================================================================== */}
       {/* 3) MEET OUR FOUNDERS: 3 Cards with Portrait, Name, Title & Bio      */}
       {/* ==================================================================== */}
-      <section className="relative py-24 sm:py-32 px-6 bg-[#0E3453] border-b border-white/5">
+      <section id="pioneers" className="relative scroll-mt-20 py-24 sm:py-32 px-6 bg-[#0E3453] border-b border-white/5">
         <div className="absolute inset-0 architectural-grid opacity-15 pointer-events-none" />
 
         <div className="max-w-7xl mx-auto relative z-10">

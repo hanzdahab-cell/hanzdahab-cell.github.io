@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Cursor } from './components/ui/Cursor';
-import { SSINavigation } from './components/ui/SSINavigation';
+import { SiteHeader } from './nav/SiteHeader';
 import { PageHeader } from './components/ui/PageHeader';
 import { HeroSurface } from './components/home/HeroSurface';
 import { CoralDepthBackground } from './components/home/CoralDepthBackground';
@@ -20,6 +20,7 @@ import { FAQSection } from './components/faq/FAQSection';
 import { Footer } from './components/ui/Footer';
 import { BookingModal } from './components/booking/BookingModal';
 import { ChatWidget } from './components/chat/ChatWidget';
+import { CookieConsent } from './components/ui/CookieConsent';
 import { EventDetailPage } from './components/calendar/EventDetailPage';
 import { CourseDetailPage } from './components/courses/CourseDetailPage';
 import { OurStoryPage } from './components/story/OurStoryPage';
@@ -131,13 +132,10 @@ export default function App() {
         <Cursor />
 
         {/* SSI Mega Menu Navigation Header with Individual Page Links */}
-        <SSINavigation
+        <SiteHeader
           currentPage={currentPage}
           onNavigate={navigateTo}
           onOpenBooking={handleOpenBooking}
-          currency={currency}
-          setCurrency={setCurrency}
-          isTransparent={currentPage === 'home' || currentPage === 'courses'}
           onNavigateToSection={scrollToSection}
         />
 
@@ -148,8 +146,11 @@ export default function App() {
         {/* ========================================================= */}
         {currentPage === 'home' && (
           <div className="page-dive-in">
-            {/* 1. HERO: underwater vortex film + milestones + cinematic descent */}
-            <HeroSurface />
+            {/* 1. HERO: Dahab photo carousel and course invitations */}
+            <HeroSurface
+              onNavigate={navigateTo}
+              onViewReviews={() => scrollToSection('home', 'testimonials')}
+            />
 
             {/* 2. STORY TEASER — Meet Our Pioneers */}
             <StoryTeaserBanner
@@ -443,6 +444,8 @@ export default function App() {
 
       {/* EMAIL-FIRST CHAT ASSISTANT — course guidance, FAQ answers, booking requests */}
       <ChatWidget onOpenBooking={handleOpenBooking} onNavigate={navigateTo} />
+
+      <CookieConsent />
 
     </div>
     </LanguageProvider>

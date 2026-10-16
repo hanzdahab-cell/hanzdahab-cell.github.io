@@ -1,532 +1,293 @@
-import { useState, useEffect, useRef } from 'react';
-import { Facebook, Instagram } from 'lucide-react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { WaterCaustics } from '../story/WaterCaustics';
-import { LetterReveal } from '../ui/LetterReveal';
-import { useLanguage } from '../../context/LanguageContext';
+import { useState } from 'react';
+import {
+  ArrowDown,
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Facebook,
+  Instagram,
+  MapPin,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { PlatformMark } from '../footer/ReviewsCarousel';
+import { useLanguage } from '../../context/LanguageContext';
+import { PageType } from '../../types';
 import { siteConfig } from '../../data/site';
+import { PlatformMark } from '../footer/ReviewsCarousel';
 
-// Register GSAP Plugin
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-  ScrollTrigger.defaults({
-    markers: false,
-  });
+interface HeroSurfaceProps {
+  onNavigate: (page: PageType) => void;
+  onViewReviews: () => void;
 }
 
-// Deterministic bubble field (stable between renders, no Math.random flicker)
-const BUBBLES = Array.from({ length: 22 }, (_, i) => {
-  const seed = (n: number) => ((Math.sin(i * 127.1 + n * 311.7) + 1) / 2);
-  return {
-    left: 3 + seed(1) * 94,
-    size: 3 + seed(2) * 9,
-    dur: 11 + seed(3) * 14,
-    delay: -seed(4) * 22,
-    drift: (seed(5) - 0.5) * 70,
-    op: 0.22 + seed(6) * 0.4,
-  };
-});
+const HERO_SLIDES = [
+  {
+    src: '/images/story-carousel/lighthouse-bay-team.webp',
+    alt: 'Freedivers training together at Lighthouse Bay in Dahab',
+    title: 'Lighthouse Bay, Dahab',
+  },
+  {
+    src: '/images/story-carousel/blue-hole-freediver.jpg',
+    alt: 'Freediver descending through the clear water of the Blue Hole',
+    title: 'The Blue Hole',
+  },
+  {
+    src: '/images/story-carousel/training-line.jpg',
+    alt: 'Freediver training with an instructor beside a Red Sea dive line',
+    title: 'Learn at your own pace',
+  },
+  {
+    src: '/images/story-carousel/red-sea-reef.jpg',
+    alt: 'Red Sea coral reef in clear blue water',
+    title: 'The Red Sea',
+  },
+  {
+    src: '/images/story-carousel/surface-session.jpg',
+    alt: 'Freedivers sharing a calm surface session in Dahab',
+    title: 'Find your first breath',
+  },
+];
 
-export function HeroSurface() {
+export function HeroSurface({ onNavigate, onViewReviews }: HeroSurfaceProps) {
   const { t } = useTranslation();
   const { isRtl } = useLanguage();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeSlide = HERO_SLIDES[activeIndex];
+  const previousSlide = HERO_SLIDES[(activeIndex - 1 + HERO_SLIDES.length) % HERO_SLIDES.length];
+  const nextSlide = HERO_SLIDES[(activeIndex + 1) % HERO_SLIDES.length];
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const targetPortalRef = useRef<HTMLDivElement>(null);
-  const depthGaugeRef = useRef<HTMLElement>(null);
-  const phase1Ref = useRef<HTMLDivElement>(null);
-  const phase2Ref = useRef<HTMLDivElement>(null);
-
-  const [activeStage, setActiveStage] = useState<number>(0);
-  const [scrollProgress, setScrollProgress] = useState<number>(0);
-
-  // Depth display calculation based on scroll progress (02M -> 32M)
-  const currentDepth = Math.round(2 + scrollProgress * 30);
-  const formattedDepth = currentDepth < 10 ? `0${currentDepth}` : `${currentDepth}`;
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || !containerRef.current) return;
-
-    // Use GSAP Context for clean lifecycle management & React 19 safety
-    const ctx = gsap.context(() => {
-      const triggerElement = containerRef.current;
-      const targetElement = targetPortalRef.current;
-
-      if (!triggerElement || !targetElement) return;
-
-      // ========================================================
-      // 1. ScrollTrigger: full-bleed stage + scroll progress driver
-      // (the portal is full-screen from the start — Convex style)
-      // ========================================================
-      const targetEl = targetElement as HTMLElement;
-      targetEl.style.width = '100%';
-      targetEl.style.borderRadius = '0px';
-
-      ScrollTrigger.create({
-        trigger: triggerElement,
-        start: 'top top',
-        end: 'bottom top',
-        scrub: 1,
-        onUpdate: (self) => {
-          setScrollProgress(self.progress);
-        },
-      });
-
-      // ========================================================
-      // 3. GSAP ScrollTrigger: SLIDE IN FROM RIGHT (ToggleActions)
-      // ========================================================
-      if (depthGaugeRef.current) {
-        gsap.from(depthGaugeRef.current, {
-          opacity: 0,
-          x: '80px',
-          duration: 1.5,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: triggerElement,
-            toggleActions: 'restart pause resume reset',
-            start: 'top 80%',
-          },
-        });
-      }
-
-      // ========================================================
-      // 4. GSAP ScrollTrigger: GRID / PHASE TITLE CHANGE (.is--active)
-      // ========================================================
-      const gridWrappers = triggerElement.querySelectorAll('.grid_wrapper');
-      gridWrappers.forEach((wrapper, index) => {
-        gsap.timeline({
-          scrollTrigger: {
-            trigger: wrapper,
-            start: 'top center',
-            end: 'bottom center',
-            onEnter: () => {
-              setActiveStage(index);
-              const items = document.querySelectorAll('.grid_text-item');
-              items.forEach((item) => item.classList.remove('is--active'));
-              items[index]?.classList.add('is--active');
-            },
-            onEnterBack: () => {
-              setActiveStage(index);
-              const items = document.querySelectorAll('.grid_text-item');
-              items.forEach((item) => item.classList.remove('is--active'));
-              items[index]?.classList.add('is--active');
-            },
-          },
-        });
-      });
-
-      // Phase content cross-fades scrubbed with descent (two phases)
-      if (phase1Ref.current && phase2Ref.current) {
-        // Phase 1 fades out smoothly by 35% scroll
-        gsap.to(phase1Ref.current, {
-          opacity: 0,
-          y: -40,
-          pointerEvents: 'none',
-          ease: 'none',
-          scrollTrigger: {
-            trigger: triggerElement,
-            start: 'top top',
-            end: '35% top',
-            scrub: 1,
-          },
-        });
-
-        // Phase 2 fades in between 30% and 52%, holds, fades out near the end
-        gsap.fromTo(
-          phase2Ref.current,
-          { opacity: 0, y: 50, pointerEvents: 'none' },
-          {
-            opacity: 1,
-            y: 0,
-            pointerEvents: 'auto',
-            ease: 'none',
-            scrollTrigger: {
-              trigger: triggerElement,
-              start: '30% top',
-              end: '52% top',
-              scrub: 1,
-            },
-          }
-        );
-
-        gsap.to(phase2Ref.current, {
-          opacity: 0,
-          y: -30,
-          pointerEvents: 'none',
-          ease: 'none',
-          scrollTrigger: {
-            trigger: triggerElement,
-            start: '82% top',
-            end: '98% top',
-            scrub: 1,
-          },
-        });
-      }
-
-      // Initial state: set first item active
-      const firstItem = document.querySelector('.grid_text-item');
-      firstItem?.classList.add('is--active');
-
-      // Refresh ScrollTrigger calculations
-      ScrollTrigger.refresh();
-    }, containerRef);
-
-    // Refresh on window resize
-    const handleResize = () => {
-      ScrollTrigger.refresh();
-    };
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      ctx.revert();
-    };
-  }, []);
+  const changeSlide = (direction: -1 | 1) => {
+    setActiveIndex((index) => (index + direction + HERO_SLIDES.length) % HERO_SLIDES.length);
+  };
 
   return (
-    <div
-      ref={containerRef}
+    <section
       id="home"
-      className="trigger-class trigger-element relative w-full min-h-[200vh] sm:min-h-[220vh] bg-[#081F35] text-white select-none"
+      className="relative isolate min-h-[calc(100svh-5rem)] overflow-hidden bg-[#081F35] text-white"
     >
-        {/* ======================================================== */}
-        {/* 2 SCROLLTRIGGER GRID WRAPPER ZONES FOR PHASE SWITCHING   */}
-        {/* ======================================================== */}
-        <div className="absolute inset-0 pointer-events-none z-0 flex flex-col justify-between">
-          <div className="grid_wrapper w-full h-[50%]" data-index="0" />
-          <div className="grid_wrapper w-full h-[50%]" data-index="1" />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_78%_44%,rgba(34,98,140,0.32),transparent_48%),linear-gradient(115deg,#081F35_22%,#0E3453_100%)]"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-y-0 end-0 w-1/2 opacity-[0.12]"
+        style={{
+          backgroundImage:
+            'radial-gradient(rgba(169,210,236,0.55) 0.7px, transparent 0.7px)',
+          backgroundSize: '18px 18px',
+          maskImage: 'linear-gradient(to left, black, transparent)',
+        }}
+      />
+
+      <div className="relative mx-auto grid min-h-[calc(100svh-5rem)] max-w-[1440px] items-start gap-8 px-5 pb-12 pt-40 sm:px-8 sm:pb-16 sm:pt-44 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12 lg:px-12 lg:pt-44">
+        <div className="relative z-10 max-w-2xl text-start">
+          <p className="mb-5 flex items-center gap-2 text-sm font-alata text-[#A9D2EC]">
+            <MapPin className="h-4 w-4 shrink-0 text-cyan-300" aria-hidden="true" />
+            {t('hero.locationEyebrow')}
+          </p>
+
+          <h1
+            className="max-w-xl text-balance font-tidal text-5xl leading-[0.98] tracking-[0.015em] text-white sm:text-6xl md:text-6xl xl:text-7xl"
+            style={{
+              fontFamily: isRtl
+                ? "'Beiruti', sans-serif"
+                : "'Tidal Astral Grotesk', 'Bebas Neue', sans-serif",
+            }}
+          >
+            {t('hero.leadTitle')}
+          </h1>
+
+          <p className="mt-6 max-w-xl font-alata text-base leading-relaxed text-slate-200 sm:text-lg">
+            {t('hero.leadDesc')}
+          </p>
+
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={() => onNavigate('courses')}
+              className="inline-flex min-h-12 items-center gap-3 rounded-full bg-white px-6 py-3 font-alata text-sm font-semibold text-[#081F35] transition-colors hover:bg-[#DCEFFC] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              {t('hero.exploreCourses')}
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate('calendar')}
+              className="inline-flex min-h-12 items-center gap-2 rounded-full border border-white/35 px-5 py-3 font-alata text-sm font-medium text-white transition-colors hover:border-cyan-200 hover:bg-white/[0.07] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-100"
+            >
+              {t('hero.bookInquireNow')}
+            </button>
+          </div>
+
+          <div className="mt-8 flex items-center gap-3" role="group" aria-label="Follow Freedive Dahab">
+            <a
+              href={siteConfig.social.instagram}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Instagram — @freedive_dahab"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/30 text-white transition-colors hover:border-white hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              <Instagram className="h-5 w-5" aria-hidden="true" />
+            </a>
+            <a
+              href={siteConfig.social.facebook}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Facebook — Freedive Dahab"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/30 text-white transition-colors hover:border-white hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              <Facebook className="h-5 w-5" aria-hidden="true" />
+            </a>
+            <a
+              href={siteConfig.social.tripadvisor}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="TripAdvisor — Freedive Dahab reviews"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/30 text-white transition-colors hover:border-white hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              <PlatformMark platform="tripadvisor" />
+            </a>
+            <button
+              type="button"
+              onClick={onViewReviews}
+              className="ms-1 inline-flex min-h-11 items-center gap-2 font-alata text-sm text-[#A9D2EC] underline decoration-white/30 underline-offset-4 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              {t('hero.readReviews')}
+            </button>
+          </div>
+
+          <div className="mt-8 flex flex-wrap gap-x-5 gap-y-2 border-t border-white/15 pt-5 font-alata text-xs text-slate-300 sm:text-sm">
+            <span>{t('hero.line1')}</span>
+            <span className="text-cyan-200/75">{t('hero.line2')}</span>
+          </div>
+
+          <a
+            href="#story"
+            className="mt-8 inline-flex min-h-11 items-center gap-2 font-alata text-xs text-[#A9D2EC] transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+          >
+            <ArrowDown className="h-4 w-4" aria-hidden="true" />
+            <span>{t('hero.scrollExplore')}</span>
+          </a>
         </div>
 
-      {/* ======================================================== */}
-      {/* STICKY FULLSCREEN CINEMATIC DEPTH STAGE                  */}
-      {/* ======================================================== */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between">
-        
-        {/* ======================================================== */}
-        {/* 1. EXPANDING CINEMATIC PORTAL (.target-class)             */}
-        {/* GSAP fromTo: width 50% -> 100% with scrub: 1             */}
-        {/* ======================================================== */}
-        <div className="absolute inset-0 z-0 flex items-center justify-center overflow-hidden pointer-events-none">
+        <div className="relative mx-auto w-full max-w-[720px] min-w-0 lg:me-0">
           <div
-            ref={targetPortalRef}
-            className="target-class relative h-full w-full overflow-hidden"
+            className="relative h-[340px] w-full sm:h-[440px] lg:h-[min(68vh,620px)]"
+            role="region"
+            aria-label="Dahab freediving photo carousel"
+            aria-roledescription="carousel"
           >
-            {/* Cinematic underwater vortex loop (the fish-school whirlpool) */}
-            <video
-              className="absolute inset-0 w-full h-full object-cover object-center"
-              src="/videos/vortex-loop.mp4"
-              poster="/videos/vortex-poster.jpg"
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="auto"
-              aria-label="Sunlight bursting through a swirling school of fish beneath the Red Sea surface"
-              style={{
-                // Source clip is 721x414 — keep the extra upscale minimal so
-                // the browser scaler doesn't soften it further.
-                transform: `scale(${1.02 + scrollProgress * 0.08}) translateY(${scrollProgress * -20}px)`,
-              }}
-            />
-
-            {/* Brand grading: pull the footage into the two blues */}
-            <div className="absolute inset-0 bg-[#0E3453]/45 mix-blend-multiply pointer-events-none" />
-            <div
-              className="absolute inset-0 mix-blend-color pointer-events-none"
-              style={{ backgroundColor: 'rgba(34, 98, 140, 0.45)' }}
-            />
-
-            {/* Living water surface: animated caustic shimmer */}
-            <WaterCaustics />
-
-            {/* Dynamic Depth Gradient: Becomes richer blue as you descend */}
-            <div
-              className="absolute inset-0 transition-colors duration-500 ease-out pointer-events-none"
-              style={{
-                backgroundColor: `rgba(8, 31, 53, ${0.18 + scrollProgress * 0.62})`,
-              }}
-            />
-
-            {/* God-rays: swaying surface light shafts */}
-            <div
-              className="absolute inset-0 pointer-events-none overflow-hidden transition-opacity duration-500"
-              style={{ opacity: Math.max(1 - scrollProgress * 2.2, 0.12) }}
-            >
+            {[previousSlide, nextSlide].map((slide, index) => (
               <div
-                className="light-ray absolute -top-24 left-[18%] w-56 h-[85vh] blur-2xl"
-                style={{
-                  '--ray-rot': '-14deg',
-                  '--ray-dur': '9s',
-                  '--ray-op': '0.5',
-                  background:
-                    'linear-gradient(180deg, rgba(169,210,236,0.28) 0%, rgba(169,210,236,0.05) 60%, transparent 100%)',
-                } as React.CSSProperties}
-              />
-              <div
-                className="light-ray absolute -top-24 left-[46%] w-72 h-[95vh] blur-3xl"
-                style={{
-                  '--ray-rot': '-7deg',
-                  '--ray-dur': '12s',
-                  '--ray-op': '0.38',
-                  background:
-                    'linear-gradient(180deg, rgba(242,248,252,0.22) 0%, rgba(169,210,236,0.04) 55%, transparent 100%)',
-                } as React.CSSProperties}
-              />
-              <div
-                className="light-ray absolute -top-24 right-[12%] w-48 h-[80vh] blur-2xl"
-                style={{
-                  '--ray-rot': '10deg',
-                  '--ray-dur': '10s',
-                  '--ray-op': '0.34',
-                  background:
-                    'linear-gradient(180deg, rgba(169,210,236,0.24) 0%, transparent 85%)',
-                } as React.CSSProperties}
-              />
-            </div>
-
-            {/* Rising bubble field */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-              {BUBBLES.map((b, i) => (
-                <span
-                  key={i}
-                  className="bubble"
-                  style={{
-                    left: `${b.left}%`,
-                    width: `${b.size}px`,
-                    height: `${b.size}px`,
-                    '--bubble-dur': `${b.dur}s`,
-                    '--bubble-delay': `${b.delay}s`,
-                    '--bubble-drift': `${b.drift}px`,
-                    '--bubble-op': `${b.op}`,
-                  } as React.CSSProperties}
+                key={`${slide.src}-${index}`}
+                aria-hidden="true"
+                className={`absolute top-[8%] hidden h-[78%] w-[58%] overflow-hidden rounded-[1.5rem] border border-white/15 bg-[#0E3453] opacity-45 shadow-2xl sm:block ${
+                  index === 0
+                    ? 'start-0 -rotate-[7deg] translate-x-1/4'
+                    : 'end-0 rotate-[7deg] -translate-x-1/4'
+                }`}
+              >
+                <img
+                  src={slide.src}
+                  alt=""
+                  loading="lazy"
+                  className="h-full w-full object-cover"
                 />
-              ))}
-            </div>
+              </div>
+            ))}
 
-            {/* Deep Coral Reef Seabed at Depth (Revealed at 20M-32M as you reach bottom) */}
-            <div
-              className="absolute inset-0 transition-opacity duration-700 pointer-events-none"
-              style={{
-                opacity: Math.min(Math.max((scrollProgress - 0.45) / 0.5, 0), 0.8),
-              }}
+            <figure
+              aria-live="polite"
+              aria-atomic="true"
+              className="absolute inset-x-[4%] top-[2%] z-10 m-0 h-[84%] overflow-hidden rounded-[1.5rem] border border-white/20 bg-[#0E3453] shadow-[0_32px_90px_rgba(0,0,0,0.45)] sm:inset-x-[12%] sm:h-[88%]"
             >
               <img
-                src="/deep-coral-reef.jpg"
-                alt="Dahab Red Sea Deep Coral Reef at 32M depth"
-                className="w-full h-full object-cover object-bottom filter contrast-110 brightness-95"
+                key={activeSlide.src}
+                src={activeSlide.src}
+                alt={activeSlide.alt}
+                fetchPriority="high"
+                className="h-full w-full object-cover"
               />
-              <div className="absolute inset-0 bg-[#0E3453]/30 mix-blend-multiply" />
-            </div>
-
-            {/* Deep Water Vignette & Soft Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#081F35]/85 via-transparent to-[#081F35]/60 pointer-events-none" />
-          </div>
-        </div>
-
-        {/* ======================================================== */}
-        {/* ======================================================== */}
-        {/* 3. CENTER STAGE: EDITORIAL CINEMATIC PHASES             */}
-        {/* ======================================================== */}
-        <div className="relative z-20 flex-1 flex flex-col justify-between max-w-6xl mx-auto px-4 sm:px-8 w-full pt-16 sm:pt-20 md:pt-24 pb-4 sm:pb-6 text-center">
-          
-          {/* -------------------------------------------------------- */}
-          {/* PHASE 1: SURFACE & MAIN HOOK                             */}
-          {/* Sentence 1 ABOVE the diver, Sentence 2 BELOW the diver   */}
-          {/* Diver completely visible in center                       */}
-          {/* -------------------------------------------------------- */}
-          <div
-            ref={phase1Ref}
-            className="flex-1 flex flex-col justify-between items-center text-center h-full w-full will-change-transform"
-          >
-            {/* TOP ZONE: Eyebrow + Line 1 ABOVE THE DIVER (One Sentence) */}
-            <div className="flex flex-col items-center pt-2 sm:pt-4">
-              <p className="text-[10px] sm:text-xs font-alata font-normal tracking-[0.24em] text-cyan-200/90 uppercase mb-2 sm:mb-3 drop-shadow-[0_2px_10px_rgba(0,0,0,0.85)]">
-                {t('hero.locationEyebrow')}
-              </p>
-
-              {/* Line 1: Milestone sentence positioned above the diver */}
-              <h1
-                className="font-tidal text-xl sm:text-2xl md:text-3xl lg:text-[2rem] leading-snug uppercase tracking-[0.05em] font-normal text-slate-50 drop-shadow-[0_3px_20px_rgba(0,0,0,0.9)] text-balance max-w-2xl"
-                style={{
-                  fontFamily: isRtl ? "'Beiruti', sans-serif" : "'Tidal Astral Grotesk', 'Bebas Neue', sans-serif",
-                }}
-              >
-                <LetterReveal
-                  as="span"
-                  text={t('hero.line1')}
-                  className="inline-block"
-                  delay={0.25}
-                  stagger={0.028}
-                  duration={0.8}
-                  wholeLine={isRtl}
-                />
-              </h1>
-            </div>
-
-            {/* CENTER STAGE: brand logo floating in the vortex — buoyancy + rotating dashed ring + glow */}
-            <div
-              className="flex-1 w-full flex items-center justify-center pointer-events-none min-h-[150px] sm:min-h-[200px] md:min-h-[240px]"
-              aria-hidden="true"
-            >
-              <div className="relative animate-ocean-buoyancy">
-                <svg
-                  viewBox="0 0 200 200"
-                  className="spin-slow absolute -inset-5 sm:-inset-7 w-[calc(100%+2.5rem)] h-[calc(100%+2.5rem)]"
-                  fill="none"
-                >
-                  <circle
-                    cx="100"
-                    cy="100"
-                    r="94"
-                    stroke="rgba(169,210,236,0.4)"
-                    strokeWidth="1"
-                    strokeDasharray="2.5 9"
-                  />
-                </svg>
-                <div className="absolute inset-0 blur-2xl bg-ocean/40 rounded-full scale-150" />
-                <img
-                  src="/logo-freedive-dahab.png"
-                  alt=""
-                  className="relative w-32 sm:w-44 md:w-52 drop-shadow-[0_10px_40px_rgba(8,31,53,0.9)]"
-                  loading="eager"
-                />
-              </div>
-            </div>
-
-            {/* BOTTOM ZONE: Line 2 BELOW THE DIVER (One Sentence) + CTAs + Microcopy */}
-            <div className="flex flex-col items-center pb-2 sm:pb-3 w-full">
-              {/* Line 2: Milestone sentence positioned below the diver */}
               <div
-                className="font-tidal text-base sm:text-lg md:text-xl lg:text-[1.35rem] leading-snug uppercase tracking-[0.05em] font-normal text-[#4E8CB8] drop-shadow-[0_0_32px_rgba(6,182,212,0.65)] text-balance max-w-2xl mb-4 sm:mb-5"
-                style={{
-                  fontFamily: isRtl ? "'Beiruti', sans-serif" : "'Tidal Astral Grotesk', 'Bebas Neue', sans-serif",
-                }}
-              >
-                <LetterReveal
-                  as="span"
-                  text={t('hero.line2')}
-                  className="inline-block"
-                  delay={0.7}
-                  stagger={0.025}
-                  duration={0.8}
-                  wholeLine={isRtl}
-                />
-              </div>
-
-              {/* Social links */}
-              <div
-                className="animate-in fade-in duration-1000 flex flex-row items-center justify-center gap-3 sm:gap-5 mb-4 sm:mb-5"
-                style={{ animationDelay: '650ms' }}
-              >
-                <a
-                  href={siteConfig.social.instagram}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="Instagram — @freedive_dahab"
-                  title="Instagram"
-                  className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/50 bg-[#081F35]/50 text-white backdrop-blur-sm transition-colors hover:border-white hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-                >
-                  <Instagram className="h-5 w-5" aria-hidden="true" />
-                </a>
-                <a
-                  href={siteConfig.social.facebook}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="Facebook — Freedive Dahab"
-                  title="Facebook"
-                  className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/50 bg-[#081F35]/50 text-white backdrop-blur-sm transition-colors hover:border-white hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-                >
-                  <Facebook className="h-5 w-5" aria-hidden="true" />
-                </a>
-                <a
-                  href={siteConfig.social.tripadvisor}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="TripAdvisor — Freedive Dahab reviews"
-                  title="TripAdvisor reviews"
-                  className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/50 bg-[#081F35]/50 text-white backdrop-blur-sm transition-colors hover:border-white hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-                >
-                  <PlatformMark platform="tripadvisor" />
-                </a>
-              </div>
-
-              {/* Trust Microcopy */}
-              <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] sm:text-xs font-alata font-normal text-slate-300/80 tracking-wider">
-                <span>4,800+ certified freedivers</span>
-                <span className="text-ocean-pale/50">·</span>
-                <span>Small groups</span>
-                <span className="text-ocean-pale/50">·</span>
-                <span>Beginners welcome</span>
-                <span className="hidden sm:inline text-ocean-pale/50">·</span>
-                <span className="hidden sm:inline text-ocean-pale/90 font-medium">SSI Diamond ITC #720079</span>
-              </div>
-
-              {/* Convex-style scroll cue */}
-              <div
-                className="mt-6 sm:mt-8 flex flex-col items-center gap-2"
-                style={{ opacity: Math.max(1 - scrollProgress * 5, 0) }}
-              >
-                <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.38em] text-ocean-pale/80 font-alata">
-                  Scroll to explore
-                </span>
-                <span className="relative block w-px h-10 bg-ocean-pale/20 overflow-hidden">
-                  <span className="scroll-cue-line absolute inset-x-0 top-0 h-full bg-ocean-pale/90" />
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* -------------------------------------------------------- */}
-          {/* PHASE 2: POETIC IMMERSION (the descent realm)            */}
-          {/* -------------------------------------------------------- */}
-          <div
-            ref={phase2Ref}
-            className="absolute inset-0 flex items-center justify-center text-center opacity-0 pointer-events-none px-6"
-          >
-            <div className="space-y-6 max-w-3xl mx-auto py-6">
-              <span className="text-[11px] font-alata font-normal tracking-[0.24em] uppercase text-cyan-400/90 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
-                THE REALM BENEATH
-              </span>
-
-              {/* Contra signature: serif italic emphasis inside bold display line */}
-              <h2 className="text-4xl sm:text-6xl md:text-7xl font-bebas text-white tracking-[0.06em] leading-tight drop-shadow-[0_4px_24px_rgba(8,31,53,0.9)]">
-                “THE <span className="font-serif italic normal-case text-ocean-pale drop-shadow-[0_0_24px_rgba(169,210,236,0.45)]">Deeper</span> YOU GO,
-                <br />
-                THE <span className="font-serif italic normal-case text-ocean-pale drop-shadow-[0_0_24px_rgba(169,210,236,0.45)]">Quieter</span> IT BECOMES.”
-              </h2>
-
-              <p className="text-sm sm:text-base font-alata font-normal text-slate-300 tracking-wide drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
-                That's where the journey begins.
-              </p>
-
-              <div className="pt-4">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-xs font-alata text-slate-300 shadow-xl">
-                  <span>Current Depth:</span>
-                  <span className="font-bebas text-cyan-300 text-lg tracking-wider">{formattedDepth} M</span>
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-t from-[#061A2B]/90 via-transparent to-[#061A2B]/10"
+              />
+              <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5 sm:p-7">
+                <div>
+                  <p className="text-xs font-alata text-[#A9D2EC]">
+                    Dahab, South Sinai, Egypt
+                  </p>
+                  <h2 className="mt-1 font-bebas text-3xl tracking-wide text-white sm:text-4xl">
+                    {activeSlide.title}
+                  </h2>
                 </div>
+                <span className="shrink-0 rounded-full border border-white/35 bg-[#081F35]/50 px-3 py-1.5 font-alata text-xs text-white backdrop-blur">
+                  {String(activeIndex + 1).padStart(2, '0')} / {String(HERO_SLIDES.length).padStart(2, '0')}
+                </span>
+              </figcaption>
+            </figure>
+
+            <div className="absolute inset-x-[4%] bottom-0 z-20 flex items-center justify-between sm:inset-x-[12%]">
+              <div className="flex items-center gap-1" aria-label="Choose a featured photo">
+                {HERO_SLIDES.map((slide, index) => (
+                  <button
+                    key={slide.src}
+                    type="button"
+                    onClick={() => setActiveIndex(index)}
+                    aria-label={`Show photo: ${slide.title}`}
+                    aria-current={index === activeIndex ? 'true' : undefined}
+                    className="flex min-h-11 min-w-9 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`h-1.5 rounded-full bg-white transition-[width,opacity] duration-300 motion-reduce:transition-none ${
+                        index === activeIndex ? 'w-6 opacity-100' : 'w-2 opacity-45'
+                      }`}
+                    />
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => changeSlide(-1)}
+                  aria-label="Show previous photo"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/45 bg-[#081F35]/70 text-white backdrop-blur transition-colors hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => changeSlide(1)}
+                  aria-label="Show next photo"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/45 bg-[#081F35]/70 text-white backdrop-blur transition-colors hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  <ChevronRight className="h-5 w-5" aria-hidden="true" />
+                </button>
               </div>
             </div>
           </div>
 
-        </div>
-
-        {/* ======================================================== */}
-        {/* 4. BOTTOM BAR: SCROLL INVITATION & DEPTH STATUS          */}
-        {/* ======================================================== */}
-        <footer className="relative z-20 flex items-center justify-end px-6 pb-6 text-xs font-alata text-slate-400 sm:px-12 sm:pb-8">
-          <div className="hidden sm:block text-[11px] font-alata text-slate-400">
-            <span>{Math.round(scrollProgress * 100)}% Immersion</span>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-7 gap-y-4 border-t border-white/15 pt-5 sm:mt-10 sm:justify-start">
+            <span className="font-alata text-xs text-slate-300">SSI-certified training since 2003</span>
+            <div className="flex items-center gap-5">
+              <img
+                src="/badges/ssi-freediving-center.png"
+                alt="SSI Freediving Center"
+                className="h-12 w-12 object-contain sm:h-14 sm:w-14"
+              />
+              <img
+                src="/badges/ssi-instructor-training-center-transparent.png"
+                alt="SSI Instructor Training Center"
+                className="h-12 w-12 object-contain sm:h-14 sm:w-14"
+              />
+            </div>
           </div>
-        </footer>
-
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
 
-// Named alias and default export for flexibility
 export const HeroSection = HeroSurface;
 export default HeroSurface;

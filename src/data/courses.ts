@@ -36,7 +36,7 @@ export const ssiCourses: Course[] = [
     id: "ssi-level-1",
     slug: "ssi-freediver-level-1",
     title: "SSI Freediver",
-    subtitle: "Your initiation into depth and diaphragmatic calm",
+    subtitle: "A calm, structured first certification in open-water freediving",
     level: "Beginner",
     tier: 1,
     certification: "SSI Freediver International License",
@@ -44,13 +44,13 @@ export const ssiCourses: Course[] = [
     priceEur: 310,
     maxDepthMeters: 20,
     prerequisites: "Comfortable swimming 200m non-stop, minimum age 12, standard medical clearance.",
-    overview: "Step into the silent world directly from our beachfront on Lighthouse Bay — no boat needed. As a certified SSI Freediving School, we teach you the science and art of breath-holding: the mammalian dive reflex that slows your heart rate, shifts blood toward your vital organs, and turns deep relaxation into your superpower. Freediving is a form of meditation — easy to learn, no fitness abilities required. You will feel like floating in space.",
+    overview: "Build a safe foundation in breath-hold, relaxation, duck diving, and buddy skills before progressing from confined water to the sea. Training takes place at Lighthouse Bay in Dahab, where shore access lets you practise on a guided line without a boat. Your instructor adapts each session to your comfort and progress.",
     highlights: [
-      "Freedive comfortably to 10–20 meters",
-      "2–3 minute static breath-hold on your first tries",
-      "Shore entry — dive line 100m from the school",
-      "Warm, clear, calm water all year long",
-      "Max student-to-instructor ratio of 3:1"
+      "Learn breath-hold, relaxation, and duck-dive fundamentals",
+      "Practise static and dynamic apnea in a controlled setting",
+      "Develop buddy and open-water safety skills with an instructor",
+      "Progress toward the 10–20 m course performance range at your own pace",
+      "SSI digital learning materials, certification, and equipment included"
     ],
     included: [
       "SSI Standard Digital Manual (all languages)",
@@ -66,26 +66,26 @@ export const ssiCourses: Course[] = [
     disciplines: [
       {
         name: "Theory & Breathing",
-        tagline: "Trigger your inner dolphin",
-        description: "Learn how the mammalian dive reflex works and how to train it: your heart rate slows, relaxation deepens, and blood shifts away from arms and legs to feed vital organs. Holding your breath becomes 100 times easier.",
+        tagline: "Understand your response",
+        description: "Explore relaxation, breath-up and the mammalian dive response with an instructor. Practise calm preparation, recovery breathing and recognising when to pause.",
         sessions: "1 breathing & relaxation session"
       },
       {
         name: "Static Apnea",
-        tagline: "Stillness is the first skill",
-        description: "Before moving, learn to hold your breath without movement — it's easier. With proper technique you could already hold 2–3 minutes on your very first try, sitting calm at the surface.",
+        tagline: "Build comfort at the surface",
+        description: "Practise relaxed breath-holds in a controlled setting with recovery breathing and attentive buddy supervision. Your comfort sets the pace; no duration is promised.",
         sessions: "1 static session"
       },
       {
         name: "Dynamic Apnea",
-        tagline: "Distance before depth",
-        description: "In the pool or the clear shallow bay: swim 30–40m horizontally and you can freedive 15–20m vertically — the exact same distance. The best discipline to learn finning, body position, safety skills and your long fins.",
+        tagline: "Move with less effort",
+        description: "Develop streamlined body position, fin technique and controlled turns in confined water. Coaching prioritises efficient movement, recovery and buddy procedures over distance.",
         sessions: "2 dynamic sessions"
       },
       {
         name: "Depth Training",
-        tagline: "The vertical line",
-        description: "This is where it all comes together. Your instructor sets a vertical dive-line with a surface buoy in the bay as your visual reference and safety device — a little deeper on every try, technique corrected for maximum efficiency.",
+        tagline: "Follow a guided line",
+        description: "Practise equalisation, line orientation and buddy checks with an instructor in open water. Depth is adapted to your readiness and conditions; progression is never automatic.",
         sessions: "3 open water sessions"
       }
     ],
@@ -115,7 +115,7 @@ export const ssiCourses: Course[] = [
     id: "ssi-level-2",
     slug: "ssi-advanced-freediver-level-2",
     title: "SSI Advanced Freediver",
-    subtitle: "Mastering freefall, thoracic flexibility, and deep calm",
+    subtitle: "Refine freefall, Frenzel equalisation, and comfort at depth",
     level: "Intermediate",
     tier: 2,
     certification: "SSI Advanced Freediver",
@@ -123,13 +123,13 @@ export const ssiCourses: Course[] = [
     priceEur: 350,
     maxDepthMeters: 30,
     prerequisites: "SSI Level 1 or equivalent certification (AIDA 2 / PADI Freediver), comfortable at 16-20m.",
-    overview: "Around 15–20 meters your body loses its buoyancy and gravity takes over — we call it the FREEFALL, the main skill of this course. Freedivers describe it as flying underwater or floating in space. You will also master Frenzel equalisation — instead of pushing air up with your belly, your tongue becomes a piston sending air into your ears — one of the most efficient and powerful techniques in the sport. And you will learn to stretch your ribcage, lungs and diaphragm to hold your breath longer and feel far more comfortable at depth.",
+    overview: "Build on Level 1 skills with coached freefall, Frenzel equalisation, and flexibility work. You will practise static, confined-water, and open-water sessions, learning to descend with less effort while keeping technique, buddy practice, and personal readiness central.",
     highlights: [
-      "Comfortable freedives to 25–30 meters",
-      "3–4 minute static breath-hold",
-      "Master the FREEFALL — flying underwater",
-      "Frenzel equalisation, finally done right",
-      "Ribcage, lung & diaphragm stretching workshops"
+      "Practise a relaxed freefall transition around neutral buoyancy",
+      "Learn Frenzel equalisation through dry and in-water drills",
+      "Add ribcage, lung, and diaphragm flexibility exercises",
+      "Progress toward the 25–30 m course performance range",
+      "SSI digital learning materials, certification, and equipment included"
     ],
     included: [
       "SSI Standard Digital Manual (all languages)",
@@ -145,26 +145,26 @@ export const ssiCourses: Course[] = [
     disciplines: [
       {
         name: "Freefall",
-        tagline: "Gravity becomes your engine",
-        description: "Learn to add just the right weight and enter the freefall shallow, where you feel comfortable — then carry it into your deeper dives. It saves enormous oxygen and makes the descent incredibly easier.",
+        tagline: "Refine buoyancy transitions",
+        description: "Explore weighting, body position and the transition into freefall during coached line sessions. Comfort and equalisation—not a target depth—guide each progression.",
         sessions: "All open water sessions"
       },
       {
         name: "Frenzel Equalisation",
-        tagline: "Your tongue is the piston",
-        description: "If you ever experienced ear pain after freediving or have to lift your head up every time you equalise, you must learn Frenzel. Simple to learn, oxygen-saving, and the gateway to every deeper depth.",
+        tagline: "Practise controlled equalisation",
+        description: "Learn Frenzel mechanics through dry drills and shallow in-water coaching. Tell your instructor if equalisation feels difficult, and stop rather than forcing it.",
         sessions: "Daily coached sessions"
       },
       {
         name: "Static & CO2 Tables",
-        tagline: "Make friends with contractions",
-        description: "CO2 builds up, acidifies your blood, and speaks to you first as warmth in the lungs, then as diaphragm spasms — contractions. It is easy to train, physically and mentally, to cope with those signals calmly.",
+        tagline: "Notice and respond to cues",
+        description: "Use supervised breath-hold practice to explore relaxation, recovery and individual body cues. The instructor adapts each session; there are no unsupervised or forced max attempts.",
         sessions: "1 static + table session"
       },
       {
         name: "Dynamic & Weighting",
-        tagline: "Neutral buoyancy mastery",
-        description: "Weighting, finning, streamlining and speed in confined water. When you find your neutral buoyancy, your body stays in mid-water without floating up or sinking down — vital for every deep dive.",
+        tagline: "Streamline your movement",
+        description: "Practise finning, alignment and controlled turns in confined water while learning how equipment and buoyancy affect movement.",
         sessions: "1 confined water session"
       }
     ],
@@ -194,7 +194,7 @@ export const ssiCourses: Course[] = [
     id: "ssi-level-3",
     slug: "ssi-performance-freediver-level-3",
     title: "SSI Performance Freediver",
-    subtitle: "The threshold of elite depth: Mouthfill and 40 meters",
+    subtitle: "Develop mouthfill, FRC practice, and performance-level planning",
     level: "Advanced",
     tier: 2,
     certification: "SSI Performance Freediver (Master Diver prerequisite)",
@@ -202,13 +202,13 @@ export const ssiCourses: Course[] = [
     priceEur: 475,
     maxDepthMeters: 40,
     prerequisites: "SSI Advanced Freediver or equivalent, 30m logged depth, React Right (or valid First Aid/CPR).",
-    overview: "At around 30–40m your lungs reach residual volume — too compressed to push air up, and equalisation runs out. Sooner or later, almost everybody needs the legendary Mouthfill technique: the most talked-about skill in freediving, and far simpler than its reputation when broken into steps and trained both dry and in the water. Alongside it you will learn FRC exhale-diving, static coaching, dieting and mental preparation — this course gives you every tool needed to reach much greater depth.",
+    overview: "Develop mouthfill equalisation with a step-by-step progression, alongside instructor-supervised FRC practice, static coaching, and session planning. The focus is on adapting safely to depth and improving your technique; progress depends on readiness and is never a guaranteed depth outcome.",
     highlights: [
-      "Comfortable freedives to 35–40 meters",
-      "4–5 minute static breath-hold",
-      "Learn the legendary Mouthfill technique, step by step",
-      "FRC exhale-diving — simulate a 30m dive in 10m",
-      "Buddy & static coaching skills under Performance Instructors"
+      "Practise mouthfill equalisation with dry drills and supervised dives",
+      "Use shallow FRC sessions to prepare for deeper work under instructor guidance",
+      "Build buddy coaching and static-apnea session skills",
+      "Progress toward the 35–40 m course performance range when ready",
+      "SSI digital learning materials, certification, and equipment included"
     ],
     included: [
       "SSI Standard Digital Manual (all languages)",
@@ -225,26 +225,26 @@ export const ssiCourses: Course[] = [
     disciplines: [
       {
         name: "Mouthfill Equalisation",
-        tagline: "Air for the deep",
-        description: "Charge your mouth at 15–20m, then use your cheeks and tongue as a piston all the way down past residual volume. Practiced dry and in water until it becomes second nature.",
+        tagline: "Build the skill in stages",
+        description: "Study mouthfill mechanics with dry drills, then apply them only in instructor-led sessions appropriate to your qualification and readiness.",
         sessions: "Daily masterclasses"
       },
       {
         name: "FRC Diving",
-        tagline: "Simulate depth without going deep",
-        description: "A passive exhale on the surface puts your lungs at neutral pressure — on FRC dives you simulate a 30m dive in 10 meters. The easiest, most convenient and safest way to train mouthfill, bloodshift and bradycardia.",
+        tagline: "A specialised coached practice",
+        description: "For qualified students, explore course-specific FRC concepts only in a conservative, closely supervised setting. This practice has distinct risks and is never for solo training.",
         sessions: "First 2 days"
       },
       {
         name: "Static Coaching",
-        tagline: "50% of freediving is for your buddy",
-        description: "Learn to coach other freedivers in static: motivate them to stay down longer and make sure they come up in time — and understand your own limits better while staying safe.",
+        tagline: "Support your training buddy",
+        description: "Practise clear briefings, attentive observation and communication during static sessions. Safety support is about following agreed procedures, not encouraging longer holds.",
         sessions: "1 coaching session"
       },
       {
         name: "Session Planning",
-        tagline: "Think like a performance diver",
-        description: "Plan and execute a real dynamic max-attempt session with your buddies: land preparation, warm-up timing, who gets cold first, who takes safety — executed together under our Performance Instructors.",
+        tagline: "Plan with care",
+        description: "Work through preparation, buddy roles, environmental conditions and stop criteria with your instructor to make a considered training plan.",
         sessions: "1 full session"
       }
     ],

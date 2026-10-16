@@ -51,7 +51,7 @@ export function AccommodationSection({ onOpenBooking, currency, onNavigate }: Ac
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           
           {/* Left Column: Room Selector Navigation */}
-          <div className="lg:col-span-5 space-y-3 flex flex-col justify-between">
+          <div id="rooms" className="lg:col-span-5 scroll-mt-20 space-y-3 flex flex-col justify-between">
             <div className="space-y-3">
               {roomTypes.map((room) => {
                 const isSelected = room.id === activeRoomId;

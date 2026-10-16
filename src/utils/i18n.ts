@@ -140,6 +140,8 @@ export interface TranslationDictionary {
     safety100Desc: string;
     exploreCourses: string;
     bookInquireNow: string;
+    readReviews: string;
+    scrollExplore: string;
     phase2Title: string;
     phase2Sub: string;
     phase2Desc: string;
@@ -507,6 +509,8 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       safety100Desc: 'World-certified SSI instructors',
       exploreCourses: 'SSI Freediving Courses',
       bookInquireNow: 'Our calendar',
+      readReviews: 'Read diver reviews',
+      scrollExplore: 'Scroll to explore',
       phase2Title: 'YOUR SANCTUARY IN DAHAB',
       phase2Sub: 'The Blue Hole & Lighthouse Bay',
       phase2Desc: 'From your first 5-meter descent to 100m+ depth exploration. Experience world-class buoy lines, counter-ballast safety, and personal coaching.',
@@ -871,6 +875,8 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       safety100Desc: 'مدربون دوليون معتمدون بأعلى المعايير',
       exploreCourses: 'دورات الغوص الحر SSI',
       bookInquireNow: 'تقويمنا',
+      readReviews: 'اقرأ تجارب الغواصين',
+      scrollExplore: 'مرر لاستكشاف الموقع',
       phase2Title: 'ملاذك الخاص في دهب',
       phase2Sub: 'الثقب الأزرق وخليج اللايتهاوس',
       phase2Desc: 'من نزولك الأول لعمق 5 أمتار وحتى استكشاف أعماق تفوق 100 متر. تمتع بخطوط عوامات تدريب عالمية، وأنظمة موازنة مضادة، وتدريب شخصي دقيق.',
@@ -1235,6 +1241,8 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       safety100Desc: 'Instructores SSI certificados internacionalmente',
       exploreCourses: 'Cursos de apnea SSI',
       bookInquireNow: 'Nuestro calendario',
+      readReviews: 'Leer opiniones de buceadores',
+      scrollExplore: 'Desliza para explorar',
       phase2Title: 'TU SANTUARIO EN DAHAB',
       phase2Sub: 'El Blue Hole y la Bahía de Lighthouse',
       phase2Desc: 'Desde tu primer descenso de 5 metros hasta la exploración de profundidades superiores a 100 metros. Disfruta de líneas de boya de clase mundial, seguridad con contrapeso y entrenamiento personalizado.',
@@ -1599,6 +1607,8 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       safety100Desc: 'International zertifizierte SSI-Tauchlehrer',
       exploreCourses: 'SSI Freediving-Kurse',
       bookInquireNow: 'Unser Kalender',
+      readReviews: 'Erfahrungsberichte lesen',
+      scrollExplore: 'Scrollen zum Entdecken',
       phase2Title: 'DEIN ZUFLUCHTSORT IN DAHAB',
       phase2Sub: 'Das Blue Hole & die Lighthouse Bay',
       phase2Desc: 'Von deinem ersten 5-Meter-Abstieg bis zu Tiefen über 100 Meter. Erlebe erstklassige Bojenleinen, Gegenballast-Sicherheit und persönliches Coaching.',

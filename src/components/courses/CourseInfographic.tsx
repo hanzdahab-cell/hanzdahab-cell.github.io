@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Timer, ArrowDownToLine, CalendarDays } from 'lucide-react';
+import { ArrowDownToLine, CalendarDays, Timer } from 'lucide-react';
 import { Course } from '../../types';
+import { CourseProgressSteps } from './CourseProgressSteps';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -12,322 +13,183 @@ interface CourseInfographicProps {
   course: Course;
 }
 
-/** Parse the max number out of range strings like "2–3 min" or "10–20 m". */
-function parseMax(range: string): number {
-  const pair = range.match(/(\d+)\s*[–-]\s*(\d+)/);
-  if (pair) return parseInt(pair[2], 10);
-  const single = range.match(/(\d+)/);
-  return single ? parseInt(single[1], 10) : 0;
-}
+const JOURNEY_TITLES: Record<string, string> = {
+  'ssi-level-1': 'Begin with calm, build confidence',
+  'ssi-level-2': 'From buoyancy to freefall',
+  'ssi-level-3': 'Prepare for deeper performance',
+};
 
-/** Hand-drawn squiggly wave, drawn on when scrolled into view (template motif). */
-function Squiggle({ className = '', color = '#22d3ee' }: { className?: string; color?: string }) {
-  return (
-    <svg viewBox="0 0 120 24" fill="none" className={className} aria-hidden="true">
-      <path
-        className="ci-wave-path"
-        d="M2 12 Q 12 2, 22 12 T 42 12 T 62 12 T 82 12 T 102 12 T 122 12"
-        stroke={color}
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        pathLength={1}
-        style={{ strokeDasharray: 1, strokeDashoffset: 1 }}
-      />
-    </svg>
-  );
-}
-
-/** Tiny hand-drawn fish that gently floats (template motif). */
-function Fish({ className = '', color = '#67e8f9' }: { className?: string; color?: string }) {
-  return (
-    <svg viewBox="0 0 32 16" fill="none" className={`ci-fish ${className}`} aria-hidden="true">
-      <path d="M2 8c4-5.5 12-5.5 17 0-5 5.5-13 5.5-17 0Z" fill={color} opacity="0.85" />
-      <path d="M19 8l10-5.5v11L19 8Z" fill={color} opacity="0.55" />
-      <circle cx="7.5" cy="7" r="1.3" fill="#0E3453" />
-    </svg>
-  );
-}
-
-/** Simple coral silhouette for the corners of the section (template motif). */
-function Coral({ className = '' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 80 120" fill="none" className={className} aria-hidden="true">
-      <path
-        d="M40 118V70M40 88c-10-4-16-14-16-26M40 96c10-4 17-14 17-28M40 70c-6-8-6-20 0-30M40 62c6-9 7-19 2-28"
-        stroke="currentColor"
-        strokeWidth="5"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
+function getDisciplineIcon(name: string): string {
+  const normalized = name.toLowerCase();
+  if (/equalis|mouthfill|breath|theory/.test(normalized)) {
+    return '/images/course-infographic/mask-snorkel.png';
+  }
+  if (/static|co2/.test(normalized)) {
+    return '/images/course-infographic/diving-watch.png';
+  }
+  if (/dynamic|session|coach|weight/.test(normalized)) {
+    return '/images/course-infographic/swimmer.png';
+  }
+  if (/depth|freefall|frc/.test(normalized)) {
+    return '/images/course-infographic/diver.png';
+  }
+  return '/images/course-infographic/wet-suit.png';
 }
 
 export function CourseInfographic({ course }: CourseInfographicProps) {
   const scopeRef = useRef<HTMLDivElement>(null);
   const rulerFillRef = useRef<HTMLDivElement>(null);
-
-  const perf = course.futurePerformances;
+  const performances = course.futurePerformances;
   const disciplines = course.disciplines ?? [];
-
-  const staticMax = perf ? parseMax(perf.staticApnea) : 0;
-  const staticUnit = perf?.staticApnea.match(/min/i) ? 'min' : '';
-  const depthMax = perf ? parseMax(perf.depth) : course.maxDepthMeters;
-  const durationTarget = course.durationDays;
-
   const rulerPct = Math.min(100, (course.maxDepthMeters / 45) * 100);
-  const showFreefall = course.maxDepthMeters >= 25;
+  const journeyTitle = JOURNEY_TITLES[course.id] ?? 'Your course, step by step';
 
   useEffect(() => {
     const scope = scopeRef.current;
     if (!scope) return;
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      scope.querySelectorAll<HTMLElement>('.ci-count').forEach((element) => {
-        const target = Number(element.dataset.target || 0);
-        element.textContent = Number.isInteger(target) ? String(target) : target.toFixed(1);
-      });
-      if (rulerFillRef.current) rulerFillRef.current.style.width = `${rulerPct}%`;
-      scope.querySelectorAll<SVGPathElement>('.ci-wave-path').forEach((path) => {
-        path.style.strokeDashoffset = '0';
-      });
+      if (rulerFillRef.current) {
+        rulerFillRef.current.style.width = `${rulerPct}%`;
+      }
       return;
     }
 
-    const ctx = gsap.context(() => {
-      // Count-up performance numbers
-      scope.querySelectorAll<HTMLElement>('.ci-count').forEach((el) => {
-        const target = parseFloat(el.dataset.target || '0');
-        const decimals = Number.isInteger(target) ? 0 : 1;
-        const obj = { v: 0 };
-        gsap.to(obj, {
-          v: target,
-          duration: 1.8,
-          ease: 'power2.out',
-          snap: { v: decimals ? 0.1 : 1 },
-          scrollTrigger: { trigger: el, start: 'top 88%', once: true },
-          onUpdate: () => {
-            el.textContent = obj.v.toFixed(decimals);
-          },
-        });
-      });
-
-      // Draw-on squiggly waves
-      scope.querySelectorAll<SVGPathElement>('.ci-wave-path').forEach((path) => {
-        gsap.fromTo(
-          path,
-          { strokeDashoffset: 1 },
-          {
-            strokeDashoffset: 0,
-            duration: 1.4,
-            ease: 'power2.inOut',
-            scrollTrigger: { trigger: path, start: 'top 92%', once: true },
-          }
-        );
-      });
-
-      // Stat cards entrance
+    const context = gsap.context(() => {
       gsap.from(scope.querySelectorAll('.ci-stat'), {
-        y: 36,
+        y: 24,
         opacity: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-        stagger: 0.12,
-        scrollTrigger: { trigger: scope.querySelector('.ci-stats-row'), start: 'top 82%', once: true },
+        duration: 0.65,
+        ease: 'power2.out',
+        stagger: 0.1,
+        scrollTrigger: { trigger: scope.querySelector('.ci-stats-row'), start: 'top 84%', once: true },
       });
-
-      // Depth ruler fill
+      gsap.from(scope.querySelectorAll('.ci-step-card'), {
+        y: 26,
+        opacity: 0,
+        duration: 0.7,
+        ease: 'power2.out',
+        stagger: 0.12,
+        scrollTrigger: { trigger: scope.querySelector('.ci-steps'), start: 'top 82%', once: true },
+      });
       if (rulerFillRef.current) {
         gsap.fromTo(
           rulerFillRef.current,
           { width: '0%' },
           {
             width: `${rulerPct}%`,
-            duration: 1.6,
-            ease: 'power3.out',
+            duration: 1.4,
+            ease: 'power2.out',
             scrollTrigger: { trigger: rulerFillRef.current, start: 'top 88%', once: true },
           }
         );
       }
-
-      // Discipline capsules entrance (staggered like the template steps)
-      const steps = scope.querySelector('.ci-steps');
-      if (steps) {
-        gsap.from(steps.querySelectorAll('.ci-step'), {
-          y: 52,
-          opacity: 0,
-          scale: 0.96,
-          duration: 0.9,
-          ease: 'power3.out',
-          stagger: 0.15,
-          scrollTrigger: { trigger: steps, start: 'top 78%', once: true },
-        });
-      }
-
-      // Floating fish loop
-      gsap.to(scope.querySelectorAll('.ci-fish'), {
-        y: -9,
-        duration: 2.4,
-        yoyo: true,
-        repeat: -1,
-        ease: 'sine.inOut',
-        stagger: 0.6,
-      });
     }, scope);
 
-    return () => ctx.revert();
+    return () => context.revert();
   }, [rulerPct]);
 
   const stats = [
     {
       icon: Timer,
-      target: staticMax,
-      unit: staticUnit,
-      label: 'Static breath-hold',
-      hint: 'Your future surface performance',
+      value: performances?.staticApnea ?? 'With coaching',
+      label: 'Static breath-hold target',
     },
     {
       icon: ArrowDownToLine,
-      target: depthMax,
-      unit: 'm',
-      label: 'Target depth',
-      hint: 'Along the dive line, no boat',
+      value: performances?.depth ?? `Up to ${course.maxDepthMeters} m`,
+      label: 'Depth performance range',
     },
     {
       icon: CalendarDays,
-      target: durationTarget,
-      unit: 'days',
+      value: `${course.durationDays} ${course.durationDays === 1 ? 'day' : 'days'}`,
       label: 'Course duration',
-      hint: '9am to 4pm daily',
     },
   ];
 
   return (
     <div ref={scopeRef} className="relative overflow-hidden">
-      {/* ============================================================ */}
-      {/* YOUR JOURNEY TO DEPTH — adapted from the hand-drawn diving    */}
-      {/* infographic template: descending step capsules, squiggly      */}
-      {/* waves, fish & coral, tailored to the Freedive Dahab theme.    */}
-      {/* ============================================================ */}
-
-      {/* Header */}
-      <div className="relative text-center space-y-3 mb-12">
-        <Squiggle className="w-24 mx-auto text-cyan-400/80" />
-        <div className="text-[10px] font-mono uppercase tracking-[0.3em] text-cyan-400">
-          Your future performances
-        </div>
-        <h2 className="font-bebas text-3xl sm:text-4xl md:text-5xl text-white tracking-[0.05em]">
-          From first breath to <span className="text-cyan-300">new depth</span>
+      <header className="relative mb-10 space-y-3 text-center sm:mb-12">
+        <div className="mx-auto h-1 w-12 rounded-full bg-cyan-300" aria-hidden="true" />
+        <p className="font-alata text-[10px] uppercase tracking-[0.28em] text-cyan-300">
+          Course progression
+        </p>
+        <h2 className="font-bebas text-3xl tracking-[0.04em] text-white sm:text-4xl md:text-5xl">
+          {journeyTitle}
         </h2>
-      </div>
+        <p className="mx-auto max-w-2xl text-sm leading-relaxed text-slate-300">
+          A clear path through the skills in this SSI course, coached around your readiness.
+        </p>
+      </header>
 
-      {/* Stats row with count-ups */}
-      <div className="ci-stats-row grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-10">
+      <div className="ci-stats-row mb-10 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="ci-stat glass-panel rounded-2xl border border-white/10 hover:border-cyan-400/40 p-6 text-center space-y-2 transition-all duration-500"
+            className="ci-stat rounded-2xl border border-white/10 bg-white/[0.045] p-4 text-center transition-colors hover:border-cyan-300/40 sm:p-5"
           >
-            <stat.icon className="w-5 h-5 text-cyan-400 mx-auto" />
-            <div className="flex items-baseline justify-center gap-1.5">
-              <span
-                className="ci-count font-bebas text-5xl sm:text-6xl text-white leading-none"
-                data-target={stat.target}
-              >
-                0
-              </span>
-              <span className="font-mono text-sm text-cyan-300 font-bold">{stat.unit}</span>
-            </div>
-            <div className="text-xs font-alata uppercase tracking-[0.2em] text-slate-200">
+            <stat.icon className="mx-auto h-5 w-5 text-cyan-300" aria-hidden="true" />
+            <p className="mt-3 font-bebas text-3xl leading-none text-white sm:text-4xl">
+              {stat.value}
+            </p>
+            <p className="mt-2 text-[10px] font-medium uppercase tracking-[0.16em] text-slate-300">
               {stat.label}
-            </div>
-            <div className="text-[11px] text-slate-500 font-light">{stat.hint}</div>
+            </p>
           </div>
         ))}
       </div>
 
-      {/* Depth ruler */}
-      <div className="glass-panel rounded-2xl border border-white/10 p-6 mb-14 space-y-3">
-        <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400">
-          <span>Surface</span>
-          <span className="text-cyan-300">{course.maxDepthMeters}m certification depth</span>
+      <div className="mb-12 space-y-3 rounded-2xl border border-white/10 bg-white/[0.035] p-4 sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-2 text-[10px] font-alata uppercase tracking-[0.16em] text-slate-300">
+          <span>Course depth range</span>
+          <span className="text-cyan-200">{performances?.depth ?? `${course.maxDepthMeters} m`}</span>
         </div>
-        <div className="relative h-3 rounded-full bg-white/[0.06] overflow-visible">
+        <div
+          className="relative h-2.5 rounded-full bg-white/10"
+          role="img"
+          aria-label={`Depth scale from 0 to 45 meters, course range ${performances?.depth ?? `${course.maxDepthMeters} meters`}`}
+        >
           <div
             ref={rulerFillRef}
-            className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-sky-400 via-cyan-400 to-cyan-300 shadow-[0_0_18px_rgba(34,211,238,0.55)]"
+            className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-cyan-400 to-teal-300 shadow-[0_0_16px_rgba(45,212,191,0.35)]"
             style={{ width: '0%' }}
           />
-          {showFreefall && (
-            <div
-              className="absolute -top-1.5 h-6 w-px bg-amber-300/80"
-              style={{ left: `${(15 / 45) * 100}%` }}
-              title="Freefall zone"
-            >
-              <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[9px] font-mono uppercase tracking-widest text-amber-300 whitespace-nowrap">
-                freefall ~15m
-              </span>
-            </div>
-          )}
         </div>
-        <div className="flex justify-between text-[9px] font-mono text-slate-500">
-          {[0, 10, 20, 30, 40].map((m) => (
-            <span key={m}>{m}m</span>
+        <div className="flex justify-between text-[9px] font-alata text-slate-400" aria-hidden="true">
+          {[0, 10, 20, 30, 40].map((depth) => (
+            <span key={depth}>{depth} m</span>
           ))}
+          <span>45 m</span>
         </div>
       </div>
 
-      {/* Discipline capsules — the template's descending steps */}
-      <div className="ci-steps relative mb-16">
-        <Fish className="absolute w-8 -top-6 right-[8%] opacity-70" />
-        <Fish className="absolute w-5 top-[38%] left-[4%] opacity-50" color="#38bdf8" />
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-4">
-          {disciplines.map((d, idx) => (
-            <div
-              key={d.name}
-              className="ci-step relative"
-              style={{ ['--stair' as string]: idx } as React.CSSProperties}
-            >
-              <div
-                className="h-full rounded-[2.2rem] border border-white/12 bg-gradient-to-b from-white/[0.05] to-transparent p-6 pt-7 text-center flex flex-col items-center gap-3 transition-all duration-500 hover:border-cyan-400/40 hover:-translate-y-1.5"
-                style={{ marginTop: undefined }}
-              >
-                {/* Squiggle connector above each following step */}
-                {idx > 0 && (
-                  <Squiggle
-                    className="w-16 mb-1 opacity-80 hidden lg:block"
-                    color={idx % 2 === 0 ? '#fbbf24' : '#22d3ee'}
-                  />
-                )}
-
-                {/* Step ring marker — alternating solid/outline like the template */}
-                <div
-                  className={`flex h-16 w-16 items-center justify-center rounded-full font-bebas text-xl tracking-wider ${
-                    idx % 2 === 0
-                      ? 'bg-cyan-400 text-slate-950 shadow-[0_0_28px_rgba(34,211,238,0.45)]'
-                      : 'border-2 border-cyan-300/70 text-cyan-300'
-                  }`}
-                >
-                  0{idx + 1}
-                </div>
-
-                <h3 className="font-serif text-lg font-bold text-white">{d.name}</h3>
-                <p className="text-[11px] font-serif italic text-cyan-200/90 -mt-2">{d.tagline}</p>
-                <p className="text-xs text-slate-400 font-light leading-relaxed flex-1">
-                  {d.description}
-                </p>
-                <span className="px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-[9px] font-mono uppercase tracking-wider text-cyan-300">
-                  {d.sessions}
-                </span>
-              </div>
-            </div>
-          ))}
+      <section aria-labelledby="course-skills-timeline" className="relative">
+        <div className="mb-5">
+          <h3 id="course-skills-timeline" className="font-bebas text-2xl tracking-wide text-white sm:text-3xl">
+            Skills you will practise
+          </h3>
+          <p className="mt-1 text-xs text-slate-400">
+            Each focus area adds a different tool to your training.
+          </p>
         </div>
-      </div>
-
-      {/* Coral corners */}
-      <Coral className="absolute w-14 bottom-0 left-0 text-cyan-500/10 pointer-events-none" />
-      <Coral className="absolute w-10 bottom-6 right-2 text-sky-400/10 pointer-events-none" />
+        <div className="ci-steps relative">
+          <CourseProgressSteps
+            steps={disciplines.map((discipline, index) => ({
+              number: index + 1,
+              label: `Focus 0${index + 1}`,
+              title: discipline.name,
+              tagline: discipline.tagline,
+              description: discipline.description,
+              detail: discipline.sessions,
+              icon: getDisciplineIcon(discipline.name),
+            }))}
+          />
+        </div>
+        <p className="mt-5 text-[11px] leading-relaxed text-slate-400">
+          Performance ranges are course targets, not guarantees. Depth progression and FRC practice are
+          always guided by instructor assessment, buddy procedures, and individual readiness.
+        </p>
+      </section>
     </div>
   );
 }

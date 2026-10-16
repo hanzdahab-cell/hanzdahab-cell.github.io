@@ -58,6 +58,30 @@
 }
 
 @font-face {
+  font-family: 'Chandler Mountain';
+  src: url('/fonts/ChandlerMountain-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Chandler Mountain';
+  src: url('/fonts/ChandlerMountain-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cloudsters';
+  src: url('/fonts/Cloudsters-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Alata';
   src: url('/fonts/Alata-Regular.ttf') format('truetype');
   font-weight: 400;
@@ -107,12 +131,12 @@
 
 @layer base {
   :root {
-    --font-display: 'Bebas Neue', sans-serif;
+    --font-display: 'Chandler Mountain', 'Bebas Neue', sans-serif;
     --font-body: 'Alata', sans-serif;
     --font-serif: 'Fraunces', 'Playfair Display', serif;
     --font-serif-display: 'Fraunces', 'Playfair Display', serif;
     --font-sans: 'Alata', sans-serif;
-    --font-hook: 'Tidal Astral Grotesk', sans-serif;
+    --font-hook: 'Cloudsters', 'Tidal Astral Grotesk', sans-serif;
     --font-arabic-heading: 'Beiruti', sans-serif;
     --font-arabic-body: 'Alan Sans', sans-serif;
 

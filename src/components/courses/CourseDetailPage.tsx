@@ -14,6 +14,7 @@ import {
 import { PageType, Course, SpecialtyCourse, InstructorCourse } from '../../types';
 import { ssiCourses, specialtyCourses, instructorCourses } from '../../data/courses';
 import { CourseInfographic } from './CourseInfographic';
+import { CourseProgressSteps } from './CourseProgressSteps';
 import { FadeUp } from '../ui/MotionKit';
 import { coursePhotoById, getCourseGalleryImages, ssiCourseArtworkBySlug } from '../../data/courseMedia';
 import { CoursePhotoCarousel, CourseStorySlide } from './CoursePhotoCarousel';
@@ -85,7 +86,11 @@ export function CourseDetailPage({
   const depthLabel = 'maxDepthMeters' in course ? `${course.maxDepthMeters}m max depth` : null;
 
   const collection: (Course | SpecialtyCourse | InstructorCourse)[] =
-    isCore ? ssiCourses : isSpecialty ? specialtyCourses : instructorCourses;
+    isCore
+      ? ssiCourses.filter((item) => item.id !== 'ssi-basic-freediver')
+      : isSpecialty
+        ? specialtyCourses
+        : instructorCourses;
 
   const related = collection.filter((c) => c.slug !== course.slug).slice(0, 3);
 
@@ -328,32 +333,14 @@ export function CourseDetailPage({
                   <Clock className="w-5 h-5 text-cyan-400" />
                   Day by day
                 </h2>
-                <ol className="relative ms-3 space-y-6 border-s border-cyan-200/35">
-                  {(course as Course).schedule!.map((day, i) => (
-                    <li
-                      key={i}
-                      className="relative ps-7"
-                    >
-                      <span
-                        aria-hidden="true"
-                        className="absolute -start-[0.45rem] top-1.5 flex h-4 w-4 items-center justify-center rounded-full border border-cyan-200/80 bg-[#0E3453] shadow-[0_0_14px_rgba(103,232,249,0.28)]"
-                      >
-                        <span className="h-1.5 w-1.5 rounded-full bg-cyan-200" />
-                      </span>
-                      <div className="rounded-xl border border-white/10 bg-slate-900/45 p-5 transition-colors duration-300 hover:border-cyan-300/35 sm:p-6">
-                        <div className="flex flex-wrap items-center gap-3">
-                          <span className="rounded-md border border-cyan-200/35 bg-cyan-500/10 px-2.5 py-1 text-[10px] font-mono uppercase tracking-[0.16em] text-cyan-100">
-                            {day.day}
-                          </span>
-                          <span className="text-sm font-semibold text-white">{day.title}</span>
-                        </div>
-                        <p className="mt-2.5 text-xs font-light leading-relaxed text-slate-300 sm:text-sm">
-                          {day.description}
-                        </p>
-                      </div>
-                    </li>
-                  ))}
-                </ol>
+                <CourseProgressSteps
+                  steps={(course as Course).schedule!.map((day, index) => ({
+                    number: index + 1,
+                    label: day.day,
+                    title: day.title,
+                    description: day.description,
+                  }))}
+                />
               </FadeUp>
             )}
 
@@ -407,8 +394,13 @@ export function CourseDetailPage({
                       {formatPrice(course.priceEur)}
                     </div>
                   </div>
-                  <div className="w-10 h-10 rounded-full bg-cyan-500 flex items-center justify-center text-slate-950 font-black text-[10px] tracking-tight shadow-lg shadow-cyan-500/30">
-                    SSI
+                  <div className="flex h-10 w-[4.5rem] items-center justify-center rounded-lg bg-white px-2 shadow-lg shadow-black/15">
+                    <img
+                      src="/badges/ssi-logo-black.png"
+                      alt="SSI"
+                      className="max-h-6 w-full object-contain"
+                      loading="lazy"
+                    />
                   </div>
                 </div>
 
