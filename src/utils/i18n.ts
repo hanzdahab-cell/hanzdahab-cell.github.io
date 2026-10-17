@@ -128,6 +128,19 @@ export interface TranslationDictionary {
   };
   hero: {
     locationEyebrow: string;
+    carouselLabel: string;
+    showPhotoLabel: (index: number, title: string) => string;
+    previousPhoto: string;
+    nextPhoto: string;
+    pauseCarousel: string;
+    resumeCarousel: string;
+    slideAnnouncement: (index: number, total: number, title: string) => string;
+    carouselSlides: {
+      eyebrow: string;
+      title: string;
+      description: string;
+      alt: string;
+    }[];
     line1: string;
     line2: string;
     leadTitle: string;
@@ -496,7 +509,52 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       },
     },
     hero: {
-      locationEyebrow: 'DAHAB · RED SEA · FREEDIVING SINCE 2003',
+      locationEyebrow: 'WELCOME TO FREEDIVE DAHAB & THE BLUE HOLE',
+      carouselLabel: 'Freedive Dahab and the Blue Hole photo carousel',
+      showPhotoLabel: (index, title) => `Show slide ${index}: ${title}`,
+      previousPhoto: 'Show previous photo',
+      nextPhoto: 'Show next photo',
+      pauseCarousel: 'Pause photo carousel',
+      resumeCarousel: 'Play photo carousel',
+      slideAnnouncement: (index, total, title) =>
+        `Slide ${index} of ${total}: ${title}`,
+      carouselSlides: [
+        {
+          eyebrow: 'Dahab’s freediving heart',
+          title: 'The Mecca of Freediving!',
+          description:
+            'In the heart of Dahab, Lighthouse Bay is our home reef and the Blue Hole is part of a remarkable freediving landscape. Come discover why divers travel here from around the world.',
+          alt: 'A freediver explores the clear water of Dahab’s Blue Hole',
+        },
+        {
+          eyebrow: 'A Dahab original',
+          title: 'Founded by a world-record holder',
+          description:
+            'Former freediving world-record holder Lotta Ericson founded Freedive Dahab in 2003, helping establish one of the world’s earliest dedicated freediving centres.',
+          alt: 'Freediving instructors and the team outside the Freedive Dahab school',
+        },
+        {
+          eyebrow: 'A world first for SSI',
+          title: 'The first SSI Freediving ITC',
+          description:
+            'In 2010, Freedive Dahab became the world’s first SSI Freediving Instructor Training Center. Since then, thousands of divers and hundreds of instructors have trained here.',
+          alt: 'A freediver trains on a depth line with instructor support',
+        },
+        {
+          eyebrow: 'Your training home in Lighthouse Bay',
+          title: 'Space to settle in and train',
+          description:
+            'Just steps from the heart of Dahab, our centre brings together an air-conditioned classroom, spacious equipment room, outdoor terrace, showers and free Wi-Fi.',
+          alt: 'The Freedive Dahab centre near Lighthouse Bay',
+        },
+        {
+          eyebrow: 'Make more time for the water',
+          title: 'Stay for your next chapter',
+          description:
+            'Join a training or combo week, build your skills over a longer stay, or ask us about private coaching, sled training, competitions and instructor courses.',
+          alt: 'Freedivers share a calm training session at the water’s surface',
+        },
+      ],
       line1: 'FIRST FREEDIVING CENTER IN DAHAB — SINCE 2003',
       line2: 'FIRST SSI FREEDIVING INSTRUCTOR TRAINING CENTER IN THE WORLD — SINCE 2010',
       leadTitle: "You don't need to be a deep diver to begin.",
@@ -862,7 +920,52 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       },
     },
     hero: {
-      locationEyebrow: 'دهب · البحر الأحمر · مركز الغوص الحر منذ 2003',
+      locationEyebrow: 'مرحباً بكم في فري دايف دهب والثقب الأزرق',
+      carouselLabel: 'صور مدرسة فري دايف دهب والثقب الأزرق',
+      showPhotoLabel: (index, title) => `عرض الشريحة ${index}: ${title}`,
+      previousPhoto: 'عرض الصورة السابقة',
+      nextPhoto: 'عرض الصورة التالية',
+      pauseCarousel: 'إيقاف عرض الصور',
+      resumeCarousel: 'تشغيل عرض الصور',
+      slideAnnouncement: (index, total, title) =>
+        `الشريحة ${index} من ${total}: ${title}`,
+      carouselSlides: [
+        {
+          eyebrow: 'قلب الغوص الحر في دهب',
+          title: 'قبلة الغوص الحر',
+          description:
+            'في قلب دهب، خليج اللايتهاوس هو شعابنا المرجانية القريبة، والثقب الأزرق جزء من عالم استثنائي للغوص الحر. اكتشفوا لماذا يقصد الغواصون دهب من أنحاء العالم.',
+          alt: 'غواص حر يستكشف المياه الصافية في الثقب الأزرق بدهب',
+        },
+        {
+          eyebrow: 'مدرسة رائدة في دهب',
+          title: 'أسستها بطلة عالمية',
+          description:
+            'أسست لوتا إريكسون، حاملة الرقم القياسي العالمي السابقة في الغوص الحر، فري دايف دهب عام 2003، لتكون من أوائل مراكز الغوص الحر المتخصصة في العالم.',
+          alt: 'مدربو الغوص الحر وأعضاء الفريق أمام مدرسة فري دايف دهب',
+        },
+        {
+          eyebrow: 'إنجاز عالمي مع SSI',
+          title: 'أول مركز تدريب مدربي غوص حر من SSI',
+          description:
+            'أصبحت فري دايف دهب عام 2010 أول مركز تدريب مدربي غوص حر تابع لـ SSI في العالم. ومنذ ذلك الحين، تدرب هنا آلاف الغواصين ومئات المدربين.',
+          alt: 'غواص حر يتدرب على حبل الأعماق بإشراف المدرب',
+        },
+        {
+          eyebrow: 'مقر تدريبكم في خليج اللايتهاوس',
+          title: 'مساحة مريحة للتدريب',
+          description:
+            'على بُعد خطوات من قلب دهب، يجمع مركزنا بين قاعة مكيفة وغرفة معدات واسعة وشرفة خارجية ودُشّين وخدمة واي فاي مجانية.',
+          alt: 'مركز فري دايف دهب بالقرب من خليج اللايتهاوس',
+        },
+        {
+          eyebrow: 'وقت أطول في الماء',
+          title: 'خطوتكم التالية تبدأ هنا',
+          description:
+            'انضموا إلى أسابيع التدريب أو الباقات المشتركة، وطوّروا مهاراتكم خلال إقامة أطول، أو استفسروا عن التدريب الخاص والتدريب بالزلاجة والمسابقات ودورات المدربين.',
+          alt: 'غواصون أحرار يتدربون معاً عند سطح الماء',
+        },
+      ],
       line1: 'أول مركز للغوص الحر في دهب — منذ 2003',
       line2: 'أول مركز تدريب مدربي غوص حر معتمد من SSI في العالم — منذ 2010',
       leadTitle: 'لست بحاجة لأن تكون غواصاً محترفاً لتبدأ.',
@@ -1228,7 +1331,52 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       },
     },
     hero: {
-      locationEyebrow: 'DAHAB · MAR ROJO · SANTUARIO DE APNEA DESDE 2003',
+      locationEyebrow: 'BIENVENIDO A FREEDIVE DAHAB Y AL BLUE HOLE',
+      carouselLabel: 'Fotos de Freedive Dahab y el Blue Hole',
+      showPhotoLabel: (index, title) => `Mostrar diapositiva ${index}: ${title}`,
+      previousPhoto: 'Mostrar foto anterior',
+      nextPhoto: 'Mostrar foto siguiente',
+      pauseCarousel: 'Pausar carrusel de fotos',
+      resumeCarousel: 'Reanudar carrusel de fotos',
+      slideAnnouncement: (index, total, title) =>
+        `Diapositiva ${index} de ${total}: ${title}`,
+      carouselSlides: [
+        {
+          eyebrow: 'El corazón de la apnea en Dahab',
+          title: 'La meca de la apnea',
+          description:
+            'En el corazón de Dahab, Lighthouse Bay es nuestro arrecife y el Blue Hole forma parte de un entorno excepcional. Descubre por qué apneístas de todo el mundo vienen aquí.',
+          alt: 'Un apneísta explora las aguas claras del Blue Hole en Dahab',
+        },
+        {
+          eyebrow: 'Una escuela pionera en Dahab',
+          title: 'Fundada por una plusmarquista mundial',
+          description:
+            'Lotta Ericson, antigua plusmarquista mundial de apnea, fundó Freedive Dahab en 2003 y ayudó a crear uno de los primeros centros especializados del mundo.',
+          alt: 'Instructores de apnea y miembros del equipo frente a Freedive Dahab',
+        },
+        {
+          eyebrow: 'Un hito mundial de SSI',
+          title: 'El primer centro SSI de formación de instructores',
+          description:
+            'En 2010, Freedive Dahab se convirtió en el primer centro SSI de formación de instructores de apnea del mundo. Desde entonces ha formado a miles de apneístas y cientos de instructores.',
+          alt: 'Un apneísta practica en una línea de profundidad con apoyo del instructor',
+        },
+        {
+          eyebrow: 'Tu base de entrenamiento en Lighthouse Bay',
+          title: 'Un espacio para entrenar y descansar',
+          description:
+            'A pocos pasos del corazón de Dahab, nuestro centro cuenta con aula climatizada, sala de equipos, terraza exterior, duchas y Wi-Fi gratuito.',
+          alt: 'El centro Freedive Dahab cerca de Lighthouse Bay',
+        },
+        {
+          eyebrow: 'Más tiempo en el agua',
+          title: 'Tu próximo capítulo empieza aquí',
+          description:
+            'Únete a una semana de entrenamiento o combinada, progresa durante una estancia larga o pregunta por entrenamiento privado, con trineo, competiciones y cursos de instructor.',
+          alt: 'Apneístas comparten una tranquila sesión de entrenamiento en la superficie',
+        },
+      ],
       line1: 'PRIMER CENTRO DE APNEA EN DAHAB — DESDE 2003',
       line2: 'PRIMER CENTRO DE FORMACIÓN DE INSTRUCTORES SSI DEL MUNDO — DESDE 2010',
       leadTitle: 'No necesitas ser un buceador profundo para comenzar.',
@@ -1594,7 +1742,52 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       },
     },
     hero: {
-      locationEyebrow: 'DAHAB · ROTES MEER · FREITAUCHEN SEIT 2003',
+      locationEyebrow: 'WILLKOMMEN BEI FREEDIVE DAHAB & AM BLUE HOLE',
+      carouselLabel: 'Fotos von Freedive Dahab und dem Blue Hole',
+      showPhotoLabel: (index, title) => `Folie ${index} anzeigen: ${title}`,
+      previousPhoto: 'Vorheriges Foto anzeigen',
+      nextPhoto: 'Nächstes Foto anzeigen',
+      pauseCarousel: 'Fotokarussell pausieren',
+      resumeCarousel: 'Fotokarussell starten',
+      slideAnnouncement: (index, total, title) =>
+        `Folie ${index} von ${total}: ${title}`,
+      carouselSlides: [
+        {
+          eyebrow: 'Dahabs Herz des Freitauchens',
+          title: 'Das Mekka des Freitauchens!',
+          description:
+            'Im Herzen von Dahab ist Lighthouse Bay unser Hausriff und das Blue Hole Teil einer außergewöhnlichen Freitauchlandschaft. Entdecke, warum Freitauchende aus aller Welt hierherkommen.',
+          alt: 'Ein Freitaucher erkundet das klare Wasser am Blue Hole in Dahab',
+        },
+        {
+          eyebrow: 'Eine Pionierschule in Dahab',
+          title: 'Gegründet von einer Weltrekordlerin',
+          description:
+            'Lotta Ericson, ehemalige Weltrekordlerin im Freitauchen, gründete Freedive Dahab 2003 und half, eines der weltweit ersten spezialisierten Freitauchzentren aufzubauen.',
+          alt: 'Freitauchlehrer und Team vor dem Freedive-Dahab-Zentrum',
+        },
+        {
+          eyebrow: 'Ein weltweiter SSI-Meilenstein',
+          title: 'Das erste SSI Freediving ITC',
+          description:
+            '2010 wurde Freedive Dahab das weltweit erste SSI Freediving Instructor Training Center. Seitdem haben hier Tausende Tauchende und Hunderte Instructoren trainiert.',
+          alt: 'Ein Freitaucher trainiert mit Unterstützung eines Tauchlehrers an der Tiefenleine',
+        },
+        {
+          eyebrow: 'Dein Trainingszentrum an der Lighthouse Bay',
+          title: 'Platz zum Ankommen und Trainieren',
+          description:
+            'Nur wenige Schritte vom Herzen Dahabs entfernt bietet unser Zentrum einen klimatisierten Kursraum, einen großen Ausrüstungsraum, eine Außenterrasse, Duschen und kostenloses WLAN.',
+          alt: 'Das Freedive-Dahab-Zentrum in der Nähe der Lighthouse Bay',
+        },
+        {
+          eyebrow: 'Mehr Zeit im Wasser',
+          title: 'Dein nächstes Kapitel beginnt hier',
+          description:
+            'Komm zu einer Trainings- oder Kombiwoche, entwickle dich bei einem längeren Aufenthalt weiter oder informiere dich über Privat-, Schlitten- und Instructor-Training sowie Wettbewerbe.',
+          alt: 'Freitauchende teilen eine ruhige Trainingseinheit an der Wasseroberfläche',
+        },
+      ],
       line1: 'ERSTE FREEDIVING CENTER IN DAHAB — SEIT 2003',
       line2: 'ERSTES SSI INSTRUCTOR TRAINING CENTER DER WELT — SEIT 2010',
       leadTitle: 'Du musst kein Tieftaucher sein, um zu beginnen.',

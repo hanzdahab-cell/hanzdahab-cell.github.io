@@ -432,6 +432,37 @@ html[dir="rtl"] .font-arabic-body {
   box-shadow: 0 10px 40px -10px rgba(4, 18, 32, 0.8);
 }
 
+/* Course-detail cards stack beneath the fixed site header as each section arrives. */
+.course-sticky-stack {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 1.5rem;
+}
+
+.course-sticky-stack__card {
+  position: sticky;
+  top: calc(5.25rem + var(--course-sticky-index, 0) * 0.875rem);
+  z-index: var(--course-sticky-layer, 1);
+  transform-origin: center top;
+}
+
+@supports (animation-timeline: view()) {
+  .course-sticky-stack__card {
+    animation: course-card-bury linear both;
+    animation-timeline: view();
+    animation-range: exit-crossing;
+  }
+}
+
+@keyframes course-card-bury {
+  to {
+    translate: 0 -10px;
+    scale: 0.92;
+    filter: brightness(0.62);
+  }
+}
+
 /* Subtle Technical Grid Lines (Driessen Architectuur) */
 .architectural-grid {
   background-size: 40px 40px;
@@ -648,7 +679,8 @@ html[dir="rtl"] .font-arabic-body {
   .bubble,
   .scroll-cue-line,
   .spin-slow,
-  .page-dive-in {
+  .page-dive-in,
+  .course-sticky-stack__card {
     animation: none !important;
   }
 

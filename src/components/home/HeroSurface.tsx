@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ArrowDown,
   ArrowRight,
@@ -7,9 +7,13 @@ import {
   Facebook,
   Instagram,
   MapPin,
+  Pause,
+  Play,
 } from 'lucide-react';
+import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../../context/LanguageContext';
+import { TRANSLATIONS } from '../../utils/i18n';
 import { PageType } from '../../types';
 import { siteConfig } from '../../data/site';
 import { PlatformMark } from '../footer/ReviewsCarousel';
@@ -19,45 +23,125 @@ interface HeroSurfaceProps {
   onViewReviews: () => void;
 }
 
-const HERO_SLIDES = [
-  {
-    src: '/images/story-carousel/lighthouse-bay-team.webp',
-    alt: 'Freedivers training together at Lighthouse Bay in Dahab',
-    title: 'Lighthouse Bay, Dahab',
-  },
-  {
-    src: '/images/story-carousel/blue-hole-freediver.jpg',
-    alt: 'Freediver descending through the clear water of the Blue Hole',
-    title: 'The Blue Hole',
-  },
-  {
-    src: '/images/story-carousel/training-line.jpg',
-    alt: 'Freediver training with an instructor beside a Red Sea dive line',
-    title: 'Learn at your own pace',
-  },
-  {
-    src: '/images/story-carousel/red-sea-reef.jpg',
-    alt: 'Red Sea coral reef in clear blue water',
-    title: 'The Red Sea',
-  },
-  {
-    src: '/images/story-carousel/surface-session.jpg',
-    alt: 'Freedivers sharing a calm surface session in Dahab',
-    title: 'Find your first breath',
-  },
+const HERO_IMAGES = [
+  '/images/story-carousel/blue-hole-freediver.jpg',
+  '/images/philosophy/team.jpg',
+  '/images/story-carousel/training-line.jpg',
+  '/images/philosophy/school.jpg',
+  '/images/story-carousel/surface-session.jpg',
 ];
+
+function cardOffset(index: number, active: number, total: number): number {
+  const raw = (index - active + total) % total;
+  return raw > total / 2 ? raw - total : raw;
+}
 
 export function HeroSurface({ onNavigate, onViewReviews }: HeroSurfaceProps) {
   const { t } = useTranslation();
-  const { isRtl } = useLanguage();
+  const { isRtl, language } = useLanguage();
+  const copy = TRANSLATIONS[language].hero;
+  const prefersReducedMotion = useReducedMotion();
+  const stageRef = useRef<HTMLDivElement>(null);
+  const pointerStartX = useRef<number | null>(null);
+  const pointerCurrentX = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
-  const activeSlide = HERO_SLIDES[activeIndex];
-  const previousSlide = HERO_SLIDES[(activeIndex - 1 + HERO_SLIDES.length) % HERO_SLIDES.length];
-  const nextSlide = HERO_SLIDES[(activeIndex + 1) % HERO_SLIDES.length];
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [motionRequested, setMotionRequested] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const [isDocumentVisible, setIsDocumentVisible] = useState(true);
+  const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
+  const [liveStatus, setLiveStatus] = useState('');
+  const inView = useInView(stageRef, { amount: 0.15 });
+  const slides = copy.carouselSlides;
+  const activeSlide = slides[activeIndex];
+  const canAnimate = !prefersReducedMotion || motionRequested;
+  const isCarouselPlaying = isPlaying && canAnimate;
+  const transitionDuration = canAnimate ? 0.65 : 0.01;
 
-  const changeSlide = (direction: -1 | 1) => {
-    setActiveIndex((index) => (index + direction + HERO_SLIDES.length) % HERO_SLIDES.length);
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
+      setStageSize({
+        width: entry.contentRect.width,
+        height: entry.contentRect.height,
+      });
+    });
+    observer.observe(stage);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const updateVisibility = () => {
+      setIsDocumentVisible(document.visibilityState === 'visible');
+    };
+    updateVisibility();
+    document.addEventListener('visibilitychange', updateVisibility);
+    return () => document.removeEventListener('visibilitychange', updateVisibility);
+  }, []);
+
+  useEffect(() => {
+    if (
+      !isCarouselPlaying ||
+      isHovered ||
+      isFocused ||
+      !isDocumentVisible ||
+      !inView ||
+      slides.length < 2
+    ) {
+      return;
+    }
+    const timer = window.setInterval(() => {
+      setActiveIndex((index) => (index + 1) % slides.length);
+    }, 6500);
+    return () => window.clearInterval(timer);
+  }, [inView, isCarouselPlaying, isDocumentVisible, isFocused, isHovered, slides.length]);
+
+  const showSlide = (index: number) => {
+    const nextIndex = (index + slides.length) % slides.length;
+    setActiveIndex(nextIndex);
+    setIsPlaying(false);
+    setLiveStatus(copy.slideAnnouncement(nextIndex + 1, slides.length, slides[nextIndex].title));
   };
+
+  const toggleCarousel = () => {
+    if (isCarouselPlaying) {
+      setIsPlaying(false);
+      return;
+    }
+    setMotionRequested(true);
+    setIsPlaying(true);
+  };
+
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType !== 'touch') return;
+    pointerStartX.current = event.clientX;
+    pointerCurrentX.current = event.clientX;
+  };
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === 'touch' && pointerStartX.current !== null) {
+      pointerCurrentX.current = event.clientX;
+    }
+  };
+
+  const handlePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType !== 'touch' || pointerStartX.current === null) return;
+    const delta = pointerCurrentX.current - pointerStartX.current;
+    pointerStartX.current = null;
+    if (Math.abs(delta) >= 40) {
+      showSlide(activeIndex + (delta < 0 ? 1 : -1));
+    }
+  };
+
+  const width = stageSize.width || 600;
+  const height = stageSize.height || 500;
+  const centerCardWidth = Math.min(width * 0.6, width < 640 ? 260 : 360);
+  const sideCardWidth = centerCardWidth * 0.78;
+  const cardHeight = Math.min(height * 0.9, centerCardWidth * 1.18);
+  const cardGap = Math.max(12, centerCardWidth * 0.08);
 
   return (
     <section
@@ -68,47 +152,45 @@ export function HeroSurface({ onNavigate, onViewReviews }: HeroSurfaceProps) {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_78%_44%,rgba(34,98,140,0.32),transparent_48%),linear-gradient(115deg,#081F35_22%,#0E3453_100%)]"
       />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 end-0 w-1/2 opacity-[0.12]"
-        style={{
-          backgroundImage:
-            'radial-gradient(rgba(169,210,236,0.55) 0.7px, transparent 0.7px)',
-          backgroundSize: '18px 18px',
-          maskImage: 'linear-gradient(to left, black, transparent)',
-        }}
-      />
 
-      <div className="relative mx-auto grid min-h-[calc(100svh-5rem)] max-w-[1440px] items-start gap-8 px-5 pb-12 pt-40 sm:px-8 sm:pb-16 sm:pt-44 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12 lg:px-12 lg:pt-44">
+      <div className="relative mx-auto grid min-h-[calc(100svh-5rem)] max-w-[1440px] items-center gap-6 px-5 pb-10 pt-32 sm:gap-8 sm:px-8 sm:pb-12 sm:pt-36 md:grid-cols-[0.82fr_1.18fr] md:gap-8 md:px-8 md:pt-32 xl:gap-10 xl:px-12">
         <div className="relative z-10 max-w-2xl text-start">
-          <p className="mb-5 flex items-center gap-2 text-sm font-alata text-[#A9D2EC]">
+          <p className="mb-5 flex items-center gap-2 font-alata text-sm text-[#A9D2EC] sm:mb-6">
             <MapPin className="h-4 w-4 shrink-0 text-cyan-300" aria-hidden="true" />
-            {t('hero.locationEyebrow')}
+            {copy.locationEyebrow}
           </p>
 
-          <h1
-            className="max-w-xl text-balance font-tidal text-5xl leading-[0.98] tracking-[0.015em] text-white sm:text-6xl md:text-6xl xl:text-7xl"
-            style={{
-              fontFamily: isRtl
-                ? "'Beiruti', sans-serif"
-                : "'Tidal Astral Grotesk', 'Bebas Neue', sans-serif",
-            }}
-          >
-            {t('hero.leadTitle')}
-          </h1>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={`copy-${activeIndex}`}
+              initial={{ opacity: 0, y: canAnimate ? 10 : 0 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: canAnimate ? -8 : 0 }}
+              transition={{ duration: Math.min(transitionDuration, 0.35) }}
+            >
+              <p className="mb-3 font-alata text-sm font-semibold text-cyan-200 sm:text-base">
+                {activeSlide.eyebrow}
+              </p>
+              <h1
+                className="max-w-[13ch] text-balance font-bebas text-5xl leading-[0.94] tracking-[0.015em] text-white sm:text-6xl md:text-5xl xl:text-7xl"
+                aria-live="off"
+              >
+                {activeSlide.title}
+              </h1>
+              <p className="mt-5 max-w-xl font-alata text-base leading-relaxed text-slate-200 sm:mt-6 sm:text-lg">
+                {activeSlide.description}
+              </p>
+            </motion.div>
+          </AnimatePresence>
 
-          <p className="mt-6 max-w-xl font-alata text-base leading-relaxed text-slate-200 sm:text-lg">
-            {t('hero.leadDesc')}
-          </p>
-
-          <div className="mt-8 flex flex-wrap items-center gap-3">
+          <div className="mt-7 flex flex-wrap items-center gap-3 sm:mt-8">
             <button
               type="button"
               onClick={() => onNavigate('courses')}
               className="inline-flex min-h-12 items-center gap-3 rounded-full bg-white px-6 py-3 font-alata text-sm font-semibold text-[#081F35] transition-colors hover:bg-[#DCEFFC] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
               {t('hero.exploreCourses')}
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              <ArrowRight className={`h-4 w-4 ${isRtl ? 'rotate-180' : ''}`} aria-hidden="true" />
             </button>
             <button
               type="button"
@@ -119,7 +201,7 @@ export function HeroSurface({ onNavigate, onViewReviews }: HeroSurfaceProps) {
             </button>
           </div>
 
-          <div className="mt-8 flex items-center gap-3" role="group" aria-label="Follow Freedive Dahab">
+          <div className="mt-7 flex flex-wrap items-center gap-3 sm:mt-8" role="group" aria-label="Follow Freedive Dahab">
             <a
               href={siteConfig.social.instagram}
               target="_blank"
@@ -156,14 +238,9 @@ export function HeroSurface({ onNavigate, onViewReviews }: HeroSurfaceProps) {
             </button>
           </div>
 
-          <div className="mt-8 flex flex-wrap gap-x-5 gap-y-2 border-t border-white/15 pt-5 font-alata text-xs text-slate-300 sm:text-sm">
-            <span>{t('hero.line1')}</span>
-            <span className="text-cyan-200/75">{t('hero.line2')}</span>
-          </div>
-
           <a
             href="#story"
-            className="mt-8 inline-flex min-h-11 items-center gap-2 font-alata text-xs text-[#A9D2EC] transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            className="mt-6 inline-flex min-h-11 items-center gap-2 font-alata text-xs text-[#A9D2EC] transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
           >
             <ArrowDown className="h-4 w-4" aria-hidden="true" />
             <span>{t('hero.scrollExplore')}</span>
@@ -172,114 +249,168 @@ export function HeroSurface({ onNavigate, onViewReviews }: HeroSurfaceProps) {
 
         <div className="relative mx-auto w-full max-w-[720px] min-w-0 lg:me-0">
           <div
-            className="relative h-[340px] w-full sm:h-[440px] lg:h-[min(68vh,620px)]"
+            ref={stageRef}
+            className="relative h-[340px] w-full touch-pan-y sm:h-[440px] md:h-[min(62vh,500px)]"
             role="region"
-            aria-label="Dahab freediving photo carousel"
+            aria-label={copy.carouselLabel}
             aria-roledescription="carousel"
+            tabIndex={0}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onFocus={() => setIsFocused(true)}
+            onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                setIsFocused(false);
+              }
+            }}
+            onKeyDown={(event) => {
+              if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                showSlide(activeIndex + (isRtl ? 1 : -1));
+              }
+              if (event.key === 'ArrowRight') {
+                event.preventDefault();
+                showSlide(activeIndex + (isRtl ? -1 : 1));
+              }
+            }}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={() => {
+              pointerStartX.current = null;
+            }}
           >
-            {[previousSlide, nextSlide].map((slide, index) => (
-              <div
-                key={`${slide.src}-${index}`}
-                aria-hidden="true"
-                className={`absolute top-[8%] hidden h-[78%] w-[58%] overflow-hidden rounded-[1.5rem] border border-white/15 bg-[#0E3453] opacity-45 shadow-2xl sm:block ${
-                  index === 0
-                    ? 'start-0 -rotate-[7deg] translate-x-1/4'
-                    : 'end-0 rotate-[7deg] -translate-x-1/4'
-                }`}
-              >
-                <img
-                  src={slide.src}
-                  alt=""
-                  loading="lazy"
-                  className="h-full w-full object-cover"
-                />
-              </div>
-            ))}
+            {slides.map((slide, index) => {
+              const offset = cardOffset(index, activeIndex, slides.length);
+              const absOffset = Math.abs(offset);
+              const isCenter = offset === 0;
+              const cardWidth = isCenter ? centerCardWidth : sideCardWidth;
+              const spread =
+                centerCardWidth * 0.64 +
+                cardGap +
+                (absOffset > 1 ? sideCardWidth * 0.78 : 0);
+              const x =
+                width / 2 -
+                cardWidth / 2 +
+                (offset === 0 ? 0 : (offset < 0 ? -1 : 1) * spread);
 
-            <figure
-              aria-live="polite"
-              aria-atomic="true"
-              className="absolute inset-x-[4%] top-[2%] z-10 m-0 h-[84%] overflow-hidden rounded-[1.5rem] border border-white/20 bg-[#0E3453] shadow-[0_32px_90px_rgba(0,0,0,0.45)] sm:inset-x-[12%] sm:h-[88%]"
-            >
-              <img
-                key={activeSlide.src}
-                src={activeSlide.src}
-                alt={activeSlide.alt}
-                fetchPriority="high"
-                className="h-full w-full object-cover"
-              />
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 bg-gradient-to-t from-[#061A2B]/90 via-transparent to-[#061A2B]/10"
-              />
-              <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5 sm:p-7">
-                <div>
-                  <p className="text-xs font-alata text-[#A9D2EC]">
-                    Dahab, South Sinai, Egypt
-                  </p>
-                  <h2 className="mt-1 font-bebas text-3xl tracking-wide text-white sm:text-4xl">
-                    {activeSlide.title}
-                  </h2>
-                </div>
-                <span className="shrink-0 rounded-full border border-white/35 bg-[#081F35]/50 px-3 py-1.5 font-alata text-xs text-white backdrop-blur">
-                  {String(activeIndex + 1).padStart(2, '0')} / {String(HERO_SLIDES.length).padStart(2, '0')}
-                </span>
-              </figcaption>
-            </figure>
-
-            <div className="absolute inset-x-[4%] bottom-0 z-20 flex items-center justify-between sm:inset-x-[12%]">
-              <div className="flex items-center gap-1" aria-label="Choose a featured photo">
-                {HERO_SLIDES.map((slide, index) => (
-                  <button
-                    key={slide.src}
-                    type="button"
-                    onClick={() => setActiveIndex(index)}
-                    aria-label={`Show photo: ${slide.title}`}
-                    aria-current={index === activeIndex ? 'true' : undefined}
-                    className="flex min-h-11 min-w-9 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`h-1.5 rounded-full bg-white transition-[width,opacity] duration-300 motion-reduce:transition-none ${
-                        index === activeIndex ? 'w-6 opacity-100' : 'w-2 opacity-45'
-                      }`}
-                    />
-                  </button>
-                ))}
-              </div>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => changeSlide(-1)}
-                  aria-label="Show previous photo"
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/45 bg-[#081F35]/70 text-white backdrop-blur transition-colors hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              return (
+                <motion.figure
+                  key={HERO_IMAGES[index]}
+                  aria-hidden={!isCenter}
+                  className="absolute left-0 top-0 m-0 overflow-hidden rounded-[1.5rem] border border-white/20 bg-[#0E3453] shadow-[0_32px_90px_rgba(0,0,0,0.45)]"
+                  initial={false}
+                  animate={{
+                    x,
+                    y: height / 2 - cardHeight / 2,
+                    width: cardWidth,
+                    height: cardHeight,
+                    opacity: absOffset > 2 ? 0 : absOffset === 2 ? 0.18 : absOffset === 1 ? 0.62 : 1,
+                    scale: isCenter ? 1 : 0.96,
+                    rotateY: offset === 0 ? 0 : offset < 0 ? 7 : -7,
+                    zIndex: isCenter ? 30 : absOffset === 1 ? 20 : 10,
+                  }}
+                  transition={{
+                    duration: transitionDuration,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  style={{ transformStyle: 'preserve-3d' }}
                 >
-                  <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => changeSlide(1)}
-                  aria-label="Show next photo"
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/45 bg-[#081F35]/70 text-white backdrop-blur transition-colors hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                >
-                  <ChevronRight className="h-5 w-5" aria-hidden="true" />
-                </button>
-              </div>
-            </div>
+                  <img
+                    src={HERO_IMAGES[index]}
+                    alt={isCenter ? slide.alt : ''}
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    fetchPriority={index === 0 ? 'high' : 'auto'}
+                    decoding="async"
+                    className="h-full w-full object-cover"
+                  />
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#061A2B]/85 via-transparent to-[#061A2B]/10"
+                  />
+                  {isCenter && (
+                    <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-4 sm:p-6">
+                      <span className="font-alata text-sm text-white sm:text-base">
+                        Dahab, South Sinai, Egypt
+                      </span>
+                      <span className="shrink-0 rounded-full border border-white/35 bg-[#081F35]/60 px-3 py-1.5 font-alata text-xs text-white backdrop-blur">
+                        {String(activeIndex + 1).padStart(2, '0')} /{' '}
+                        {String(slides.length).padStart(2, '0')}
+                      </span>
+                    </figcaption>
+                  )}
+                </motion.figure>
+              );
+            })}
           </div>
 
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-7 gap-y-4 border-t border-white/15 pt-5 sm:mt-10 sm:justify-start">
-            <span className="font-alata text-xs text-slate-300">SSI-certified training since 2003</span>
-            <div className="flex items-center gap-5">
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-1 sm:mt-3">
+            <button
+              type="button"
+              onClick={() => showSlide(activeIndex + (isRtl ? 1 : -1))}
+              aria-label={copy.previousPhoto}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-[#081F35]/70 text-white backdrop-blur transition-colors hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              <ChevronLeft className={`h-5 w-5 ${isRtl ? 'rotate-180' : ''}`} aria-hidden="true" />
+            </button>
+            {slides.map((slide, index) => (
+              <button
+                key={HERO_IMAGES[index]}
+                type="button"
+                onClick={() => showSlide(index)}
+                aria-label={copy.showPhotoLabel(index + 1, slide.title)}
+                aria-current={index === activeIndex ? 'true' : undefined}
+                className="inline-flex h-11 min-w-9 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              >
+                <span
+                  aria-hidden="true"
+                  className={`h-1.5 rounded-full bg-white transition-[width,opacity] duration-300 motion-reduce:transition-none ${
+                    index === activeIndex ? 'w-6 opacity-100' : 'w-2 opacity-45'
+                  }`}
+                />
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={toggleCarousel}
+              aria-label={isCarouselPlaying ? copy.pauseCarousel : copy.resumeCarousel}
+              aria-pressed={isCarouselPlaying}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-[#081F35]/70 text-white backdrop-blur transition-colors hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              {isCarouselPlaying ? (
+                <Pause className="h-4 w-4" aria-hidden="true" />
+              ) : (
+                <Play className="h-4 w-4" aria-hidden="true" />
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => showSlide(activeIndex + (isRtl ? -1 : 1))}
+              aria-label={copy.nextPhoto}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-[#081F35]/70 text-white backdrop-blur transition-colors hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              <ChevronRight className={`h-5 w-5 ${isRtl ? 'rotate-180' : ''}`} aria-hidden="true" />
+            </button>
+          </div>
+
+          <p className="sr-only" aria-live="polite" aria-atomic="true">
+            {liveStatus}
+          </p>
+
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-7 gap-y-4 border-t border-white/15 pt-4 sm:mt-6 sm:justify-start sm:pt-5">
+            <span className="font-alata text-xs text-slate-300">
+              SSI-certified training since 2003
+            </span>
+            <div className="flex items-center gap-4 sm:gap-5">
               <img
                 src="/badges/ssi-freediving-center.png"
                 alt="SSI Freediving Center"
-                className="h-12 w-12 object-contain sm:h-14 sm:w-14"
+                className="h-11 w-11 object-contain sm:h-14 sm:w-14"
               />
               <img
                 src="/badges/ssi-instructor-training-center-transparent.png"
                 alt="SSI Instructor Training Center"
-                className="h-12 w-12 object-contain sm:h-14 sm:w-14"
+                className="h-11 w-11 object-contain sm:h-14 sm:w-14"
               />
             </div>
           </div>

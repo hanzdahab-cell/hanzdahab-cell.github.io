@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { CSSProperties, useState } from 'react';
 import {
   ArrowLeft,
   Clock,
@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { PageType, Course, SpecialtyCourse, InstructorCourse } from '../../types';
 import { ssiCourses, specialtyCourses, instructorCourses } from '../../data/courses';
-import { CourseInfographic } from './CourseInfographic';
+import { CourseInfographic, CourseProgressionCard } from './CourseInfographic';
 import { CourseProgressSteps } from './CourseProgressSteps';
 import { FadeUp } from '../ui/MotionKit';
 import { coursePhotoById, getCourseGalleryImages, ssiCourseArtworkBySlug } from '../../data/courseMedia';
@@ -272,6 +272,7 @@ export function CourseDetailPage({
           <ul className="flex flex-wrap gap-x-6">
             {[
               { id: 'course-about', label: 'Overview' },
+              { id: 'course-highlights', label: 'Course highlights' },
               { id: 'course-skills', label: isInstructor ? 'Course modules' : 'What you will learn' },
               ...(isCore && (course as Course).schedule ? [{ id: 'course-schedule', label: 'Day by day' }] : []),
               ...(includedList ? [{ id: 'course-included', label: "What's included" }] : []),
@@ -293,56 +294,104 @@ export function CourseDetailPage({
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* LEFT: Description & curriculum */}
           <div className="lg:col-span-2 space-y-12">
-            <FadeUp id="course-about" className="scroll-mt-32 space-y-5">
-              <h2 className="font-bebas text-3xl sm:text-4xl text-white tracking-[0.05em] flex items-center gap-3">
-                <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
-                About the course
-              </h2>
-              {description.split('\n\n').map((para, i) => (
-                <p key={i} className="text-slate-300 font-light text-sm sm:text-base leading-relaxed">
-                  {para}
-                </p>
-              ))}
-            </FadeUp>
-
-            {/* Skills / highlights / modules */}
-            <FadeUp id="course-skills" className="scroll-mt-32 space-y-5">
-              <h2 className="font-bebas text-3xl sm:text-4xl text-white tracking-[0.05em] flex items-center gap-3">
-                <Waves className="w-5 h-5 text-cyan-400" aria-hidden="true" />
-                {skillsTitle}
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {skillsList.map((item, i) => (
-                  <div
-                    key={i}
-                    className="group flex items-start gap-3 p-4 rounded-xl bg-slate-900/50 border border-white/10 hover:border-cyan-400/40 transition-all duration-300"
-                  >
-                    <CheckCircle className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                    <span className="text-xs sm:text-sm text-slate-300 group-hover:text-white transition-colors">
-                      {item}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </FadeUp>
-
-            {/* Day-by-day schedule (core courses with a full plan in the data) */}
-            {isCore && (course as Course).schedule && (
-              <FadeUp id="course-schedule" className="scroll-mt-32 space-y-5">
-                <h2 className="font-bebas text-3xl sm:text-4xl text-white tracking-[0.05em] flex items-center gap-3">
-                  <Clock className="w-5 h-5 text-cyan-400" />
-                  Day by day
+            <div className="course-sticky-stack relative">
+              <FadeUp
+                as="article"
+                id="course-about"
+                className="course-sticky-stack__card scroll-mt-32 space-y-5 rounded-2xl border border-white/10 bg-[#0A2943] p-5 shadow-[0_24px_60px_rgba(0,0,0,0.32)] sm:p-7"
+                style={{ '--course-sticky-index': 0, '--course-sticky-layer': 1 } as CSSProperties}
+              >
+                <h2 className="flex items-center gap-3 font-bebas text-3xl tracking-[0.05em] text-white sm:text-4xl">
+                  <span className="h-2.5 w-2.5 rounded-full bg-cyan-400" aria-hidden="true" />
+                  About the course
                 </h2>
-                <CourseProgressSteps
-                  steps={(course as Course).schedule!.map((day, index) => ({
-                    number: index + 1,
-                    label: day.day,
-                    title: day.title,
-                    description: day.description,
-                  }))}
-                />
+                {description.split('\n\n').map((para, i) => (
+                  <p key={i} className="text-sm font-light leading-relaxed text-slate-300 sm:text-base">
+                    {para}
+                  </p>
+                ))}
               </FadeUp>
-            )}
+
+              <FadeUp
+                as="article"
+                id="course-highlights"
+                className="course-sticky-stack__card scroll-mt-32 space-y-5 rounded-2xl border border-white/10 bg-[#0B2C4A] p-5 shadow-[0_24px_60px_rgba(0,0,0,0.32)] sm:p-7"
+                style={{ '--course-sticky-index': 1, '--course-sticky-layer': 2 } as CSSProperties}
+              >
+                <h2 className="flex items-center gap-3 font-bebas text-3xl tracking-[0.05em] text-white sm:text-4xl">
+                  <Waves className="h-5 w-5 text-cyan-400" aria-hidden="true" />
+                  {skillsTitle}
+                </h2>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {skillsList.map((item, i) => (
+                    <div
+                      key={i}
+                      className="group flex items-start gap-3 rounded-xl border border-white/10 bg-slate-900/50 p-4 transition-all duration-300 hover:border-cyan-400/40"
+                    >
+                      <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-cyan-400" aria-hidden="true" />
+                      <span className="text-xs text-slate-300 transition-colors group-hover:text-white sm:text-sm">
+                        {item}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </FadeUp>
+
+              {/* Each scheduled day is its own card; the heading stays with day one. */}
+              {isCore && (course as Course).schedule && (
+                <section
+                  aria-labelledby="course-schedule-heading"
+                  className="grid items-start gap-6"
+                >
+                  {(course as Course).schedule!.map((day, index) => (
+                    <FadeUp
+                      key={`${day.day}-${day.title}`}
+                      as="article"
+                      id={index === 0 ? 'course-schedule' : undefined}
+                      className={`course-sticky-stack__card scroll-mt-32 space-y-4 rounded-2xl border border-white/10 p-5 shadow-[0_24px_60px_rgba(0,0,0,0.32)] sm:p-7 ${
+                        index % 2 === 0 ? 'bg-[#0A2943]' : 'bg-[#0B2C4A]'
+                      }`}
+                      style={{
+                        '--course-sticky-index': index + 2,
+                        '--course-sticky-layer': index + 3,
+                      } as CSSProperties}
+                    >
+                      {index === 0 && (
+                        <h2
+                          id="course-schedule-heading"
+                          className="flex items-center gap-3 font-bebas text-3xl tracking-[0.05em] text-white sm:text-4xl"
+                        >
+                          <Clock className="h-5 w-5 text-cyan-400" aria-hidden="true" />
+                          Day by day
+                        </h2>
+                      )}
+                      <p className="font-alata text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-200">
+                        {day.day}
+                      </p>
+                      <h3 className="font-bebas text-2xl tracking-wide text-white sm:text-3xl">
+                        {day.title}
+                      </h3>
+                      <p className="text-xs font-light leading-relaxed text-slate-300 sm:text-sm">
+                        {day.description}
+                      </p>
+                    </FadeUp>
+                  ))}
+                </section>
+              )}
+
+              {isCore && (
+                <FadeUp
+                  as="article"
+                  className="course-sticky-stack__card scroll-mt-32 rounded-2xl border border-cyan-200/20 bg-[#0A2943] p-5 text-center shadow-[0_24px_60px_rgba(0,0,0,0.32)] sm:p-7"
+                  style={{
+                    '--course-sticky-index': 2 + ((course as Course).schedule?.length ?? 0),
+                    '--course-sticky-layer': 3 + ((course as Course).schedule?.length ?? 0),
+                  } as CSSProperties}
+                >
+                  <CourseProgressionCard course={course as Course} />
+                </FadeUp>
+              )}
+            </div>
 
             {/* Motion infographic — adapted from the hand-drawn diving template */}
             {isCore && (course as Course).disciplines && (course as Course).futurePerformances && (

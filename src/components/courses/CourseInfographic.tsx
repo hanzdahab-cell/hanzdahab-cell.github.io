@@ -19,6 +19,29 @@ const JOURNEY_TITLES: Record<string, string> = {
   'ssi-level-3': 'Prepare for deeper performance',
 };
 
+interface CourseProgressionCardProps {
+  course: Course;
+}
+
+export function CourseProgressionCard({ course }: CourseProgressionCardProps) {
+  const journeyTitle = JOURNEY_TITLES[course.id] ?? 'Your course, step by step';
+
+  return (
+    <>
+      <div className="mx-auto mb-4 h-1 w-12 rounded-full bg-cyan-300" aria-hidden="true" />
+      <p className="font-alata text-[10px] uppercase tracking-[0.28em] text-cyan-300">
+        Course progression
+      </p>
+      <h2 className="font-bebas text-3xl tracking-[0.04em] text-white sm:text-4xl md:text-5xl">
+        {journeyTitle}
+      </h2>
+      <p className="mx-auto max-w-2xl text-sm leading-relaxed text-slate-300">
+        A clear path through the skills in this SSI course, coached around your readiness.
+      </p>
+    </>
+  );
+}
+
 function getDisciplineIcon(name: string): string {
   const normalized = name.toLowerCase();
   if (/equalis|mouthfill|breath|theory/.test(normalized)) {
@@ -42,7 +65,6 @@ export function CourseInfographic({ course }: CourseInfographicProps) {
   const performances = course.futurePerformances;
   const disciplines = course.disciplines ?? [];
   const rulerPct = Math.min(100, (course.maxDepthMeters / 45) * 100);
-  const journeyTitle = JOURNEY_TITLES[course.id] ?? 'Your course, step by step';
 
   useEffect(() => {
     const scope = scopeRef.current;
@@ -109,19 +131,6 @@ export function CourseInfographic({ course }: CourseInfographicProps) {
 
   return (
     <div ref={scopeRef} className="relative overflow-hidden">
-      <header className="relative mb-10 space-y-3 text-center sm:mb-12">
-        <div className="mx-auto h-1 w-12 rounded-full bg-cyan-300" aria-hidden="true" />
-        <p className="font-alata text-[10px] uppercase tracking-[0.28em] text-cyan-300">
-          Course progression
-        </p>
-        <h2 className="font-bebas text-3xl tracking-[0.04em] text-white sm:text-4xl md:text-5xl">
-          {journeyTitle}
-        </h2>
-        <p className="mx-auto max-w-2xl text-sm leading-relaxed text-slate-300">
-          A clear path through the skills in this SSI course, coached around your readiness.
-        </p>
-      </header>
-
       <div className="ci-stats-row mb-10 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
         {stats.map((stat) => (
           <div
@@ -163,7 +172,7 @@ export function CourseInfographic({ course }: CourseInfographicProps) {
         </div>
       </div>
 
-      <section aria-labelledby="course-skills-timeline" className="relative">
+      <section id="course-skills" aria-labelledby="course-skills-timeline" className="relative scroll-mt-32">
         <div className="mb-5">
           <h3 id="course-skills-timeline" className="font-bebas text-2xl tracking-wide text-white sm:text-3xl">
             Skills you will practise
