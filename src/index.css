@@ -431,17 +431,18 @@ html[dir="rtl"] .font-arabic-body {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  border: 1px solid rgb(156 230 225 / 0.72);
-  background: linear-gradient(145deg, #147f83 0%, #075b6d 58%, #06445c 100%);
-  color: #fff;
+  border: 1px solid #efffff;
+  border-radius: 999px;
+  background: #efffff;
+  color: #0e3453;
   box-shadow:
     0 7px 20px rgb(0 0 0 / 0.2),
-    inset 0 1px rgb(255 255 255 / 0.32),
-    inset 0 -1px rgb(1 35 51 / 0.55);
+    inset 0 1px rgb(255 255 255 / 0.6);
   transition:
-    background-color 180ms ease,
-    border-color 180ms ease,
-    box-shadow 180ms ease,
+    background-color 240ms ease,
+    border-color 240ms ease,
+    box-shadow 240ms ease,
+    color 240ms ease,
     transform 180ms ease;
 }
 
@@ -458,13 +459,28 @@ html[dir="rtl"] .font-arabic-body {
 
 .fd-button:hover,
 .btn-luxury:hover {
-  border-color: rgb(205 250 243 / 0.95);
-  background: linear-gradient(145deg, #19969a 0%, #087080 58%, #07546b 100%);
+  border-color: #89ffff;
+  background: #89ffff;
+  color: #0e3453;
   box-shadow:
     0 9px 24px rgb(0 0 0 / 0.24),
-    0 0 0 1px rgb(85 227 212 / 0.1),
-    inset 0 1px rgb(255 255 255 / 0.42);
+    0 0 0 1px rgb(137 255 255 / 0.18);
   transform: translateY(-1px);
+}
+
+.fd-button:focus-visible,
+.btn-luxury:focus-visible,
+.fd-button:active,
+.btn-luxury:active {
+  border-color: #89ffff;
+  background: #89ffff;
+  color: #0e3453;
+}
+
+.fd-button:focus-visible,
+.btn-luxury:focus-visible {
+  outline: 2px solid #efffff;
+  outline-offset: 3px;
 }
 
 .fd-button:hover::before,
@@ -478,13 +494,13 @@ html[dir="rtl"] .font-arabic-body {
 }
 
 .fd-button--quiet {
-  background: rgb(5 46 66 / 0.72);
-  border-color: rgb(156 230 225 / 0.58);
-  box-shadow: inset 0 1px rgb(255 255 255 / 0.2);
+  background: #efffff;
+  border-color: #efffff;
 }
 
 .fd-button--quiet:hover {
-  background: rgb(7 75 91 / 0.92);
+  background: #89ffff;
+  border-color: #89ffff;
 }
 
 /* Elite Glass Card */

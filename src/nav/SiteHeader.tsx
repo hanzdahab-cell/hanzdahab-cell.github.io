@@ -14,7 +14,6 @@ import {
   MenuItemIcon,
   NavDropdown,
   NavProvider,
-  OCEAN_BTN,
   OCEAN_TEXT,
   type MenuDefinition,
   type MenuLink,
@@ -477,10 +476,10 @@ export function SiteHeader({
             <button
               type="button"
               onClick={() => onOpenBooking('ssi-level-1')}
-              aria-label="Book Now"
-              className={`fd-button inline-flex min-h-10 items-center justify-center rounded-lg px-2 text-xs font-semibold sm:px-4 sm:text-sm ${OCEAN_BTN} ${HEADER_CTA_FOCUS}`}
+              className={`fd-button inline-flex min-h-10 items-center justify-center whitespace-nowrap rounded-full px-2 text-[0.65rem] font-semibold sm:px-4 sm:text-sm ${HEADER_CTA_FOCUS}`}
             >
-              Book Now
+              <span className="sm:hidden">Book a Dive</span>
+              <span className="hidden sm:inline">Book Now</span>
             </button>
 
             <button

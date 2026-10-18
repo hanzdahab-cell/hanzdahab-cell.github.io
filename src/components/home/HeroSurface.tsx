@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, type FocusEvent } from 'react';
-import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { TRANSLATIONS } from '../../utils/i18n';
 import type { PageType } from '../../types';
@@ -11,34 +10,24 @@ interface HeroSurfaceProps {
 
 const HERO_SLIDES = [
   {
-    name: 'freedive-team',
+    name: 'freedive-dahab-freediving-training-red-sea.webp',
     alt: 'Freedivers training together in the clear water of Dahab',
-    position: 'center 48%',
   },
   {
-    name: 'cnf-record-one',
-    alt: 'Egyptian freediver celebrating a national constant no fins record',
-    position: 'center 38%',
+    name: 'linda-paganelli-freedive-dahab-freediving.webp',
+    alt: 'Linda Paganelli freediving above a coral reef',
   },
   {
-    name: 'blue-water-diver',
-    alt: 'A freediver moving through blue water in Dahab',
-    position: 'center 46%',
-  },
-  {
-    name: 'cnf-record-two',
-    alt: 'Freediver holding the Egyptian flag after a record dive',
-    position: 'center 42%',
-  },
-  {
-    name: 'ras-mohammed',
+    name: 'ras-mohammed-red-sea-turtle-coral-reef.webp',
     alt: 'A sea turtle swimming above a reef at Ras Mohammed',
-    position: 'center 50%',
   },
   {
-    name: 'lighthouse-freediver',
-    alt: 'A freediver training at Lighthouse Bay in Dahab',
-    position: 'center 55%',
+    name: 'dahab-lighthouse-bay-freediving-reef.webp',
+    alt: 'Freediving at Lighthouse Bay in Dahab',
+  },
+  {
+    name: 'freediving-blue-hole-sinai-red-sea-egypt.webp',
+    alt: 'A freediver descending at the Blue Hole in Sinai',
   },
 ];
 
@@ -53,10 +42,8 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
   const headlineTail = headlineWords.slice(-2).join(' ');
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const [manuallyPaused, setManuallyPaused] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const [isPlayingThroughInteraction, setIsPlayingThroughInteraction] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
@@ -81,36 +68,24 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
     return () => mediaQuery.removeEventListener('change', updatePreference);
   }, []);
 
-  const interactionPaused = (isHovered || isFocused) && !isPlayingThroughInteraction;
+  const interactionPaused = isHovered || isFocused;
 
   useEffect(() => {
-    if (manuallyPaused || interactionPaused || reducedMotion || !isVisible) return;
+    if (interactionPaused || reducedMotion || !isVisible) return;
 
     const timer = window.setInterval(() => {
       setActiveIndex((index) => (index + 1) % HERO_SLIDES.length);
-    }, 6500);
+    }, 4000);
     return () => window.clearInterval(timer);
-  }, [interactionPaused, isVisible, manuallyPaused, reducedMotion]);
-
-  const showSlide = (index: number) => {
-    setActiveIndex((index + HERO_SLIDES.length) % HERO_SLIDES.length);
-  };
-
-  const togglePlayback = () => {
-    const nextPaused = !manuallyPaused;
-    setManuallyPaused(nextPaused);
-    setIsPlayingThroughInteraction(!nextPaused);
-  };
+  }, [interactionPaused, isVisible, reducedMotion]);
 
   const handleMouseLeave = () => {
     setIsHovered(false);
-    if (!isFocused) setIsPlayingThroughInteraction(false);
   };
 
   const handleBlur = (event: FocusEvent<HTMLElement>) => {
     if (event.currentTarget.contains(event.relatedTarget as Node | null)) return;
     setIsFocused(false);
-    if (!isHovered) setIsPlayingThroughInteraction(false);
   };
 
   return (
@@ -124,7 +99,6 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
       onMouseLeave={handleMouseLeave}
       onFocusCapture={() => {
         setIsFocused(true);
-        setIsPlayingThroughInteraction(false);
       }}
       onBlurCapture={handleBlur}
     >
@@ -136,21 +110,12 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
               className={`car-05__slide ${index === activeIndex ? 'is-active' : ''}`}
             >
               <img
-                src={`/images/home-hero/optimized/${slide.name}-1920.webp`}
-                srcSet={[
-                  `/images/home-hero/optimized/${slide.name}-1920.webp 1920w`,
-                  `/images/home-hero/optimized/${slide.name}-3840.webp 3840w`,
-                  `/images/home-hero/optimized/${slide.name}-7680.webp 7680w`,
-                ].join(', ')}
-                sizes="100vw"
+                src={`/images/home-hero/source/${slide.name}`}
                 alt=""
                 aria-hidden="true"
-                width="7680"
-                height="4320"
                 loading={index === 0 ? 'eager' : 'lazy'}
                 fetchPriority={index === 0 ? 'high' : 'auto'}
                 decoding="async"
-                style={{ objectPosition: slide.position }}
               />
             </div>
           ))}
@@ -186,59 +151,12 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
               Our Calendar
             </button>
           </div>
+          <p className="car-05__trust-line">
+            4,800+ certified freedivers <span aria-hidden="true">·</span> Small groups{' '}
+            <span aria-hidden="true">·</span> Beginners welcome <span aria-hidden="true">·</span>{' '}
+            SSI Pro #720079
+          </p>
         </div>
-
-        <div className="car-05__controls" role="group" aria-label="Slideshow controls">
-          <button
-            type="button"
-            onClick={() => showSlide(activeIndex - 1)}
-            aria-label="Show previous hero image"
-            className="car-05__control"
-          >
-            <ChevronLeft aria-hidden="true" />
-          </button>
-          <div className="car-05__indicators" role="group" aria-label="Choose a hero image">
-            {HERO_SLIDES.map((slide, index) => (
-              <button
-                key={slide.name}
-                type="button"
-                onClick={() => showSlide(index)}
-                aria-label={`Show hero image ${index + 1} of ${HERO_SLIDES.length}`}
-                aria-current={index === activeIndex ? 'true' : undefined}
-                className={`car-05__indicator ${index === activeIndex ? 'is-active' : ''}`}
-              />
-            ))}
-          </div>
-          <button
-            type="button"
-            onClick={() => showSlide(activeIndex + 1)}
-            aria-label="Show next hero image"
-            className="car-05__control"
-          >
-            <ChevronRight aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            onClick={togglePlayback}
-            aria-label={
-              reducedMotion
-                ? 'Automatic hero slideshow disabled by reduced-motion preference'
-                : manuallyPaused
-                  ? 'Resume hero slideshow'
-                  : 'Pause hero slideshow'
-            }
-            aria-pressed={manuallyPaused || reducedMotion}
-            disabled={reducedMotion}
-            className="car-05__control car-05__playback"
-          >
-            {manuallyPaused || reducedMotion ? (
-              <Play aria-hidden="true" />
-            ) : (
-              <Pause aria-hidden="true" />
-            )}
-          </button>
-        </div>
-
       </div>
     </section>
   );
