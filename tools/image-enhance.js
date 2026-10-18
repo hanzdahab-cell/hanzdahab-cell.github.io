@@ -1,34 +1,42 @@
-import fs from 'fs';
-import path from 'path';
+import { mkdir } from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 
-const IN_DIR = path.join(path.resolve(), 'public', 'images', 'home-hero');
-const OUT_DIR = IN_DIR; // place enhanced images alongside
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const sourceDirectory = path.join(root, 'public', 'images', 'home-hero');
+const outputDirectory = path.join(sourceDirectory, 'optimized');
+const widths = [1920, 3840, 7680];
+const sources = [
+  ['freedive-team', 'freedive-team.jpg'],
+  ['cnf-record-one', 'cnf-record-one.webp'],
+  ['blue-water-diver', 'blue-water-diver.jpg'],
+  ['cnf-record-two', 'cnf-record-two.webp'],
+  ['ras-mohammed', 'ras-mohammed.jpg'],
+  ['lighthouse-freediver', 'lighthouse-freediver.jpg'],
+];
 
-async function enhance(file) {
-  const src = path.join(IN_DIR, file);
-  const name = path.parse(file).name;
-  const out = path.join(OUT_DIR, `enhanced-${name}.webp`);
-  try {
-    console.log('Processing', file);
-    await sharp(src)
+await mkdir(outputDirectory, { recursive: true });
+
+for (const [name, file] of sources) {
+  const input = path.join(sourceDirectory, file);
+
+  for (const width of widths) {
+    const height = Math.round((width * 9) / 16);
+    const output = path.join(outputDirectory, `${name}-${width}.webp`);
+
+    await sharp(input)
       .rotate()
-      .resize({ width: 7680, withoutEnlargement: false, kernel: 'lanczos3' })
-      .sharpen()
-      .modulate({ saturation: 1.05 })
-      .normalize()
-      .webp({ quality: 90, alphaQuality: 90 })
-      .toFile(out);
-    console.log('Wrote', out);
-  } catch (e) {
-    console.error('Failed', file, e);
+      .median(3)
+      .resize(width, height, {
+        fit: 'cover',
+        position: sharp.strategy.attention,
+        kernel: sharp.kernel.lanczos3,
+      })
+      .sharpen({ sigma: 0.8, m1: 0.5, m2: 1.5 })
+      .webp({ quality: width === 7680 ? 88 : 86, effort: 6 })
+      .toFile(output);
+
+    console.log(`Wrote ${path.relative(root, output)}`);
   }
 }
-
-(async () => {
-  const files = fs.readdirSync(IN_DIR).filter(f => /\.(png|jpe?g|webp)$/i.test(f));
-  for (const f of files) {
-    await enhance(f);
-  }
-  console.log('Done');
-})();

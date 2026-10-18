@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, BookOpen, MessageSquareQuote } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -15,6 +15,7 @@ interface StoryTeaserBannerProps {
 
 export function StoryTeaserBanner({ onNavigate, onViewReviews }: StoryTeaserBannerProps) {
   const gridRef = useRef<HTMLDivElement>(null);
+  const [flippedCards, setFlippedCards] = useState<Set<string>>(() => new Set());
 
   // Motion: perpetual slow "underwater drift" zoom on portraits.
   // (Card entrance uses CSS animate-in classes so cards can never be left invisible.)
@@ -116,53 +117,93 @@ export function StoryTeaserBanner({ onNavigate, onViewReviews }: StoryTeaserBann
 
         {/* 3 Pioneer Cards — dynamic, informative & motional */}
         <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {founders.map((founder, idx) => (
-            <div key={idx} style={{ animationDelay: `${idx * 140}ms` }} className="pioneer-card-outer">
-              <div
-                role="button"
-                tabIndex={0}
-                onClick={() => onNavigate('story')}
-                onKeyDown={(e) => { if (e.key === 'Enter') onNavigate('story'); }}
-                className="pioneer-card-flip group relative w-full h-full"
+          {founders.map((founder, idx) => {
+            const isFlipped = flippedCards.has(founder.name);
+            const bioId = `pioneer-bio-${idx}`;
+            const toggleCard = () => {
+              setFlippedCards((current) => {
+                const next = new Set(current);
+                if (next.has(founder.name)) next.delete(founder.name);
+                else next.add(founder.name);
+                return next;
+              });
+            };
+
+            return (
+              <article
+                key={founder.name}
+                style={{ animationDelay: `${idx * 140}ms` }}
+                className="pioneer-card-outer"
               >
-                <div className="pioneer-card-inner">
-                  <div className="pioneer-card-front relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-white/10 bg-slate-900/40">
-                    <img
-                      src={founder.image}
-                      alt={founder.alt}
-                      loading="lazy"
-                      referrerPolicy="no-referrer"
-                      className="pioneer-img w-full h-full object-cover will-change-transform rounded-2xl"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/25 to-transparent opacity-85 transition-opacity duration-500" />
-                    <div className="absolute top-4 right-4 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[10px] font-mono tracking-wider text-cyan-300 uppercase flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                      Pioneer
+                <div className={`pioneer-card-flip${isFlipped ? ' is-flipped' : ''}`}>
+                  <div className="pioneer-card-inner">
+                    <div
+                      className="pioneer-card-front relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-white/10 bg-slate-900/40"
+                      aria-hidden={isFlipped}
+                      inert={isFlipped}
+                    >
+                      <img
+                        src={founder.image}
+                        alt={founder.alt}
+                        loading="lazy"
+                        referrerPolicy="no-referrer"
+                        className="pioneer-img h-full w-full rounded-2xl object-cover will-change-transform"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/25 to-transparent opacity-85 transition-opacity duration-500" />
+                      <div className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full border border-white/15 bg-black/60 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-cyan-300 backdrop-blur-md">
+                        <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                        Pioneer
+                      </div>
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <span className="mb-1 block font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-400">
+                          {founder.role}
+                        </span>
+                        <h3 className="font-bebas text-3xl leading-none tracking-wide text-white sm:text-4xl">
+                          {founder.name}
+                        </h3>
+                      </div>
                     </div>
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-cyan-400 font-semibold block mb-1">
-                        {founder.role}
-                      </span>
-                      <h3 className="font-bebas text-3xl sm:text-4xl text-white tracking-wide leading-none">
-                        {founder.name}
-                      </h3>
+
+                    <div
+                      id={bioId}
+                      className="pioneer-card-back rounded-2xl border border-white/10 bg-[#0A2943] p-6"
+                      aria-hidden={!isFlipped}
+                      inert={!isFlipped}
+                    >
+                      <div className="space-y-4">
+                        <h3 className="font-bebas text-2xl text-white">{founder.name}</h3>
+                        <p className="text-sm leading-relaxed text-slate-200">{founder.info}</p>
+                        <p className="text-xs font-semibold text-[#89ffff]">{founder.highlight}</p>
+                        <button
+                          type="button"
+                          onClick={() => onNavigate('story')}
+                          className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/35 px-4 py-2 text-sm text-white transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                        >
+                          Explore our story
+                          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                        </button>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="pioneer-card-back rounded-2xl bg-[#0A2943] p-6 flex flex-col justify-between">
-                    <div>
-                      <h4 className="font-bebas text-2xl text-white mb-2">{founder.name}</h4>
-                      <p className="text-sm text-slate-200 leading-relaxed">{founder.info}</p>
-                    </div>
-                    <div className="mt-4 text-sm text-slate-300 flex items-center justify-between">
-                      <span>{founder.highlight}</span>
-                      <button className="fd-button px-4 py-2 rounded-md">Read more</button>
-                    </div>
-                  </div>
+                  <button
+                    type="button"
+                    className="pioneer-card-toggle focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    onClick={toggleCard}
+                    aria-expanded={isFlipped}
+                    aria-controls={bioId}
+                    aria-label={`${isFlipped ? 'Show portrait of' : 'Read biography of'} ${founder.name}`}
+                  >
+                    {isFlipped ? 'View portrait' : 'Read biography'}
+                    <ArrowRight
+                      className={`h-4 w-4 transition-transform${isFlipped ? ' rotate-180' : ''}`}
+                      aria-hidden="true"
+                    />
+                  </button>
                 </div>
-              </div>
-            </div>
-          ))}
+              </article>
+            );
+          })}
         </div>
 
       </div>

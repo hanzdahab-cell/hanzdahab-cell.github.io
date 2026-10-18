@@ -58,8 +58,9 @@
   z-index: 2;
   inset-inline-start: 50%;
   bottom: clamp(5rem, 8vh, 7rem);
-  width: min(72rem, calc(100% - 2.5rem));
+  width: min(84rem, calc(100% - 2.5rem));
   transform: translateX(-50%);
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -67,10 +68,11 @@
 }
 
 .car-05__title {
-  max-width: 12ch;
+  max-width: 100%;
+  white-space: nowrap;
   color: #fff;
   font-family: var(--font-hook);
-  font-size: clamp(2.25rem, 5.8vw, 5.6rem);
+  font-size: clamp(1rem, 5.5cqi, 5.25rem);
   font-weight: 400;
   letter-spacing: 0.015em;
   line-height: 0.98;
@@ -125,24 +127,25 @@
 
 .car-05__cta--sky {
   border-color: #89ffff;
-  background: linear-gradient(90deg, #89ffff 0%, #efffff 100%);
+  background: linear-gradient(110deg, #89ffff 0%, #efffff 100%);
   color: #0e3453;
 }
 
 .car-05__cta--sky:hover {
-  filter: brightness(0.98) saturate(1.02);
-  box-shadow: 0 14px 40px -18px rgba(137,255,255,0.18);
+  filter: brightness(0.98);
+  box-shadow: 0 14px 40px -18px rgb(137 255 255 / 35%);
   transform: translateY(-2px);
 }
 
 .car-05__cta--white {
-  background: #f2f8fc;
+  border-color: #efffff;
+  background: linear-gradient(250deg, #89ffff 0%, #efffff 100%);
   color: #0e3453;
 }
 
 .car-05__title--accent {
   color: #89ffff;
-  text-shadow: 0 6px 28px rgba(137,255,255,0.08);
+  text-shadow: 0 6px 28px rgb(137 255 255 / 8%);
 }
 
 .car-05__cta--white:hover {
@@ -232,15 +235,14 @@
   }
 
   .car-05__overlay {
-    inset-inline: 1.25rem;
+    inset-inline-start: 50%;
     bottom: 6.25rem;
-    width: min(100%, 28rem);
+    width: calc(100% - 2rem);
     transform: translateX(-50%);
   }
 
   .car-05__title {
-    max-width: 12ch;
-    font-size: clamp(2.15rem, 10vw, 3.5rem);
+    font-size: clamp(1rem, 5.6cqi, 5.25rem);
   }
 
   .car-05__controls {

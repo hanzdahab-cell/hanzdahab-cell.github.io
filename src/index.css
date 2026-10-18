@@ -829,48 +829,147 @@ html[dir="rtl"] .font-arabic-body {
   }
 }
 
-/* Courses ticker */
+/* Repeating course names form a lightweight, decorative marquee. */
 .courses-ticker {
-  --g: 24rem;
-  position: relative;
-}
-.courses-ticker__track {
-  display: flex;
-  gap: 1rem;
-  animation: ticker 28s linear infinite;
-  align-items: center;
-}
-.courses-ticker__item { flex: 0 0 auto; }
-@keyframes ticker {
-  from { transform: translateX(0); }
-  to { transform: translateX(calc(-50%)); }
+  overflow: hidden;
+  border-block: 1px solid rgb(169 210 236 / 14%);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
 
-/* Pioneer flip styles */
-.pioneer-card-outer { perspective: 1400px; }
-.pioneer-card-flip { width: 100%; height: 100%; }
-.pioneer-card-inner {
+.courses-ticker__track {
+  display: flex;
+  width: max-content;
+  animation: courses-ticker-scroll 36s linear infinite;
+}
+
+.courses-ticker__group {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  padding-inline-end: clamp(1.5rem, 4vw, 4rem);
+}
+
+.courses-ticker__item {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.65rem;
+  color: #efffff;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.courses-ticker__item::before {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: #89ffff;
+  content: '';
+}
+
+.courses-ticker:hover .courses-ticker__track {
+  animation-play-state: paused;
+}
+
+@keyframes courses-ticker-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Accessible, tap-controlled 3D pioneer cards. */
+.pioneer-card-outer {
+  perspective: 1400px;
+}
+
+.pioneer-card-flip {
   position: relative;
-  width: 100%;
-  height: 100%;
+  aspect-ratio: 4 / 5;
+  isolation: isolate;
+}
+
+.pioneer-card-inner {
+  position: absolute;
+  inset: 0;
   transform-style: preserve-3d;
-  transition: transform 600ms cubic-bezier(.2,.9,.2,1);
+  transition: transform 650ms cubic-bezier(0.2, 0.9, 0.2, 1);
 }
-.pioneer-card-front, .pioneer-card-back {
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
+
+.pioneer-card-flip.is-flipped .pioneer-card-inner {
+  transform: rotateY(180deg);
 }
-.pioneer-card-front { transform: rotateY(0deg); }
+
+.pioneer-card-front,
 .pioneer-card-back {
   position: absolute;
   inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.pioneer-card-back {
   transform: rotateY(180deg);
 }
-.pioneer-card-flip:hover .pioneer-card-inner,
-.pioneer-card-flip:focus-within .pioneer-card-inner { transform: rotateY(180deg); }
 
-/* Make the back visible on small touch if tapped (handles via click handler already) */
-.pioneer-card-back { display: flex; }
+.pioneer-card-toggle {
+  position: absolute;
+  z-index: 2;
+  inset-inline-start: 50%;
+  bottom: 1rem;
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  transform: translateX(-50%);
+  border: 1px solid rgb(239 255 255 / 55%);
+  border-radius: 999px;
+  background: rgb(8 31 53 / 88%);
+  color: #efffff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+}
+
+.pioneer-card-toggle:hover {
+  border-color: #89ffff;
+  background: rgb(8 31 53 / 96%);
+}
+
+.pioneer-card-back {
+  overflow-y: auto;
+  padding-bottom: 5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .courses-ticker {
+    mask-image: none;
+  }
+
+  .courses-ticker__track {
+    animation: none;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .courses-ticker__group {
+    flex-wrap: wrap;
+  }
+
+  .courses-ticker__group[aria-hidden='true'] {
+    display: none;
+  }
+
+  .pioneer-card-inner {
+    transition: none;
+  }
+}
 
 /* ==========================================================================
    GSAP SCROLLTRIGGER INTRO SYSTEM & ACTIVE STATES

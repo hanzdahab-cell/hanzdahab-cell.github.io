@@ -11,24 +11,34 @@ interface HeroSurfaceProps {
 
 const HERO_SLIDES = [
   {
-    src: '/images/home-hero/enhanced-freedive-team.webp',
+    name: 'freedive-team',
     alt: 'Freedivers training together in the clear water of Dahab',
     position: 'center 48%',
   },
   {
-    src: '/images/home-hero/enhanced-cnf-record-one.webp',
+    name: 'cnf-record-one',
     alt: 'Egyptian freediver celebrating a national constant no fins record',
     position: 'center 38%',
   },
   {
-    src: '/images/home-hero/enhanced-blue-water-diver.webp',
+    name: 'blue-water-diver',
     alt: 'A freediver moving through blue water in Dahab',
     position: 'center 46%',
   },
   {
-    src: '/images/home-hero/enhanced-cnf-record-two.webp',
+    name: 'cnf-record-two',
     alt: 'Freediver holding the Egyptian flag after a record dive',
     position: 'center 42%',
+  },
+  {
+    name: 'ras-mohammed',
+    alt: 'A sea turtle swimming above a reef at Ras Mohammed',
+    position: 'center 50%',
+  },
+  {
+    name: 'lighthouse-freediver',
+    alt: 'A freediver training at Lighthouse Bay in Dahab',
+    position: 'center 55%',
   },
 ];
 
@@ -38,7 +48,6 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
     .split(' — ')
     .map((part) => part.trim());
 
-  // Render headline as single sentence, color last two words specially
   const headlineWords = headline.split(/\s+/);
   const headlineLead = headlineWords.slice(0, Math.max(0, headlineWords.length - 2)).join(' ');
   const headlineTail = headlineWords.slice(-2).join(' ');
@@ -123,15 +132,21 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
         <div className="car-05__image-stack" aria-hidden="true">
           {HERO_SLIDES.map((slide, index) => (
             <div
-              key={slide.src}
+              key={slide.name}
               className={`car-05__slide ${index === activeIndex ? 'is-active' : ''}`}
             >
               <img
-                src={slide.src}
+                src={`/images/home-hero/optimized/${slide.name}-1920.webp`}
+                srcSet={[
+                  `/images/home-hero/optimized/${slide.name}-1920.webp 1920w`,
+                  `/images/home-hero/optimized/${slide.name}-3840.webp 3840w`,
+                  `/images/home-hero/optimized/${slide.name}-7680.webp 7680w`,
+                ].join(', ')}
+                sizes="100vw"
                 alt=""
                 aria-hidden="true"
-                width="1920"
-                height="1080"
+                width="7680"
+                height="4320"
                 loading={index === 0 ? 'eager' : 'lazy'}
                 fetchPriority={index === 0 ? 'high' : 'auto'}
                 decoding="async"
@@ -144,7 +159,10 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
         <div className="car-05__shade" aria-hidden="true" />
 
         <div className="car-05__overlay">
-          <h1 className="car-05__title">{headlineLead} <span className="car-05__title--accent">{headlineTail}</span></h1>
+          <h1 className="car-05__title">
+            {headlineLead}{' '}
+            <span className="car-05__title--accent">{headlineTail}</span>
+          </h1>
           <img
             src="/logo-freedive-dahab.png"
             alt="Freedive Dahab"
@@ -182,7 +200,7 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
           <div className="car-05__indicators" role="group" aria-label="Choose a hero image">
             {HERO_SLIDES.map((slide, index) => (
               <button
-                key={slide.src}
+                key={slide.name}
                 type="button"
                 onClick={() => showSlide(index)}
                 aria-label={`Show hero image ${index + 1} of ${HERO_SLIDES.length}`}
