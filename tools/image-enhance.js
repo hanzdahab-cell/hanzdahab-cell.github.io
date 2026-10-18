@@ -24,16 +24,31 @@ for (const [name, file] of sources) {
   for (const width of widths) {
     const height = Math.round((width * 9) / 16);
     const output = path.join(outputDirectory, `${name}-${width}.webp`);
-
-    await sharp(input)
+    const background = await sharp(input)
       .rotate()
-      .median(3)
       .resize(width, height, {
         fit: 'cover',
         position: sharp.strategy.attention,
         kernel: sharp.kernel.lanczos3,
       })
+      .blur(Math.max(8, Math.round(width / 120)))
+      .modulate({ brightness: 0.38, saturation: 0.9 })
+      .png()
+      .toBuffer();
+    const fullImage = await sharp(input)
+      .rotate()
+      .median(3)
+      .resize(width, height, {
+        fit: 'contain',
+        background: { r: 8, g: 31, b: 53, alpha: 0 },
+        kernel: sharp.kernel.lanczos3,
+      })
       .sharpen({ sigma: 0.8, m1: 0.5, m2: 1.5 })
+      .png()
+      .toBuffer();
+
+    await sharp(background)
+      .composite([{ input: fullImage }])
       .webp({ quality: width === 7680 ? 88 : 86, effort: 6 })
       .toFile(output);
 

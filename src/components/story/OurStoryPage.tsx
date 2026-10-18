@@ -466,76 +466,86 @@ interface FounderCardProps {
 
 function FounderCard({ founder, onSelect }: FounderCardProps) {
   const [imageHidden, setImageHidden] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const bioId = `founder-bio-${founder.id}`;
 
   return (
-    <article className="group flex flex-col rounded-2xl bg-slate-900/40 border border-white/10 hover:border-cyan-400/40 transition-all duration-300 overflow-hidden shadow-xl hover:shadow-[0_10px_35px_rgba(0,0,0,0.6)]">
-      
-      {/* Founder Photo Area (Clicking opens simple popup) */}
-      {!imageHidden ? (
-        <button
-          onClick={onSelect}
-          type="button"
-          className="relative aspect-[4/5] w-full overflow-hidden bg-slate-950 block text-left cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
-          title={`Click to view more about ${founder.name}`}
-          aria-label={`View extra details and photos of ${founder.name}`}
-        >
-          <SmartImage
-            primarySrc={founder.image}
-            fallbackCandidates={founder.altImageCandidates}
-            alt={founder.name}
-            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transform-none"
-            onMissing={() => setImageHidden(true)}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity" />
+    <article className="story-pioneer-card-3d">
+      <div className={`story-pioneer-card-3d__scene group${isFlipped ? ' is-flipped' : ''}`}>
+        <div className="story-pioneer-card-3d__inner">
+          <div
+            className="story-pioneer-card-3d__face story-pioneer-card-3d__front"
+            aria-hidden={isFlipped}
+            inert={isFlipped}
+          >
+            {!imageHidden ? (
+              <>
+                <SmartImage
+                  primarySrc={founder.image}
+                  fallbackCandidates={founder.altImageCandidates}
+                  alt={founder.name}
+                  className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transform-none"
+                  onMissing={() => setImageHidden(true)}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
+              </>
+            ) : (
+              <div className="flex h-full flex-col justify-end bg-[#0A2943] p-6">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-cyan-400/30 bg-cyan-500/10">
+                  <span className="font-bebas text-2xl text-cyan-300">
+                    {founder.name.split(' ').map((name) => name[0]).join('')}
+                  </span>
+                </div>
+              </div>
+            )}
 
-          {/* Subtle click badge */}
-          <div className="absolute top-4 right-4 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-mono tracking-widest text-cyan-300 uppercase opacity-0 group-hover:opacity-100 transition-opacity">
-            Explore Details
+            <div className="absolute bottom-16 left-5 right-5">
+              <span className="mb-1 block font-mono text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">
+                {founder.role}
+              </span>
+              <h3 className="font-bebas text-3xl leading-none tracking-wide text-white sm:text-4xl">
+                {founder.name}
+              </h3>
+            </div>
           </div>
 
-          <div className="absolute bottom-4 left-4 right-4">
-            <span className="text-xs font-mono uppercase tracking-[0.2em] text-cyan-400 font-semibold block mb-1">
+          <div
+            id={bioId}
+            className="story-pioneer-card-3d__face story-pioneer-card-3d__back"
+            aria-hidden={!isFlipped}
+            inert={!isFlipped}
+          >
+            <span className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">
               {founder.role}
             </span>
-            <h3 className="font-bebas text-3xl sm:text-4xl text-white tracking-wide leading-none">
-              {founder.name}
-            </h3>
+            <h3 className="font-bebas text-3xl leading-tight text-white">{founder.name}</h3>
+            <p className="text-sm leading-relaxed text-slate-200">{founder.bio}</p>
+            <button
+              type="button"
+              onClick={onSelect}
+              className="inline-flex min-h-11 items-center gap-2 self-start rounded-full border border-white/35 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white transition-colors hover:border-[#89ffff] hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              <span>View Profile &amp; Media</span>
+              <ChevronRight className="h-4 w-4" aria-hidden="true" />
+            </button>
           </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setIsFlipped((flipped) => !flipped)}
+          className="story-pioneer-card-3d__toggle focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          aria-expanded={isFlipped}
+          aria-controls={bioId}
+          aria-label={`${isFlipped ? 'Show portrait of' : 'Read biography of'} ${founder.name}`}
+        >
+          {isFlipped ? 'View portrait' : 'Read biography'}
+          <ChevronRight
+            className={`h-4 w-4 transition-transform${isFlipped ? ' rotate-180' : ''}`}
+            aria-hidden="true"
+          />
         </button>
-      ) : (
-        /* Clean fallback header when image file is missing (no broken image box) */
-        <div className="p-6 pb-2 border-b border-white/5 bg-slate-900/60">
-          <div className="w-16 h-16 rounded-full bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center mb-4">
-            <span className="font-bebas text-2xl text-cyan-300">
-              {founder.name.split(' ').map((n) => n[0]).join('')}
-            </span>
-          </div>
-          <span className="text-xs font-mono uppercase tracking-[0.2em] text-cyan-400 font-semibold block mb-1">
-            {founder.role}
-          </span>
-          <h3 className="font-bebas text-3xl text-white tracking-wide">
-            {founder.name}
-          </h3>
-        </div>
-      )}
-
-      {/* Card Content & Bio (verbatim) */}
-      <div className="p-6 sm:p-7 flex-1 flex flex-col justify-between space-y-4">
-        <p className="text-sm text-slate-300 font-alata font-normal leading-relaxed">
-          {founder.bio}
-        </p>
-
-        <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-          <button
-            onClick={onSelect}
-            className="text-xs font-mono uppercase tracking-wider text-cyan-400 hover:text-cyan-300 transition-colors flex items-center gap-1.5 cursor-pointer"
-          >
-            <span>View Profile &amp; Media</span>
-            <ChevronRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
       </div>
-
     </article>
   );
 }
