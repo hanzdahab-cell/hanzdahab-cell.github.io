@@ -6,16 +6,16 @@ export const trainingMenu: MenuDefinition = {
   page: 'training',
   icon: '/icons/diving-watch.png',
   columns: [[
-    L('Why Training With FDD', 'training'),
-    L('Light House Bay', 'training'),
-    L('Blue Hole', 'training'),
+    L('Why Training with Us?', 'training'),
+    L('Lighthouse Bay', 'training', 'lighthouse-bay-training'),
+    L('Blue Hole', 'training', 'blue-hole-training'),
     G('Training Packages', [
       L('Training Week', 'event-training-week'),
-      L('Beginner Training Week', 'event-beginner-week'),
-      L('Advanced Training Week', 'event-advanced-week'),
-      L('Beginner Advanced Training Week', 'package-ultimate-dahab-combo-week'),
+      L('Beginner Week', 'event-beginner-week'),
+      L('Advanced Week', 'event-advanced-week'),
+      L('Beginner Advanced Week', 'package-ultimate-dahab-combo-week'),
     ]),
-    L('Master', 'course-master-freediver', undefined, true),
+    L('Master', 'course-master-freediver'),
   ]],
 };
 

@@ -6,10 +6,9 @@ export const homeMenu: MenuDefinition = {
   page: 'home',
   icon: '/icons/diver.png',
   columns: [[
-    L('Freedive Dahab', 'home'),
-    L('Reviews and Testimonials', 'home', 'testimonials'),
-    L('Our Dive Spots', 'home', 'dahab-blue-hole'),
-    L('Our Legacy', 'story'),
+    L('Diving Spots', 'home', 'dahab-blue-hole'),
+    L('Reviews & Testimonials', 'home', 'testimonials'),
+    L('Our Legacy in Numbers', 'home', 'legacy'),
   ]],
 };
 

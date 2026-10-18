@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ArrowRight, Pause, Play } from 'lucide-react';
 import { InfiniteMovingCards } from '../ui/infinite-moving-cards';
 import { REVIEW_SOURCES, reviews, ReviewPlatform } from '../../data/reviews';
@@ -45,51 +45,6 @@ export function PlatformMark({ platform }: { platform: ReviewPlatform }) {
   );
 }
 
-function GoogleReviewsEmbed() {
-  const [scriptError, setScriptError] = useState(false);
-
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://widgets.sociablekit.com/google-reviews/widget.js';
-    script.defer = true;
-    script.async = true;
-    script.onerror = () => setScriptError(true);
-    document.body.appendChild(script);
-    return () => script.remove();
-  }, []);
-
-  return (
-    <div className="mt-14 border-t border-white/10 pt-10">
-      <h3 className="font-bebas text-3xl tracking-wide text-white sm:text-4xl">
-        Google reviews
-      </h3>
-      <p className="mb-5 mt-2 text-sm text-slate-300">
-        Recent reviews from our Google profile.
-      </p>
-      <div
-        className="sk-ww-google-reviews min-h-72 rounded-2xl bg-white p-3 text-slate-900"
-        data-embed-id="25722416"
-        aria-label="Google reviews widget"
-        role="region"
-      />
-      {scriptError && (
-        <p role="status" className="mt-3 text-sm text-slate-300">
-          Google reviews could not be loaded. You can still read them on{' '}
-          <a
-            href={REVIEW_SOURCES.find((source) => source.platform === 'google')?.url}
-            target="_blank"
-            rel="noreferrer"
-            className="font-semibold text-cyan-200 underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-          >
-            Google
-          </a>
-          .
-        </p>
-      )}
-    </div>
-  );
-}
-
 export function ReviewsCarousel() {
   const [isPaused, setIsPaused] = useState(false);
   const { t } = useLanguage();
@@ -98,9 +53,9 @@ export function ReviewsCarousel() {
     <section
       id="testimonials"
       aria-labelledby="testimonials-title"
-      className="relative border-t border-white/5 bg-transparent px-6 py-24 sm:py-28"
+      className="relative overflow-hidden border-t border-white/5 bg-[#0E3453] px-6 py-24 sm:py-28"
     >
-      <div className="mx-auto max-w-7xl">
+      <div className="relative z-10 mx-auto max-w-7xl">
         <header className="mb-12 flex flex-col gap-6 lg:mb-14 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
             <p className="mb-3 text-xs font-alata uppercase tracking-[0.24em] text-cyan-300">
@@ -199,7 +154,6 @@ export function ReviewsCarousel() {
             </article>
           )}
         />
-        <GoogleReviewsEmbed />
       </div>
     </section>
   );

@@ -136,16 +136,17 @@ export function TrainingSection({ onOpenBooking, currency = 'EUR', onNavigate }:
         {/* Tab Navigation */}
         <div id="training-modules" className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-12 scroll-mt-32">
           {[
-            { id: 'depth', label: 'Blue Hole Line Training', icon: Waves },
-            { id: 'equalization', label: 'Equalization Lab', icon: Target },
-            { id: 'pool', label: 'Pool & Static Apnea', icon: Activity },
-            { id: 'coaching', label: 'Master Coaching', icon: Award },
+            { id: 'depth', label: 'Blue Hole Line Training', icon: Waves, anchor: 'blue-hole-training' },
+            { id: 'equalization', label: 'Equalization Lab', icon: Target, anchor: 'lighthouse-bay-training' },
+            { id: 'pool', label: 'Pool & Static Apnea', icon: Activity, anchor: undefined },
+            { id: 'coaching', label: 'Master Coaching', icon: Award, anchor: undefined },
           ].map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
+                id={tab.anchor}
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`flex items-center gap-2 px-5 py-3 rounded-xl text-xs sm:text-sm font-sans font-medium transition-all duration-200 cursor-pointer ${
                   isActive

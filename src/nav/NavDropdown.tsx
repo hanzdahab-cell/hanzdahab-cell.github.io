@@ -7,13 +7,14 @@ import {
   type ReactNode,
 } from 'react';
 import { AnimatePresence, MotionConfig, motion, type Variants } from 'framer-motion';
+import { MapPin } from 'lucide-react';
 import type { PageType } from '../types';
 
 export interface MenuLink {
   label: string;
   page?: PageType;
   sectionId?: string;
-  btn?: boolean;
+  icon?: 'brand' | 'location';
 }
 
 export interface MenuGroup {
@@ -37,8 +38,8 @@ export const L = (
   label: string,
   page?: PageType,
   sectionId?: string,
-  btn = false,
-): MenuLink => ({ label, page, sectionId, btn });
+  icon?: MenuLink['icon'],
+): MenuLink => ({ label, page, sectionId, icon });
 
 export const G = (group: string, items: MenuLink[]): MenuGroup => ({ group, items });
 
@@ -134,6 +135,24 @@ export function MaskIcon({
   );
 }
 
+export function MenuItemIcon({
+  menuId,
+  index,
+  icon,
+}: {
+  menuId: string;
+  index: number;
+  icon?: MenuLink['icon'];
+}) {
+  if (icon === 'brand') {
+    return <img src="/logo-freedive-dahab.png" alt="" className="size-[18px] shrink-0 object-contain" />;
+  }
+  if (icon === 'location') {
+    return <MapPin className="size-[18px] shrink-0 text-current" aria-hidden="true" />;
+  }
+  return <MaskIcon src={menuItemIcon(menuId, index)} className="size-[18px] shrink-0" />;
+}
+
 const panelVariants: Variants = {
   hidden: { opacity: 0, scale: 0.98, y: -4 },
   visible: {
@@ -179,18 +198,11 @@ function Panel({
               onSelect(item);
             }
           }}
-          className={`group/row flex min-h-11 items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium leading-tight transition-colors ${FOCUS} ${
-            item.btn
-              ? `mt-1.5 justify-center ${OCEAN_BTN}`
-              : `${OCEAN_TEXT} ${HOVER_BG}`
-          }`}
+          className={`group/row flex min-h-11 items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium leading-tight transition-colors ${OCEAN_TEXT} ${HOVER_BG} ${FOCUS}`}
         >
-          {!item.btn && (
-            <MaskIcon
-              src={menuItemIcon(menu.id, index)}
-              className="size-[18px] transition-transform duration-200 group-hover/row:scale-110 motion-reduce:transition-none"
-            />
-          )}
+          <span className="transition-transform duration-200 group-hover/row:scale-110 motion-reduce:transition-none">
+            <MenuItemIcon menuId={menu.id} index={index} icon={item.icon} />
+          </span>
           {item.label}
         </a>
       </motion.li>
@@ -306,16 +318,6 @@ export function NavDropdown({
             } ${menu.wide ? 'w-[min(600px,calc(100vw-2rem))]' : 'w-[min(300px,calc(100vw-2rem))]'}`}
           >
             <Panel menu={menu} onSelect={handleSelect} />
-            <a
-              href={`#${menu.page}`}
-              onClick={(event) => {
-                event.preventDefault();
-                handleSelect({ label: 'Learn more', page: menu.page });
-              }}
-              className={`mt-2 flex min-h-10 w-full items-center justify-center rounded-lg px-3 py-2 text-sm font-semibold ${OCEAN_BTN} ${FOCUS}`}
-            >
-              Learn more
-            </a>
           </motion.div>
         )}
       </AnimatePresence>

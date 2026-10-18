@@ -11,11 +11,11 @@ import {
   HOVER_BG,
   L,
   MaskIcon,
+  MenuItemIcon,
   NavDropdown,
   NavProvider,
   OCEAN_BTN,
   OCEAN_TEXT,
-  menuItemIcon,
   type MenuDefinition,
   type MenuLink,
 } from './NavDropdown';
@@ -32,9 +32,9 @@ const MENUS: MenuDefinition[] = [
   storyMenu,
   coursesMenu,
   trainingMenu,
+  packagesMenu,
   activitiesMenu,
   accommodationMenu,
-  packagesMenu,
 ];
 const HEADER_FOCUS =
   'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6bbbe8]';
@@ -53,9 +53,9 @@ const SEARCH_PAGES: MenuLink[] = [
   L('Our Story', 'story'),
   L('Courses', 'courses'),
   L('Training', 'training'),
+  L('Packages', 'packages'),
   L('Activities', 'experience'),
   L('Accommodation', 'accommodation'),
-  L('Packages', 'packages'),
   L('Calendar', 'calendar'),
   L('Blog', 'blog'),
   L('FAQ', 'faq'),
@@ -101,7 +101,7 @@ function MobileDrawer({
       exit={{ opacity: 0, y: -6 }}
       transition={{ duration: 0.12 }}
       data-lenis-prevent
-      className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto overscroll-contain border-t border-slate-200 bg-white px-4 pb-8 pt-2 min-[1440px]:hidden"
+      className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto overscroll-contain border-t border-slate-200 bg-white px-4 pb-8 pt-2 min-[1200px]:hidden"
     >
       <div className="border-b border-slate-200 py-3">
         <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
@@ -147,14 +147,10 @@ function MobileDrawer({
                 onClose();
               }
             }}
-            className={`flex min-h-11 items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium ${FOCUS} ${
-              menuLink.btn
-                ? `mt-1 justify-center ${OCEAN_BTN}`
-                : `text-[#0a5c8c] ${HOVER_BG}`
-            }`}
+            className={`flex min-h-11 items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-[#0a5c8c] ${HOVER_BG} ${FOCUS}`}
           >
-            {!menuLink.btn && menu && (
-              <MaskIcon src={menuItemIcon(menu.id, iconIndex++)} />
+            {menu && (
+              <MenuItemIcon menuId={menu.id} index={iconIndex++} icon={menuLink.icon} />
             )}
             {menuLink.label}
           </a>
@@ -211,16 +207,6 @@ function MobileDrawer({
                       renderMenuLink(block)
                     ),
                   )}
-                  <a
-                    href={`#${menu.page}`}
-                    onClick={(event) => {
-                      event.preventDefault();
-                      onSelect({ label: 'Learn more', page: menu.page });
-                    }}
-                    className={`mt-2 flex min-h-10 items-center justify-center rounded-lg px-3 py-2 text-sm font-semibold ${OCEAN_BTN} ${FOCUS}`}
-                  >
-                    Learn more
-                  </a>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -277,9 +263,9 @@ export function SiteHeader({
     { id: 'story', label: storyMenu.label, page: 'story', menu: storyMenu },
     { id: 'courses', label: t('labels.courses'), page: 'courses', menu: { ...coursesMenu, label: t('labels.courses') } },
     { id: 'training', label: t('labels.training'), page: 'training', menu: { ...trainingMenu, label: t('labels.training') } },
+    { id: 'packages', label: t('labels.packages'), page: 'packages', menu: { ...packagesMenu, label: t('labels.packages') } },
     { id: 'activities', label: t('labels.experience'), page: 'experience', menu: { ...activitiesMenu, label: t('labels.experience') } },
     { id: 'accommodation', label: t('labels.accommodation'), page: 'accommodation', menu: { ...accommodationMenu, label: t('labels.accommodation') } },
-    { id: 'packages', label: t('labels.packages'), page: 'packages', menu: { ...packagesMenu, label: t('labels.packages') } },
     { id: 'calendar', label: t('labels.calendar'), page: 'calendar' },
     { id: 'blog', label: t('labels.blog'), page: 'blog' },
     { id: 'faq', label: t('labels.faq'), page: 'faq' },
@@ -375,8 +361,8 @@ export function SiteHeader({
             />
           </button>
 
-          <nav aria-label="Primary" className="absolute left-1/2 hidden -translate-x-1/2 min-[1440px]:block">
-            <ul className="flex items-center gap-0.5">
+          <nav aria-label="Primary" className="hidden min-w-0 flex-1 items-center px-2 min-[1200px]:flex">
+            <ul className="flex w-full items-center justify-between gap-0.5">
               {navigationItems.map((item) =>
                 item.menu ? (
                   <NavDropdown key={item.id} menu={item.menu} onSelect={selectMenuItem} />
@@ -388,7 +374,7 @@ export function SiteHeader({
                         event.preventDefault();
                         selectMenuItem({ label: item.label, page: item.page });
                       }}
-                      className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-lg px-1.5 text-xs font-mono font-semibold uppercase tracking-wider text-[#6bbbe8] transition-colors hover:bg-white/10 hover:text-white ${HEADER_FOCUS}`}
+                      className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-lg px-1 text-[10px] font-mono font-semibold uppercase tracking-[0.05em] text-[#6bbbe8] transition-colors hover:bg-white/10 hover:text-white min-[1680px]:px-1.5 min-[1680px]:text-[11px] ${HEADER_FOCUS}`}
                     >
                       {item.label}
                     </a>
@@ -471,11 +457,10 @@ export function SiteHeader({
             <button
               type="button"
               onClick={() => onOpenBooking('ssi-level-1')}
-              aria-label="Become SSI Freediver"
+              aria-label="Book Now"
               className={`inline-flex min-h-10 items-center justify-center rounded-lg px-3 text-xs font-semibold transition-colors sm:px-4 ${OCEAN_BTN} ${HEADER_CTA_FOCUS}`}
             >
-              <span className="hidden min-[520px]:inline">Become SSI Freediver</span>
-              <span className="min-[520px]:hidden">SSI</span>
+              Book Now
             </button>
 
             <button
@@ -485,7 +470,7 @@ export function SiteHeader({
               aria-expanded={isDrawerOpen}
               aria-controls="mobile-navigation"
               onClick={() => setIsDrawerOpen((open) => !open)}
-              className={`grid size-11 place-items-center rounded-lg border border-[#1b3243] bg-[#0d1d29] text-[#6bbbe8] min-[1440px]:hidden ${HEADER_FOCUS}`}
+              className={`grid size-11 place-items-center rounded-lg border border-[#1b3243] bg-[#0d1d29] text-[#6bbbe8] min-[1200px]:hidden ${HEADER_FOCUS}`}
             >
               {isDrawerOpen ? (
                 <X className="size-5" aria-hidden="true" />

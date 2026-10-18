@@ -90,6 +90,14 @@
 }
 
 @font-face {
+  font-family: 'Righteous';
+  src: url('/fonts/Righteous-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Tidal Astral Grotesk';
   src: url('/fonts/tidal-astral-grotesk-regular.ttf') format('truetype');
   font-weight: 400;
@@ -131,12 +139,12 @@
 
 @layer base {
   :root {
-    --font-display: 'Chandler Mountain', 'Bebas Neue', sans-serif;
+    --font-display: 'Bebas Neue', sans-serif;
     --font-body: 'Alata', sans-serif;
     --font-serif: 'Fraunces', 'Playfair Display', serif;
     --font-serif-display: 'Fraunces', 'Playfair Display', serif;
     --font-sans: 'Alata', sans-serif;
-    --font-hook: 'Cloudsters', 'Tidal Astral Grotesk', sans-serif;
+    --font-hook: 'Tidal Astral Grotesk', sans-serif;
     --font-arabic-heading: 'Beiruti', sans-serif;
     --font-arabic-body: 'Alan Sans', sans-serif;
 
@@ -189,6 +197,10 @@
 .font-axiforma,
 .font-sub {
   font-family: var(--font-body);
+}
+
+.font-righteous {
+  font-family: 'Righteous', sans-serif;
 }
 
 /* Explicit Arabic Typography Utility Classes */
@@ -432,7 +444,7 @@ html[dir="rtl"] .font-arabic-body {
   box-shadow: 0 10px 40px -10px rgba(4, 18, 32, 0.8);
 }
 
-/* Course-detail cards stack beneath the fixed site header as each section arrives. */
+/* Course-detail cards replace one another beneath the fixed header without exposing old text. */
 .course-sticky-stack {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -442,8 +454,10 @@ html[dir="rtl"] .font-arabic-body {
 
 .course-sticky-stack__card {
   position: sticky;
-  top: calc(5.25rem + var(--course-sticky-index, 0) * 0.875rem);
-  z-index: var(--course-sticky-layer, 1);
+  top: 5.25rem;
+  z-index: calc(10 + var(--course-sticky-layer, 1));
+  isolation: isolate;
+  background-clip: padding-box;
   transform-origin: center top;
 }
 

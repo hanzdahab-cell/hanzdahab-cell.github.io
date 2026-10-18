@@ -295,8 +295,7 @@ export function CourseDetailPage({
           {/* LEFT: Description & curriculum */}
           <div className="lg:col-span-2 space-y-12">
             <div className="course-sticky-stack relative">
-              <FadeUp
-                as="article"
+              <article
                 id="course-about"
                 className="course-sticky-stack__card scroll-mt-32 space-y-5 rounded-2xl border border-white/10 bg-[#0A2943] p-5 shadow-[0_24px_60px_rgba(0,0,0,0.32)] sm:p-7"
                 style={{ '--course-sticky-index': 0, '--course-sticky-layer': 1 } as CSSProperties}
@@ -310,10 +309,9 @@ export function CourseDetailPage({
                     {para}
                   </p>
                 ))}
-              </FadeUp>
+              </article>
 
-              <FadeUp
-                as="article"
+              <article
                 id="course-highlights"
                 className="course-sticky-stack__card scroll-mt-32 space-y-5 rounded-2xl border border-white/10 bg-[#0B2C4A] p-5 shadow-[0_24px_60px_rgba(0,0,0,0.32)] sm:p-7"
                 style={{ '--course-sticky-index': 1, '--course-sticky-layer': 2 } as CSSProperties}
@@ -335,7 +333,7 @@ export function CourseDetailPage({
                     </div>
                   ))}
                 </div>
-              </FadeUp>
+              </article>
 
               {/* Each scheduled day is its own card; the heading stays with day one. */}
               {isCore && (course as Course).schedule && (
@@ -344,9 +342,8 @@ export function CourseDetailPage({
                   className="grid items-start gap-6"
                 >
                   {(course as Course).schedule!.map((day, index) => (
-                    <FadeUp
+                    <article
                       key={`${day.day}-${day.title}`}
-                      as="article"
                       id={index === 0 ? 'course-schedule' : undefined}
                       className={`course-sticky-stack__card scroll-mt-32 space-y-4 rounded-2xl border border-white/10 p-5 shadow-[0_24px_60px_rgba(0,0,0,0.32)] sm:p-7 ${
                         index % 2 === 0 ? 'bg-[#0A2943]' : 'bg-[#0B2C4A]'
@@ -374,14 +371,13 @@ export function CourseDetailPage({
                       <p className="text-xs font-light leading-relaxed text-slate-300 sm:text-sm">
                         {day.description}
                       </p>
-                    </FadeUp>
+                    </article>
                   ))}
                 </section>
               )}
 
               {isCore && (
-                <FadeUp
-                  as="article"
+                <article
                   className="course-sticky-stack__card scroll-mt-32 rounded-2xl border border-cyan-200/20 bg-[#0A2943] p-5 text-center shadow-[0_24px_60px_rgba(0,0,0,0.32)] sm:p-7"
                   style={{
                     '--course-sticky-index': 2 + ((course as Course).schedule?.length ?? 0),
@@ -389,7 +385,7 @@ export function CourseDetailPage({
                   } as CSSProperties}
                 >
                   <CourseProgressionCard course={course as Course} />
-                </FadeUp>
+                </article>
               )}
             </div>
 

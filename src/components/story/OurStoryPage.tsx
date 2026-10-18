@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { X, ChevronLeft, ChevronRight, BookOpen, Compass, Waves, MessageSquare, Calendar } from 'lucide-react';
 import { PageType } from '../../types';
 import { LuxuryStory } from '../home/LuxuryStory';
-import { DescentStats } from '../home/DescentStats';
 
 // ============================================================================
 // CONFIGURATION & MEDIA MANIFEST (EDIT CONTENT, PATHS, QUOTES & CAPTIONS HERE)
@@ -314,13 +313,31 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
       {/* 2.5) PHILOSOPHY & 24-YEAR STATISTICS (moved from the home page) */}
       <LuxuryStory onOpenBooking={onOpenBooking} />
 
-      {/* 2.6) OUR LEGACY IN NUMBERS — Contra-style count-up statement numbers */}
-      <DescentStats />
-
       {/* ==================================================================== */}
       {/* 3) MEET OUR FOUNDERS: 3 Cards with Portrait, Name, Title & Bio      */}
       {/* ==================================================================== */}
-      <section id="pioneers" className="relative scroll-mt-20 py-24 sm:py-32 px-6 bg-[#0E3453] border-b border-white/5">
+      <section
+        id="pioneers"
+        className="relative scroll-mt-20 py-24 sm:py-32 px-6 bg-[#0E3453] border-b border-white/5"
+        onPointerMove={(event) => {
+          if (event.pointerType !== 'mouse') return;
+          const bounds = event.currentTarget.getBoundingClientRect();
+          event.currentTarget.style.setProperty('--pioneer-spotlight-x', `${event.clientX - bounds.left}px`);
+          event.currentTarget.style.setProperty('--pioneer-spotlight-y', `${event.clientY - bounds.top}px`);
+          event.currentTarget.style.setProperty('--pioneer-spotlight-opacity', '1');
+        }}
+        onPointerLeave={(event) => {
+          event.currentTarget.style.setProperty('--pioneer-spotlight-opacity', '0');
+        }}
+      >
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-[var(--pioneer-spotlight-opacity,0)] transition-opacity duration-300"
+          style={{
+            background:
+              'radial-gradient(560px circle at var(--pioneer-spotlight-x, 50%) var(--pioneer-spotlight-y, 50%), rgba(34, 98, 140, 0.3), transparent 72%)',
+          }}
+        />
         <div className="absolute inset-0 architectural-grid opacity-15 pointer-events-none" />
 
         <div className="max-w-7xl mx-auto relative z-10">

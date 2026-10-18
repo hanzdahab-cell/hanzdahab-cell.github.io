@@ -6,14 +6,14 @@ export const packagesMenu: MenuDefinition = {
   page: 'packages',
   icon: '/icons/wet-suit.png',
   columns: [[
-    L('Why FDD Packages', 'packages'),
-    L('Training Week', 'package-depth-training-week'),
-    L('Beginner Training Week', 'package-ultimate-dahab-combo-week'),
-    L('Advanced Training Week', 'package-ultimate-dahab-combo-week'),
-    L('Beginner Advanced Training Week', 'package-ultimate-dahab-combo-week'),
-    L('Master Freediving Program / Performance Freediving', 'package-master-freediver-immersion'),
-    L('Zero To Hero Freediving Program', 'package-instructor-pathway'),
-    L('Student Accommodation', 'room-shared-dorm'),
+    L('Why Packages?', 'packages'),
+    L('Training Week', 'event-training-week'),
+    L('Beginner Week', 'event-beginner-week'),
+    L('Advanced Week', 'event-advanced-week'),
+    L('Beginner Advanced Week', 'package-ultimate-dahab-combo-week'),
+    L('Master & Performance Freediver', 'package-master-freediver-immersion'),
+    L('Advanced Training Program', 'training', 'training-modules'),
+    L('Zero to Hero Program', 'package-instructor-pathway'),
   ]],
 };
 

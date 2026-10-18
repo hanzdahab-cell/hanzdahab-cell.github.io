@@ -25,20 +25,91 @@ interface CourseProgressionCardProps {
 
 export function CourseProgressionCard({ course }: CourseProgressionCardProps) {
   const journeyTitle = JOURNEY_TITLES[course.id] ?? 'Your course, step by step';
+  const performances = course.futurePerformances;
+  const depthPercent = Math.min(100, (course.maxDepthMeters / 45) * 100);
+  const stats = [
+    {
+      icon: Timer,
+      value: performances?.staticApnea ?? 'With coaching',
+      label: 'Static breath-hold practice',
+    },
+    {
+      icon: ArrowDownToLine,
+      value: performances?.depth ?? `Up to ${course.maxDepthMeters} m`,
+      label: 'Course depth range',
+    },
+    {
+      icon: CalendarDays,
+      value: `${course.durationDays} ${course.durationDays === 1 ? 'day' : 'days'}`,
+      label: 'Course duration',
+    },
+  ];
 
   return (
-    <>
-      <div className="mx-auto mb-4 h-1 w-12 rounded-full bg-cyan-300" aria-hidden="true" />
-      <p className="font-alata text-[10px] uppercase tracking-[0.28em] text-cyan-300">
-        Course progression
+    <div className="space-y-6">
+      <div className="space-y-3">
+        <div className="mx-auto h-1 w-12 rounded-full bg-cyan-300" aria-hidden="true" />
+        <p className="font-alata text-[10px] uppercase tracking-[0.28em] text-cyan-300">
+          Course progression
+        </p>
+        <h2 className="font-bebas text-3xl tracking-[0.04em] text-white sm:text-4xl md:text-5xl">
+          {journeyTitle}
+        </h2>
+        <p className="mx-auto max-w-2xl text-sm leading-relaxed text-slate-300">
+          A clear path through the skills in this SSI course, coached around your readiness.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 text-left sm:grid-cols-3 sm:gap-4">
+        {stats.map(({ icon: Icon, value, label }) => (
+          <div
+            key={label}
+            className="rounded-xl border border-white/15 bg-[#061F35]/75 p-4 sm:p-5"
+          >
+            <Icon
+              className="h-5 w-5 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]"
+              aria-hidden="true"
+            />
+            <p className="mt-3 font-bebas text-3xl leading-none text-white sm:text-4xl">
+              {value}
+            </p>
+            <p className="mt-2 text-[10px] font-medium uppercase tracking-[0.14em] text-slate-300">
+              {label}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <div className="space-y-3 rounded-xl border border-white/15 bg-[#061F35]/75 p-4 text-left sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-2 text-[10px] font-alata uppercase tracking-[0.16em] text-slate-300">
+          <span>Course depth scale</span>
+          <span className="text-cyan-100">
+            {performances?.depth ?? `Up to ${course.maxDepthMeters} m`}
+          </span>
+        </div>
+        <div
+          className="relative h-2.5 rounded-full bg-white/15"
+          role="img"
+          aria-label={`Depth scale from 0 to 45 meters, course range ${performances?.depth ?? `${course.maxDepthMeters} meters`}`}
+        >
+          <div
+            className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-cyan-200 to-teal-200 shadow-[0_0_16px_rgba(255,255,255,0.45)]"
+            style={{ width: `${depthPercent}%` }}
+          />
+        </div>
+        <div className="flex justify-between text-[9px] font-alata text-slate-400" aria-hidden="true">
+          {[0, 10, 20, 30, 40].map((depth) => (
+            <span key={depth}>{depth} m</span>
+          ))}
+          <span>45 m</span>
+        </div>
+      </div>
+
+      <p className="mx-auto max-w-2xl text-xs leading-relaxed text-slate-300">
+        Performance ranges are course targets, not guarantees. Your instructor adapts progression
+        to your readiness, buddy procedures, and sea conditions.
       </p>
-      <h2 className="font-bebas text-3xl tracking-[0.04em] text-white sm:text-4xl md:text-5xl">
-        {journeyTitle}
-      </h2>
-      <p className="mx-auto max-w-2xl text-sm leading-relaxed text-slate-300">
-        A clear path through the skills in this SSI course, coached around your readiness.
-      </p>
-    </>
+    </div>
   );
 }
 
@@ -61,31 +132,15 @@ function getDisciplineIcon(name: string): string {
 
 export function CourseInfographic({ course }: CourseInfographicProps) {
   const scopeRef = useRef<HTMLDivElement>(null);
-  const rulerFillRef = useRef<HTMLDivElement>(null);
-  const performances = course.futurePerformances;
   const disciplines = course.disciplines ?? [];
-  const rulerPct = Math.min(100, (course.maxDepthMeters / 45) * 100);
 
   useEffect(() => {
     const scope = scopeRef.current;
     if (!scope) return;
 
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      if (rulerFillRef.current) {
-        rulerFillRef.current.style.width = `${rulerPct}%`;
-      }
-      return;
-    }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const context = gsap.context(() => {
-      gsap.from(scope.querySelectorAll('.ci-stat'), {
-        y: 24,
-        opacity: 0,
-        duration: 0.65,
-        ease: 'power2.out',
-        stagger: 0.1,
-        scrollTrigger: { trigger: scope.querySelector('.ci-stats-row'), start: 'top 84%', once: true },
-      });
       gsap.from(scope.querySelectorAll('.ci-step-card'), {
         y: 26,
         opacity: 0,
@@ -94,84 +149,13 @@ export function CourseInfographic({ course }: CourseInfographicProps) {
         stagger: 0.12,
         scrollTrigger: { trigger: scope.querySelector('.ci-steps'), start: 'top 82%', once: true },
       });
-      if (rulerFillRef.current) {
-        gsap.fromTo(
-          rulerFillRef.current,
-          { width: '0%' },
-          {
-            width: `${rulerPct}%`,
-            duration: 1.4,
-            ease: 'power2.out',
-            scrollTrigger: { trigger: rulerFillRef.current, start: 'top 88%', once: true },
-          }
-        );
-      }
     }, scope);
 
     return () => context.revert();
-  }, [rulerPct]);
-
-  const stats = [
-    {
-      icon: Timer,
-      value: performances?.staticApnea ?? 'With coaching',
-      label: 'Static breath-hold target',
-    },
-    {
-      icon: ArrowDownToLine,
-      value: performances?.depth ?? `Up to ${course.maxDepthMeters} m`,
-      label: 'Depth performance range',
-    },
-    {
-      icon: CalendarDays,
-      value: `${course.durationDays} ${course.durationDays === 1 ? 'day' : 'days'}`,
-      label: 'Course duration',
-    },
-  ];
+  }, []);
 
   return (
     <div ref={scopeRef} className="relative overflow-hidden">
-      <div className="ci-stats-row mb-10 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
-        {stats.map((stat) => (
-          <div
-            key={stat.label}
-            className="ci-stat rounded-2xl border border-white/10 bg-white/[0.045] p-4 text-center transition-colors hover:border-cyan-300/40 sm:p-5"
-          >
-            <stat.icon className="mx-auto h-5 w-5 text-cyan-300" aria-hidden="true" />
-            <p className="mt-3 font-bebas text-3xl leading-none text-white sm:text-4xl">
-              {stat.value}
-            </p>
-            <p className="mt-2 text-[10px] font-medium uppercase tracking-[0.16em] text-slate-300">
-              {stat.label}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <div className="mb-12 space-y-3 rounded-2xl border border-white/10 bg-white/[0.035] p-4 sm:p-6">
-        <div className="flex flex-wrap items-center justify-between gap-2 text-[10px] font-alata uppercase tracking-[0.16em] text-slate-300">
-          <span>Course depth range</span>
-          <span className="text-cyan-200">{performances?.depth ?? `${course.maxDepthMeters} m`}</span>
-        </div>
-        <div
-          className="relative h-2.5 rounded-full bg-white/10"
-          role="img"
-          aria-label={`Depth scale from 0 to 45 meters, course range ${performances?.depth ?? `${course.maxDepthMeters} meters`}`}
-        >
-          <div
-            ref={rulerFillRef}
-            className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-cyan-400 to-teal-300 shadow-[0_0_16px_rgba(45,212,191,0.35)]"
-            style={{ width: '0%' }}
-          />
-        </div>
-        <div className="flex justify-between text-[9px] font-alata text-slate-400" aria-hidden="true">
-          {[0, 10, 20, 30, 40].map((depth) => (
-            <span key={depth}>{depth} m</span>
-          ))}
-          <span>45 m</span>
-        </div>
-      </div>
-
       <section id="course-skills" aria-labelledby="course-skills-timeline" className="relative scroll-mt-32">
         <div className="mb-5">
           <h3 id="course-skills-timeline" className="font-bebas text-2xl tracking-wide text-white sm:text-3xl">

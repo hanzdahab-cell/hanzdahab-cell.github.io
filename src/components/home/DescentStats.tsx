@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
+import { ArrowRight } from 'lucide-react';
 import { TextReveal, CountUp, FadeUp } from '../ui/MotionKit';
+import type { PageType } from '../../types';
 
 /* ==========================================================================
    DESCENT STATS — Contra-report style statement numbers
@@ -24,11 +26,11 @@ const STATS: StatDef[] = [
   { value: 92, suffix: 'm', labelKey: 's6Label', descKey: 's6Desc' },
 ];
 
-export function DescentStats() {
+export function DescentStats({ onNavigate }: { onNavigate: (page: PageType) => void }) {
   const { t } = useTranslation();
 
   return (
-    <section className="relative overflow-hidden bg-[#081F35] border-y border-ocean-pale/10 film-grain">
+    <section id="legacy" className="relative scroll-mt-20 overflow-hidden bg-[#081F35] border-y border-ocean-pale/10 film-grain">
       {/* Slow deep-water glow */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -89,6 +91,16 @@ export function DescentStats() {
               </div>
             </FadeUp>
           ))}
+        </div>
+        <div className="mt-8 flex justify-end">
+          <button
+            type="button"
+            onClick={() => onNavigate('story')}
+            className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/40 px-5 py-2.5 font-alata text-sm font-semibold text-white transition-colors hover:border-white hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+          >
+            Learn more
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </button>
         </div>
       </div>
     </section>

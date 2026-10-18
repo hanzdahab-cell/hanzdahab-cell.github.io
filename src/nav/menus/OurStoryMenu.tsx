@@ -7,8 +7,8 @@ export const storyMenu: MenuDefinition = {
   icon: '/icons/mask-snorkel.png',
   columns: [[
     L('Meet Our Pioneers', 'story', 'pioneers'),
-    L('Why Freedive Dahab', 'story', 'story-intro'),
-    L('Why Dahab and South Saini', 'home', 'dahab-blue-hole'),
+    L('Why Freedive Dahab?', 'story', 'story-intro', 'brand'),
+    L('Why Dahab?', 'home', 'dahab-blue-hole', 'location'),
   ]],
 };
 

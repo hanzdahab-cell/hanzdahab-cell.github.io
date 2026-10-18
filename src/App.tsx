@@ -5,8 +5,8 @@ import { PageHeader } from './components/ui/PageHeader';
 import { HeroSurface } from './components/home/HeroSurface';
 import { CoralDepthBackground } from './components/home/CoralDepthBackground';
 import { SSICertificates } from './components/ssi/SSICertificates';
-import { StoryTeaserBanner } from './components/home/StoryTeaserBanner';
 import { DahabBlueHoleSection } from './components/home/DahabBlueHoleSection';
+import { DescentStats } from './components/home/DescentStats';
 import { CoursesSection } from './components/courses/CoursesSection';
 import { TrainingSection } from './components/training/TrainingSection';
 import { CalendarSection } from './components/calendar/CalendarSection';
@@ -146,17 +146,8 @@ export default function App() {
         {/* ========================================================= */}
         {currentPage === 'home' && (
           <div className="page-dive-in">
-            {/* 1. HERO: Dahab photo carousel and course invitations */}
-            <HeroSurface
-              onNavigate={navigateTo}
-              onViewReviews={() => scrollToSection('home', 'testimonials')}
-            />
-
-            {/* 2. STORY TEASER — Meet Our Pioneers */}
-            <StoryTeaserBanner
-              onNavigate={navigateTo}
-              onViewReviews={() => scrollToSection('home', 'testimonials')}
-            />
+            {/* 1. HERO: Dahab, Freedive Dahab, and the founding year */}
+            <HeroSurface onNavigate={navigateTo} />
 
             {/* Immersive Coral Depth Environment (The depth of the corals across all home sections) */}
             <div className="relative">
@@ -170,6 +161,9 @@ export default function App() {
 
                 {/* Diver Voices & Testimonials */}
                 <TestimonialsSection />
+
+                {/* Freedive Dahab legacy and milestones */}
+                <DescentStats onNavigate={navigateTo} />
 
                 {/* Last: Official SSI Partner badges */}
                 <SSICertificates

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, Calendar, MessageCircle, ShieldCheck, Send, CheckCircle2 } from 'lucide-react';
+import { X, Calendar, ShieldCheck, Send, CheckCircle2 } from 'lucide-react';
 import { ssiCourses, specialtyCourses, instructorCourses } from '../../data/courses';
 import { packagesData } from '../../data/packages';
 import { roomTypes } from '../../data/accommodation';
@@ -81,13 +81,6 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
     setIsSuccess(true);
   };
 
-  const handleWhatsAppDirect = () => {
-    const text = encodeURIComponent(
-      `Hello Freedive Dahab! I want to enquire about: ${currentOffering.title} for ${diverCount} diver(s) starting on ${startDate}. Name: ${name || 'Interested Diver'}. Displayed estimate: €${totalEur}.${currentOffering.rateNote ? ' Please confirm the current price and availability.' : ''}`
-    );
-    window.open(`https://wa.me/201008452911?text=${text}`, '_blank');
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-lg animate-in fade-in duration-200">
       <div
@@ -117,7 +110,7 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
               </h3>
               <p className="text-slate-300 max-w-md mx-auto text-sm font-light leading-relaxed">
                 Your reservation for <strong className="text-white">{currentOffering.title}</strong> has been logged. 
-                Our instructor team will contact you within 6 hours via WhatsApp or email with your confirmation package.
+                Our instructor team will contact you within 6 hours by email with your confirmation package.
               </p>
             </div>
 
@@ -141,21 +134,14 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">{currentOffering.rateNote ? 'Indicative 30% deposit:' : '30% Deposit Due:'}</span>
-                <span className="text-emerald-400 font-bold">{formatPrice(depositEur)}</span>
+                <span className="font-bebas text-2xl text-emerald-400">{formatPrice(depositEur)}</span>
               </div>
             </div>
 
             <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
               <button
-                onClick={handleWhatsAppDirect}
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-white px-6 py-3.5 text-xs font-semibold uppercase tracking-wide text-[#081F35] transition-colors hover:bg-[#DCEFFC] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-              >
-                <MessageCircle className="h-4 w-4" aria-hidden="true" />
-                <span>{t.booking.whatsappDirect}</span>
-              </button>
-              <button
                 onClick={onClose}
-                className="px-6 py-3.5 rounded-xl border border-white/20 text-white text-xs font-mono uppercase tracking-wider hover:bg-white/5 cursor-pointer"
+                className="min-h-11 rounded-xl border border-white/20 px-6 py-3.5 text-xs font-mono uppercase tracking-wider text-white hover:bg-white/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 {t.booking.close}
               </button>
@@ -309,21 +295,21 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
             <div className="p-5 rounded-2xl bg-black/50 border border-cyan-500/30 space-y-3 font-mono text-xs">
               <div className="flex justify-between text-slate-300">
                 <span>{currentOffering.title} ({diverCount}x):</span>
-                <span>{formatPrice(courseBasePrice)}</span>
+                <span className="font-bebas text-xl">{formatPrice(courseBasePrice)}</span>
               </div>
               {selectedRoom && (
                 <div className="flex justify-between text-slate-300">
                   <span>Sea Lodge ({selectedRoom.title} x {lodgingNights} nights):</span>
-                  <span>{formatPrice(lodgingCost)}</span>
+                  <span className="font-bebas text-xl">{formatPrice(lodgingCost)}</span>
                 </div>
               )}
               <div className="flex justify-between text-slate-400 text-[11px] border-t border-white/10 pt-2">
                 <span>{currentOffering.rateNote ? 'Brochure-rate estimate:' : 'Total Calculated:'}</span>
-                <span className="text-white font-bold">{formatPrice(totalEur)}</span>
+                <span className="font-bebas text-2xl text-white">{formatPrice(totalEur)}</span>
               </div>
               <div className="flex justify-between text-emerald-400 font-bold text-sm">
                 <span>{currentOffering.rateNote ? 'Indicative 30% deposit:' : '30% Deposit to Secure Slot:'}</span>
-                <span>{formatPrice(depositEur)}</span>
+                <span className="font-bebas text-2xl">{formatPrice(depositEur)}</span>
               </div>
               <div className="text-[10px] text-slate-500">
                 {currentOffering.rateNote
@@ -332,7 +318,7 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
               </div>
             </div>
 
-            {/* Submit & WhatsApp Action Buttons */}
+            {/* Reservation request */}
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <button
                 type="submit"
@@ -340,15 +326,6 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
               >
                 <Send className="h-4 w-4" aria-hidden="true" />
                 <span>{t.booking.submit}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleWhatsAppDirect}
-                className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-white/60 bg-transparent px-6 py-4 text-xs font-semibold uppercase tracking-wide text-white transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-              >
-                <MessageCircle className="h-4 w-4" aria-hidden="true" />
-                <span>{t.booking.whatsappDirect}</span>
               </button>
             </div>
 

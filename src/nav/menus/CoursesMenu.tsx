@@ -29,7 +29,7 @@ export const coursesMenu: MenuDefinition = {
         L('SSI Marine Ecology', 'course-marine-ecology'),
         L('SSI React Right', 'course-react-right-first-aid'),
         L('Equalization Clinic', 'training', 'training-modules'),
-        L('SSI Mouthfill Workshop', 'course-mouthfill-mastery'),
+        L('Mouthfill Workshop', 'course-mouthfill-mastery'),
       ]),
     ],
   ],
