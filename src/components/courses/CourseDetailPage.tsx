@@ -16,6 +16,7 @@ import { ssiCourses, specialtyCourses, instructorCourses } from '../../data/cour
 import { CourseInfographic, CourseProgressionCard } from './CourseInfographic';
 import { CourseProgressSteps } from './CourseProgressSteps';
 import { FadeUp } from '../ui/MotionKit';
+import { TiltSurface } from '../ui/TiltSurface';
 import { coursePhotoById, getCourseGalleryImages, ssiCourseArtworkBySlug } from '../../data/courseMedia';
 import { CoursePhotoCarousel, CourseStorySlide } from './CoursePhotoCarousel';
 
@@ -66,7 +67,7 @@ export function CourseDetailPage({
           </p>
           <button
             onClick={() => onNavigate('courses')}
-            className="px-8 py-3.5 rounded-xl bg-ocean hover:bg-ocean-light text-white text-xs font-bold uppercase tracking-wider transition-all inline-flex items-center gap-2 cursor-pointer"
+            className="fd-button inline-flex items-center gap-2 rounded-xl px-8 py-3.5 text-xs font-bold uppercase tracking-wider"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>All Courses</span>
@@ -161,11 +162,11 @@ export function CourseDetailPage({
   };
 
   return (
-    <div className="relative bg-[#0E3453] text-slate-100 min-h-screen">
+    <div className="ocean-surface relative min-h-screen text-slate-100">
       {/* ========================================================== */}
       {/* HERO                                                        */}
       {/* ========================================================== */}
-      <header className="relative overflow-hidden bg-[#081F35] pb-14 pt-28 sm:pb-20 sm:pt-32">
+      <header className="relative overflow-hidden bg-[#081F35]/78 pb-14 pt-28 sm:pb-20 sm:pt-32">
         <div className="absolute inset-0 architectural-grid-fine opacity-20" aria-hidden="true" />
         <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-8 px-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12">
           <div className="space-y-5">
@@ -236,7 +237,7 @@ export function CourseDetailPage({
               <button
                 type="button"
                 onClick={() => onOpenBooking(course.id)}
-                className="inline-flex min-h-12 items-center gap-3 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-[#081F35] transition-colors hover:bg-[#DCEFFC] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                className="fd-button inline-flex min-h-12 items-center gap-3 rounded-xl px-5 py-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
               >
                 {isInstructor ? 'Apply for this course' : 'Enroll in course'}
                 <ChevronRight className="h-4 w-4" aria-hidden="true" />
@@ -451,7 +452,7 @@ export function CourseDetailPage({
 
                 <button
                   onClick={() => onOpenBooking(course.id)}
-                  className="w-full py-4 rounded-xl bg-ocean hover:bg-ocean-light text-white text-xs font-bold uppercase tracking-[0.15em] transition-all shadow-lg shadow-cyan-500/25 hover:shadow-cyan-400/40 flex items-center justify-center gap-2 cursor-pointer"
+                  className="fd-button flex w-full items-center justify-center gap-2 rounded-xl py-4 text-xs font-bold uppercase tracking-[0.15em]"
                 >
                   <span>{isInstructor ? 'Apply Now' : 'Reserve Your Spot'}</span>
                   <ChevronRight className="w-4 h-4" />
@@ -506,34 +507,40 @@ export function CourseDetailPage({
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {related.map((rel, i) => (
-                <button
+                <TiltSurface
                   key={rel.id}
-                  onClick={() => handleNavigateToCourse(rel.slug)}
-                  className="group text-left rounded-2xl overflow-hidden border border-white/10 hover:border-cyan-400/50 bg-slate-900/40 transition-all duration-500 hover:-translate-y-1.5 cursor-pointer animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both"
-                  style={{ animationDelay: `${i * 100}ms` }}
+                  delay={i * 0.1}
+                  className="group h-full rounded-2xl"
                 >
-                  <div className="relative aspect-[16/9] overflow-hidden">
-                    <img
-                      src={rel.image.url}
-                      alt={rel.image.alt}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0E3453] via-transparent to-transparent" />
-                  </div>
-                  <div className="p-5 space-y-2">
-                    <h3 className="font-serif text-lg font-bold text-white group-hover:text-cyan-200 transition-colors">
-                      {rel.title}
-                    </h3>
-                    <div className="flex items-center justify-between text-xs font-mono text-slate-400">
-                      <span>
-                        {'durationDays' in rel
-                          ? `${rel.durationDays} days`
-                          : rel.durationWeeksOrDays}
-                      </span>
-                      <span className="text-cyan-300 font-bold">{formatPrice(rel.priceEur)}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleNavigateToCourse(rel.slug)}
+                    className="group flex h-full w-full flex-col rounded-2xl border border-white/10 bg-slate-900/40 text-left transition-all duration-500 hover:-translate-y-1.5 hover:border-cyan-400/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both"
+                    style={{ animationDelay: `${i * 100}ms` }}
+                  >
+                    <div className="fd-tilt-photo-layer relative aspect-[16/9] w-full overflow-hidden rounded-t-2xl">
+                      <img
+                        src={rel.image.url}
+                        alt={rel.image.alt}
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0E3453] via-transparent to-transparent" />
                     </div>
-                  </div>
-                </button>
+                    <div className="fd-tilt-copy-layer w-full p-5 space-y-2">
+                      <h3 className="font-serif text-lg font-bold text-white group-hover:text-cyan-200 transition-colors">
+                        {rel.title}
+                      </h3>
+                      <div className="flex items-center justify-between text-xs font-mono text-slate-400">
+                        <span>
+                          {'durationDays' in rel
+                            ? `${rel.durationDays} days`
+                            : rel.durationWeeksOrDays}
+                        </span>
+                        <span className="text-cyan-300 font-bold">{formatPrice(rel.priceEur)}</span>
+                      </div>
+                    </div>
+                  </button>
+                </TiltSurface>
               ))}
             </div>
           </FadeUp>

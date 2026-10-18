@@ -58,24 +58,24 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
             <div key={badge.id} className="flex min-h-20 items-center justify-center px-4">
               {badge.format === 'pdf' ? (
                 <div className="aspect-square h-24 max-w-full overflow-hidden rounded-full">
-                  <object
-                    data={`${badge.src}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`}
-                    type="application/pdf"
-                    aria-label={badge.alt}
-                    className="h-full w-full border-0 bg-transparent"
-                  >
-                    <a href={badge.src} className="text-sm text-cyan-300 underline">
-                      View {badge.title}
-                    </a>
-                  </object>
+                    <object
+                      data={`${badge.src}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`}
+                      type="application/pdf"
+                      aria-label={badge.alt}
+                      className="h-full w-full border-0 bg-transparent"
+                    >
+                      <a href={badge.src} className="text-sm text-cyan-300 underline">
+                        View {badge.title}
+                      </a>
+                    </object>
                 </div>
               ) : (
                 <img
-                  src={badge.src}
-                  alt={badge.alt}
-                  loading="lazy"
-                  decoding="async"
-                  className="max-h-24 w-full max-w-[190px] object-contain"
+                    src={badge.src}
+                    alt={badge.alt}
+                    loading="lazy"
+                    decoding="async"
+                    className="max-h-24 w-full max-w-[190px] object-contain"
                 />
               )}
             </div>

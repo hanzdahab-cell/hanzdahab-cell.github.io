@@ -245,9 +245,11 @@ function Panel({
 export function NavDropdown({
   menu,
   onSelect,
+  isActive,
 }: {
   menu: MenuDefinition;
   onSelect: (item: MenuLink) => void;
+  isActive: boolean;
 }) {
   const { openId, open, close } = useNavigationContext();
   const rootRef = useRef<HTMLLIElement>(null);
@@ -296,7 +298,8 @@ export function NavDropdown({
           if (skipNextFocusOpen.current) skipNextFocusOpen.current = false;
           else open(menu.id);
         }}
-        className={`min-h-11 whitespace-nowrap rounded-lg px-1.5 py-3 text-xs font-mono font-semibold uppercase tracking-wider text-[#6bbbe8] transition-colors hover:text-white ${HEADER_FOCUS}`}
+        className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-full px-2 py-2 text-[11px] font-alata font-semibold uppercase tracking-[0.06em] transition-colors hover:text-white min-[1680px]:px-3 min-[1680px]:text-xs ${isActive ? 'text-white' : 'text-[#6bbbe8]'} ${HEADER_FOCUS}`}
+        aria-current={isActive ? 'page' : undefined}
       >
         {menu.label}
       </a>

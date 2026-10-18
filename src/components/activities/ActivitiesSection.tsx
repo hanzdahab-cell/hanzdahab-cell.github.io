@@ -18,7 +18,7 @@ export function ActivitiesSection({ onOpenBooking, currency, onNavigate }: Activ
   };
 
   return (
-    <section id="safaris" className="relative py-32 px-6 bg-[#0E3453] border-t border-white/5">
+    <section id="safaris" className="ocean-surface relative border-t border-white/5 px-6 py-32">
       <div className="max-w-7xl mx-auto">
         
         {/* Section Header */}
@@ -112,7 +112,7 @@ export function ActivitiesSection({ onOpenBooking, currency, onNavigate }: Activ
                   <button
                     type="button"
                     onClick={() => onOpenBooking(act.id)}
-                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-xs font-semibold uppercase tracking-wide text-[#081F35] transition-colors hover:bg-[#DCEFFC] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    className="fd-button inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-semibold uppercase tracking-wide focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                   >
                     <span>Book Expedition</span>
                     <ArrowRight className="w-4 h-4" />

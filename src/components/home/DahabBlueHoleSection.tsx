@@ -98,7 +98,7 @@ export function DahabBlueHoleSection({ onNavigate }: DahabBlueHoleSectionProps) 
           <button
             type="button"
             onClick={() => onNavigate('experience')}
-            className="mt-8 inline-flex min-h-11 items-center gap-3 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-[#081F35] transition-colors hover:bg-[#DCEFFC] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            className="fd-button mt-8 inline-flex min-h-11 items-center gap-3 rounded-xl px-5 py-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
           >
             Explore Dahab experiences
             <ArrowRight className="h-4 w-4" aria-hidden="true" />

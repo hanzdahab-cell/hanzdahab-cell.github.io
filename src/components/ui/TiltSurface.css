@@ -1,0 +1,148 @@
+@property --fd-tilt-x {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: true;
+}
+
+@property --fd-tilt-y {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: true;
+}
+
+@property --fd-glare-x {
+  syntax: '<percentage>';
+  initial-value: 50%;
+  inherits: true;
+}
+
+@property --fd-glare-y {
+  syntax: '<percentage>';
+  initial-value: 50%;
+  inherits: true;
+}
+
+@property --fd-holo-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes fd-holo-sweep {
+  to {
+    --fd-holo-angle: 360deg;
+  }
+}
+
+.fd-tilt-scene {
+  perspective: 1200px;
+  perspective-origin: center 40%;
+}
+
+.fd-tilt-surface {
+  --fd-tilt-x: 0deg;
+  --fd-tilt-y: 0deg;
+  --fd-glare-x: 50%;
+  --fd-glare-y: 50%;
+  position: relative;
+  transform: rotateX(var(--fd-tilt-x)) rotateY(var(--fd-tilt-y));
+  transform-style: preserve-3d;
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.fd-tilt-surface::before {
+  position: absolute;
+  z-index: 30;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--fd-holo-angle),
+    #A9D2EC,
+    #4E8CB8,
+    #55E3D4,
+    #A9D2EC
+  );
+  content: '';
+  opacity: 0;
+  pointer-events: none;
+  transform: translateZ(36px);
+  transition: opacity 280ms ease;
+  animation: fd-holo-sweep 14s linear infinite;
+  animation-play-state: paused;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+.fd-tilt-glare {
+  position: absolute;
+  z-index: 20;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    240px circle at var(--fd-glare-x) var(--fd-glare-y),
+    rgb(255 255 255 / 24%),
+    transparent 68%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transform: translateZ(28px);
+  transition: opacity 260ms ease;
+  mix-blend-mode: screen;
+}
+
+.fd-tilt-scene:hover .fd-tilt-surface::before,
+.fd-tilt-scene:focus-within .fd-tilt-surface::before,
+.fd-tilt-surface:hover::before,
+.fd-tilt-surface:focus-visible::before,
+.fd-tilt-scene:hover .fd-tilt-glare,
+.fd-tilt-scene:focus-within .fd-tilt-glare,
+.fd-tilt-surface:hover .fd-tilt-glare,
+.fd-tilt-surface:focus-visible .fd-tilt-glare {
+  opacity: 0.72;
+}
+
+.fd-tilt-scene:hover .fd-tilt-surface::before,
+.fd-tilt-scene:focus-within .fd-tilt-surface::before,
+.fd-tilt-surface:hover::before,
+.fd-tilt-surface:focus-visible::before {
+  animation-play-state: running;
+}
+
+.fd-tilt-photo-layer {
+  transform: translateZ(8px);
+  transform-style: preserve-3d;
+}
+
+.fd-tilt-copy-layer {
+  transform: translateZ(24px);
+}
+
+.fd-founder-bio-preview {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(0.5rem);
+  transition: max-height 320ms ease, opacity 240ms ease, transform 240ms ease;
+}
+
+.fd-founder-card:hover .fd-founder-bio-preview,
+.fd-founder-card:focus-visible .fd-founder-bio-preview,
+.fd-founder-card:focus-within .fd-founder-bio-preview {
+  max-height: 7rem;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fd-tilt-surface,
+  .fd-tilt-surface::before,
+  .fd-tilt-glare,
+  .fd-founder-bio-preview {
+    animation: none;
+    transition: none;
+  }
+}

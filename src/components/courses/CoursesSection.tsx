@@ -3,6 +3,7 @@ import { PageType } from '../../types';
 import { ArrowRight, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { FadeUp } from '../ui/MotionKit';
+import { TiltSurface } from '../ui/TiltSurface';
 import { coreCoursePhotoById, courseCardArtworkById, coursePhotoById } from '../../data/courseMedia';
 import { CoursePhotoCarousel, CourseStorySlide } from './CoursePhotoCarousel';
 
@@ -55,8 +56,8 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
   }));
 
   return (
-    <section id="courses" className="relative bg-[#0E3453] pb-20 sm:pb-28 film-grain">
-      <div className="relative isolate overflow-hidden bg-[#081F35]">
+    <section id="courses" className="ocean-surface relative pb-20 sm:pb-28 film-grain">
+      <div className="relative isolate overflow-hidden bg-[#081F35]/75">
         <img
           src="/courses/uploaded/dahab-reef-fish.jpg"
           alt=""
@@ -88,7 +89,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
             </p>
             <a
               href="#chapter-core"
-              className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-[#081F35] transition-colors hover:bg-[#DCEFFC] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+              className="fd-button inline-flex min-h-11 items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
               Explore courses
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -105,6 +106,18 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 pt-12 sm:pt-16">
+        {/* Infinite course ticker */}
+        <div className="overflow-hidden py-4">
+          <div className="courses-ticker" aria-hidden="true">
+            <div className="courses-ticker__track">
+              {coreCards.concat(coreCards).map((c, i) => (
+                <div key={i} className="courses-ticker__item">
+                  <img src={(courseCardArtworkById[c.id] ?? coreCoursePhotoById[c.id] ?? c.image).src} alt="" className="h-20 w-32 object-cover rounded-lg" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
         <div className="absolute inset-0 architectural-grid-fine opacity-10 pointer-events-none" />
         {/* ========================================================== */}
         {/* CORE COURSE CARDS                                          */}
@@ -115,14 +128,14 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
           {/* Core SSI Freediver certifications */}
           <div className="grid grid-cols-1 items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-4">
           {coreCards.map((course, idx) => (
-            <FadeUp
+            <TiltSurface
               key={course.id}
               delay={idx * 0.06}
-              className="group flex h-full flex-col overflow-hidden rounded-2xl border border-ocean-pale/10 bg-[#0A2943] transition-colors duration-300 hover:border-ocean-light/50"
+              className="group flex h-full flex-col rounded-2xl border border-ocean-pale/10 bg-[#0A2943] transition-colors duration-300 hover:border-ocean-light/50"
             >
               <>
                 {/* Card Image */}
-                <div className="relative aspect-[16/10] overflow-hidden bg-[#081F35]">
+                <div className="fd-tilt-photo-layer relative aspect-[16/10] overflow-hidden rounded-t-2xl bg-[#081F35]">
                   <img
                     src={(courseCardArtworkById[course.id] ?? coreCoursePhotoById[course.id] ?? course.image).src}
                     alt={(courseCardArtworkById[course.id] ?? coreCoursePhotoById[course.id] ?? course.image).alt}
@@ -137,7 +150,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
                 </div>
 
                 {/* Card Content */}
-                <div className="flex flex-1 flex-col p-5 sm:p-6">
+                <div className="fd-tilt-copy-layer flex flex-1 flex-col p-5 sm:p-6">
                   <h3 className="min-h-[3.5rem] font-serif text-xl font-bold leading-snug text-white transition-colors group-hover:text-ocean-pale sm:text-2xl">
                     <button
                       type="button"
@@ -167,7 +180,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
                     <button
                       type="button"
                       onClick={() => onOpenBooking(course.id)}
-                      className="inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-lg bg-white px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wide text-[#081F35] transition-colors hover:bg-[#DCEFFC] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                      className="fd-button inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-lg px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wide focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                     >
                       Enroll in course
                     </button>
@@ -185,7 +198,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
                   </p>
                 </div>
               </>
-            </FadeUp>
+            </TiltSurface>
           ))}
           </div>
         </div>
@@ -198,12 +211,12 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
 
           <div className="grid grid-cols-1 items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {specialtyCards.map((course, idx) => (
-              <FadeUp
+              <TiltSurface
                 key={course.id}
                 delay={(idx % 4) * 0.08}
-                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-ocean-pale/10 bg-[#0A2943] transition-colors duration-300 hover:border-ocean-light/50"
+                className="group flex h-full flex-col rounded-2xl border border-ocean-pale/10 bg-[#0A2943] transition-colors duration-300 hover:border-ocean-light/50"
               >
-                <div className="relative aspect-[16/10] overflow-hidden">
+                <div className="fd-tilt-photo-layer relative aspect-[16/10] overflow-hidden rounded-t-2xl">
                   <img
                     src={(courseCardArtworkById[course.id] ?? coursePhotoById[course.id] ?? course.image).src}
                     alt={(courseCardArtworkById[course.id] ?? coursePhotoById[course.id] ?? course.image).alt}
@@ -216,7 +229,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
                   </span>
                 </div>
 
-                <div className="flex flex-1 flex-col p-5">
+                <div className="fd-tilt-copy-layer flex flex-1 flex-col p-5">
                   <h3 className="min-h-[3.5rem] font-serif text-lg font-bold leading-snug text-white transition-colors group-hover:text-ocean-pale">
                     <button
                       type="button"
@@ -233,7 +246,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
                     <button
                       type="button"
                       onClick={() => onOpenBooking(course.id)}
-                      className="inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-lg bg-white px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wide text-[#081F35] transition-colors hover:bg-[#DCEFFC] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                      className="fd-button inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-lg px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wide focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                     >
                       Enroll in course
                     </button>
@@ -248,7 +261,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
                   </div>
                   <p className="mt-3 text-right text-sm font-semibold text-ocean-pale">{formatPrice(course.priceEur)}</p>
                 </div>
-              </FadeUp>
+              </TiltSurface>
             ))}
           </div>
         </div>
@@ -261,10 +274,10 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
 
           {/* Master Freediver — feature card */}
           {masterCourse && (
-            <FadeUp
-              className="group glass-panel rounded-2xl overflow-hidden border border-ocean-light/20 hover:border-ocean-light/60 grid grid-cols-1 lg:grid-cols-2 transition-colors duration-300 mb-10"
+            <TiltSurface
+              className="group glass-panel rounded-2xl border border-ocean-light/20 hover:border-ocean-light/60 grid grid-cols-1 lg:grid-cols-2 transition-colors duration-300 mb-10"
             >
-              <div className="relative aspect-[16/10] lg:aspect-auto lg:min-h-[360px] overflow-hidden bg-[#081F35]">
+              <div className="fd-tilt-photo-layer relative aspect-[16/10] overflow-hidden rounded-t-2xl bg-[#081F35] lg:aspect-auto lg:min-h-[360px] lg:rounded-bl-2xl lg:rounded-tr-none">
                 <img
                   src={(courseCardArtworkById[masterCourse.id] ?? coursePhotoById[masterCourse.id] ?? masterCourse.image).src}
                   alt={(courseCardArtworkById[masterCourse.id] ?? coursePhotoById[masterCourse.id] ?? masterCourse.image).alt}
@@ -277,7 +290,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
                 </span>
               </div>
 
-              <div className="p-8 sm:p-10 flex flex-col justify-between gap-6">
+              <div className="fd-tilt-copy-layer p-8 sm:p-10 flex flex-col justify-between gap-6">
                 <div className="space-y-4">
                   <h4 className="font-serif text-3xl sm:text-4xl font-bold text-white group-hover:text-ocean-pale transition-colors">
                     <button
@@ -300,7 +313,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => onOpenBooking(masterCourse.id)}
-                    className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl bg-white px-5 py-3 text-xs font-semibold uppercase tracking-wide text-[#081F35] transition-colors hover:bg-[#DCEFFC] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    className="fd-button inline-flex min-h-11 flex-1 items-center justify-center rounded-xl px-5 py-3 text-xs font-semibold uppercase tracking-wide focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                   >
                     Enroll in course
                   </button>
@@ -314,18 +327,18 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
                   </button>
                 </div>
               </div>
-            </FadeUp>
+            </TiltSurface>
           )}
 
           {/* Professional instructor path */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             {instructorCourses.map((course, idx) => (
-              <FadeUp
+              <TiltSurface
                 key={course.id}
                 delay={idx * 0.1}
-                className="group glass-panel rounded-2xl overflow-hidden border border-ocean-pale/10 hover:border-ocean-light/50 flex flex-col transition-colors duration-300"
+                className="group glass-panel rounded-2xl border border-ocean-pale/10 hover:border-ocean-light/50 flex flex-col transition-colors duration-300"
               >
-                <div className="relative aspect-[16/10] overflow-hidden">
+                <div className="fd-tilt-photo-layer relative aspect-[16/10] overflow-hidden rounded-t-2xl">
                   <img
                     src={(courseCardArtworkById[course.id] ?? coursePhotoById[course.id] ?? course.image).src}
                     alt={(courseCardArtworkById[course.id] ?? coursePhotoById[course.id] ?? course.image).alt}
@@ -343,7 +356,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
                   )}
                 </div>
 
-                <div className="flex flex-1 flex-col p-5">
+                <div className="fd-tilt-copy-layer flex flex-1 flex-col p-5">
                   <h3 className="min-h-[3.5rem] font-serif text-lg font-bold leading-snug text-white transition-colors group-hover:text-ocean-pale">
                     <button
                       type="button"
@@ -360,7 +373,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
                     <button
                       type="button"
                       onClick={() => onOpenBooking(course.id)}
-                      className="inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-lg bg-white px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wide text-[#081F35] transition-colors hover:bg-[#DCEFFC] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                      className="fd-button inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-lg px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wide focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                     >
                       Enroll in course
                     </button>
@@ -375,7 +388,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
                   </div>
                   <p className="mt-3 text-right text-sm font-semibold text-ocean-pale">{formatPrice(course.priceEur)}</p>
                 </div>
-              </FadeUp>
+              </TiltSurface>
             ))}
           </div>
 
@@ -393,7 +406,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
             </div>
             <button
               onClick={() => onOpenBooking()}
-              className="shrink-0 px-7 py-3.5 rounded-full bg-white text-[#0E3453] hover:bg-ocean-pale font-alata text-xs font-semibold uppercase tracking-[0.08em] transition-all flex items-center gap-2 cursor-pointer hover:scale-105"
+              className="fd-button shrink-0 flex items-center gap-2 rounded-full px-7 py-3.5 font-alata text-xs font-semibold uppercase tracking-[0.08em]"
             >
               <span>Ask Us Anything</span>
               <ArrowRight className="w-4 h-4" />

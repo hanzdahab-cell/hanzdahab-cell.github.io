@@ -35,21 +35,21 @@ export function Footer({ onNavigate }: FooterProps) {
   return (
     <footer className="border-t border-slate-200 bg-white text-[#0E3453]">
       <div className="mx-auto max-w-7xl px-5 py-5 sm:px-8">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex flex-wrap items-center gap-4">
+        <div className="grid grid-cols-1 items-center gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-[auto_minmax(12rem,1fr)_minmax(17rem,1.25fr)_10rem_auto]">
+          <div className="flex items-center gap-4">
             <img
               src="/logo-freedive-dahab.png"
               alt="Freedive Dahab"
-              className="h-12 w-auto max-w-32 object-contain brightness-0"
+              className="h-14 w-auto max-w-36 object-contain brightness-0"
             />
             <img
               src="/badges/ssi-logo-black.png"
               alt="SSI Freediving"
-              className="h-7 w-auto max-w-28 object-contain"
+              className="h-8 w-auto max-w-28 object-contain"
             />
           </div>
           <nav aria-label="Footer">
-            <ul className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-alata sm:gap-x-5">
+            <ul className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-alata sm:gap-x-4">
               {FOOTER_LINKS.map((link) => (
                 <li key={link.label}>
                   <button
@@ -65,10 +65,10 @@ export function Footer({ onNavigate }: FooterProps) {
             </ul>
           </nav>
 
-          <address className="flex flex-col gap-1 text-xs not-italic text-slate-600 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4">
+          <address className="flex flex-col gap-1.5 text-xs not-italic text-slate-600">
             <span className="inline-flex items-center gap-1.5">
               <MapPin className="h-3.5 w-3.5 text-cyan-800" aria-hidden="true" />
-              Lighthouse Bay, Dahab · South Sinai, Egypt · Red Sea
+              Lighthouse Bay, Dahab
             </span>
             <a className="inline-flex items-center gap-1.5 hover:text-cyan-800" href={`mailto:${siteConfig.contact.email}`}>
               <Mail className="h-3.5 w-3.5 text-cyan-800" aria-hidden="true" />
@@ -79,6 +79,14 @@ export function Footer({ onNavigate }: FooterProps) {
               {siteConfig.contact.phone}
             </a>
           </address>
+
+          <iframe
+            title="Map showing Freedive Dahab at Lighthouse Bay"
+            src="https://www.google.com/maps?q=28.500013,34.5193704&z=15&output=embed"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            className="h-24 w-full rounded-lg border border-slate-200 bg-slate-100 sm:col-span-1 lg:w-40"
+          />
 
           <div className="flex items-center gap-1.5">
             <a href={siteConfig.social.instagram} target="_blank" rel="noreferrer" aria-label="Instagram — @freedive_dahab" className="grid size-9 place-items-center rounded-full text-[#0E3453] transition-colors hover:bg-slate-100 hover:text-cyan-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-800">
@@ -96,7 +104,7 @@ export function Footer({ onNavigate }: FooterProps) {
           </div>
         </div>
 
-        <p className="mt-3 border-t border-slate-200 pt-3 text-center text-[11px] text-slate-500 lg:text-left">
+        <p className="mt-3 border-t border-slate-200 pt-3 text-center text-[11px] text-slate-500 sm:text-left">
           © {new Date().getFullYear()} Freedive Dahab. {t.footer.allRightsReserved}
         </p>
       </div>

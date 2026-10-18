@@ -322,7 +322,7 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <button
                 type="submit"
-                className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-white px-6 py-4 text-xs font-semibold uppercase tracking-wide text-[#081F35] transition-colors hover:bg-[#DCEFFC] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                className="fd-button inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl px-6 py-4 text-xs font-semibold uppercase tracking-wide focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 <Send className="h-4 w-4" aria-hidden="true" />
                 <span>{t.booking.submit}</span>

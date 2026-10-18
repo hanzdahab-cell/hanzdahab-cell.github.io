@@ -1,19 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { storyConfig } from '../../config/storyConfig';
 import { ImageWithFallback } from './ImageWithFallback';
 import { X, ChevronLeft, ChevronRight, Play, Volume2, ArrowRight } from 'lucide-react';
-
-interface TiltState {
-  rotateX: number;
-  rotateY: number;
-}
+import { TiltDeck } from '../ui/TiltSurface';
 
 export function FoundersSection() {
   const founders = storyConfig.media.founders;
   const [selectedFounderId, setSelectedFounderId] = useState<string | null>(null);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [tilt, setTilt] = useState<Record<string, TiltState>>({});
   const [isPlayingVideo, setIsPlayingVideo] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
 
@@ -70,32 +65,6 @@ export function FoundersSection() {
     setIsPlayingVideo(false);
   };
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>, id: string) => {
-    // Disable 3D tilt on touch or reduced motion
-    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      return;
-    }
-
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-
-    setTilt((prev) => ({
-      ...prev,
-      [id]: {
-        rotateX: -y * 12,
-        rotateY: x * 12,
-      },
-    }));
-  };
-
-  const handleMouseLeave = (id: string) => {
-    setTilt((prev) => ({
-      ...prev,
-      [id]: { rotateX: 0, rotateY: 0 },
-    }));
-  };
-
   return (
     <section
       id="founders"
@@ -144,10 +113,7 @@ export function FoundersSection() {
 
         {/* Three Tall Glass Cards with 3D Tilt */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
-          {founders.map((founder, index) => {
-            const cardTilt = tilt[founder.id] || { rotateX: 0, rotateY: 0 };
-
-            return (
+          {founders.map((founder, index) => (
               <motion.div
                 key={founder.id}
                 layoutId={`founder-card-${founder.id}`}
@@ -155,26 +121,26 @@ export function FoundersSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: index * 0.15 }}
-                onMouseMove={(e) => handleMouseMove(e, founder.id)}
-                onMouseLeave={() => handleMouseLeave(founder.id)}
                 onClick={() => setSelectedFounderId(founder.id)}
-                style={{
-                  perspective: 1000,
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    setSelectedFounderId(founder.id);
+                  }
                 }}
-                className="group relative cursor-pointer focus-visible:outline-none"
+                role="button"
+                tabIndex={0}
+                aria-label={`${founder.name}, ${founder.role}. Open full story.`}
+                aria-haspopup="dialog"
+                className="fd-tilt-scene fd-founder-card group relative cursor-pointer rounded-3xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A9D2EC]"
               >
-                <motion.div
-                  animate={{
-                    rotateX: cardTilt.rotateX,
-                    rotateY: cardTilt.rotateY,
-                  }}
-                  transition={{ type: 'spring', damping: 20, stiffness: 250 }}
-                  className="relative h-[540px] rounded-3xl overflow-hidden bg-gradient-to-b from-white/[0.08] to-black/40 border border-white/10 group-hover:border-[#2EC4B6]/50 shadow-2xl transition-all duration-500 flex flex-col justify-end p-8"
+                <TiltDeck
+                  className="relative flex h-[540px] flex-col justify-end rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.08] to-black/40 p-8 shadow-2xl transition-colors duration-500 group-hover:border-[#2EC4B6]/50"
                 >
                   {/* Portrait Background with LayoutId */}
                   <motion.div
                     layoutId={`founder-img-${founder.id}`}
-                    className="absolute inset-0 w-full h-full pointer-events-none"
+                    className="fd-tilt-photo-layer pointer-events-none absolute inset-0 h-full w-full overflow-hidden rounded-[inherit]"
                   >
                     <ImageWithFallback
                       src={founder.portrait}
@@ -190,7 +156,7 @@ export function FoundersSection() {
                   </motion.div>
 
                   {/* Card Content Overlay */}
-                  <div className="relative z-10 space-y-3">
+                  <div className="fd-tilt-copy-layer relative z-10 space-y-3">
                     <span className="inline-block text-[11px] font-mono uppercase tracking-[0.2em] text-[#2EC4B6]">
                       {founder.depthFocus}
                     </span>
@@ -203,16 +169,19 @@ export function FoundersSection() {
                       {founder.role}
                     </p>
 
+                    <p className="fd-founder-bio-preview line-clamp-3 font-inter text-sm leading-relaxed text-white/90">
+                      {founder.bio}
+                    </p>
+
                     {/* Tap to explore hint */}
                     <div className="pt-3 flex items-center gap-2 text-xs font-mono text-cyan-300/80 group-hover:text-cyan-300 transition-colors">
                       <span>Tap to explore story</span>
                       <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
-                </motion.div>
+                </TiltDeck>
               </motion.div>
-            );
-          })}
+            ))}
         </div>
       </div>
 

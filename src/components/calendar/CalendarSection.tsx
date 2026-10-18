@@ -119,7 +119,7 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
   const eventTypesList = Object.values(EVENT_TYPES_DATA);
 
   return (
-    <section className="relative bg-[#0E3453] text-slate-100 py-12 sm:py-16 px-4 sm:px-8">
+    <section className="ocean-surface relative px-4 py-12 text-slate-100 sm:px-8 sm:py-16">
       
       {/* Background Ambience */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[1000px] h-[450px] bg-cyan-600/[0.04] blur-[150px] pointer-events-none rounded-full" />
@@ -159,7 +159,7 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
 
           <button
             onClick={() => onOpenBooking()}
-            className="px-5 py-2.5 rounded-xl bg-ocean hover:bg-ocean-light text-white font-mono text-xs font-bold uppercase tracking-wider transition-all shrink-0 shadow-lg shadow-cyan-500/25 cursor-pointer text-center"
+            className="fd-button shrink-0 rounded-xl px-5 py-2.5 text-center font-mono text-xs font-bold uppercase tracking-wider"
           >
             Custom Date Inquiry
           </button>
@@ -365,7 +365,7 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
                 </p>
                 <button
                   onClick={() => onOpenBooking()}
-                  className="px-6 py-2.5 rounded-xl bg-ocean hover:bg-ocean-light text-white font-mono text-xs font-bold uppercase tracking-wider"
+                  className="fd-button rounded-xl px-6 py-2.5 font-mono text-xs font-bold uppercase tracking-wider"
                 >
                   Request Custom Dates in {currentMonth.name}
                 </button>

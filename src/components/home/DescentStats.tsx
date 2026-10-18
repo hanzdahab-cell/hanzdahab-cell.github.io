@@ -30,7 +30,7 @@ export function DescentStats({ onNavigate }: { onNavigate: (page: PageType) => v
   const { t } = useTranslation();
 
   return (
-    <section id="legacy" className="relative scroll-mt-20 overflow-hidden bg-[#081F35] border-y border-ocean-pale/10 film-grain">
+    <section id="legacy" className="ocean-surface relative scroll-mt-20 overflow-hidden border-y border-ocean-pale/10 film-grain">
       {/* Slow deep-water glow */}
       <div
         className="absolute inset-0 pointer-events-none"

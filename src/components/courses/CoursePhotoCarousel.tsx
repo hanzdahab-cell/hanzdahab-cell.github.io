@@ -78,7 +78,7 @@ export function CoursePhotoCarousel({
       aria-label={showStory ? 'Freediving course highlights' : `${activeSlide.title} photo gallery`}
       aria-roledescription="carousel"
       className={`group relative isolate overflow-hidden rounded-3xl border border-white/15 bg-[#081F35] shadow-[0_24px_70px_rgba(0,0,0,0.38)] ${
-        showStory ? 'h-[440px] sm:h-[360px] lg:h-[390px]' : 'aspect-[4/3] min-h-[280px]'
+        showStory ? 'h-[440px] sm:h-[360px] lg:h-[390px]' : 'aspect-[4/3] min-h-[12rem] sm:min-h-[280px]'
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -155,7 +155,7 @@ export function CoursePhotoCarousel({
             <button
               type="button"
               onClick={() => onBook(activeSlide.courseId)}
-              className="inline-flex min-h-11 items-center justify-center rounded-xl bg-white px-5 py-3 text-xs font-semibold uppercase tracking-wide text-[#081F35] transition-colors hover:bg-[#DCEFFC] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+              className="fd-button inline-flex min-h-11 items-center justify-center rounded-xl px-5 py-3 text-xs font-semibold uppercase tracking-wide focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
               Enroll in course
             </button>

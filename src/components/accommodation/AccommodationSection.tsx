@@ -22,7 +22,7 @@ export function AccommodationSection({ onOpenBooking, currency, onNavigate }: Ac
   };
 
   return (
-    <section id="accommodation" className="relative py-32 px-6 bg-[#0E3453] border-t border-white/5">
+    <section id="accommodation" className="ocean-surface relative border-t border-white/5 px-6 py-32">
       <div className="max-w-7xl mx-auto">
         
         {/* Header */}
@@ -156,7 +156,7 @@ export function AccommodationSection({ onOpenBooking, currency, onNavigate }: Ac
                 <button
                   type="button"
                   onClick={onOpenBooking}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-white px-5 py-3 text-xs font-semibold uppercase tracking-wide text-[#081F35] transition-colors hover:bg-[#DCEFFC] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  className="fd-button inline-flex min-h-11 items-center gap-2 rounded-xl px-5 py-3 text-xs font-semibold uppercase tracking-wide focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   <span>Book {activeRoom.title}</span>
                   <ArrowRight className="w-4 h-4" />

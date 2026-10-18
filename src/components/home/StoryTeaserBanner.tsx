@@ -98,7 +98,7 @@ export function StoryTeaserBanner({ onNavigate, onViewReviews }: StoryTeaserBann
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => onNavigate('story')}
-              className="px-7 py-3.5 rounded-full bg-white text-[#0E3453] hover:bg-slate-100 font-alata text-xs sm:text-sm font-semibold uppercase tracking-[0.08em] transition-all duration-200 flex items-center gap-2 cursor-pointer hover:shadow-[0_0_25px_rgba(255,255,255,0.3)] hover:scale-105"
+              className="fd-button flex items-center gap-2 rounded-full px-7 py-3.5 font-alata text-xs font-semibold uppercase tracking-[0.08em] transition-all duration-200 sm:text-sm"
             >
               <span>Explore Our Story</span>
               <ArrowRight className="w-4 h-4" />
@@ -117,56 +117,49 @@ export function StoryTeaserBanner({ onNavigate, onViewReviews }: StoryTeaserBann
         {/* 3 Pioneer Cards — dynamic, informative & motional */}
         <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {founders.map((founder, idx) => (
-            <div
-              key={idx}
-              onClick={() => onNavigate('story')}
-              className="pioneer-card group relative flex flex-col rounded-2xl bg-slate-900/40 border border-white/10 hover:border-cyan-400/60 transition-all duration-500 overflow-hidden shadow-xl hover:shadow-[0_18px_50px_rgba(0,0,0,0.75),0_0_30px_rgba(34,211,238,0.12)] cursor-pointer will-change-transform animate-in fade-in slide-in-from-bottom-8 duration-700 fill-mode-both"
-              style={{ animationDelay: `${idx * 140}ms` }}
-            >
-              {/* Portrait with perpetual underwater drift */}
-              <div className="relative aspect-[4/5] w-full overflow-hidden bg-slate-950">
-                <img
-                  src={founder.image}
-                  alt={founder.alt}
-                  loading="lazy"
-                  referrerPolicy="no-referrer"
-                  className="pioneer-img w-full h-full object-cover will-change-transform"
-                />
+            <div key={idx} style={{ animationDelay: `${idx * 140}ms` }} className="pioneer-card-outer">
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => onNavigate('story')}
+                onKeyDown={(e) => { if (e.key === 'Enter') onNavigate('story'); }}
+                className="pioneer-card-flip group relative w-full h-full"
+              >
+                <div className="pioneer-card-inner">
+                  <div className="pioneer-card-front relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-white/10 bg-slate-900/40">
+                    <img
+                      src={founder.image}
+                      alt={founder.alt}
+                      loading="lazy"
+                      referrerPolicy="no-referrer"
+                      className="pioneer-img w-full h-full object-cover will-change-transform rounded-2xl"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/25 to-transparent opacity-85 transition-opacity duration-500" />
+                    <div className="absolute top-4 right-4 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[10px] font-mono tracking-wider text-cyan-300 uppercase flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                      Pioneer
+                    </div>
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-cyan-400 font-semibold block mb-1">
+                        {founder.role}
+                      </span>
+                      <h3 className="font-bebas text-3xl sm:text-4xl text-white tracking-wide leading-none">
+                        {founder.name}
+                      </h3>
+                    </div>
+                  </div>
 
-                {/* Subtle gradient scrim at bottom for text contrast */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/25 to-transparent opacity-85 group-hover:opacity-60 transition-opacity duration-500" />
-
-                {/* Badge Indicator */}
-                <div className="absolute top-4 right-4 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[10px] font-mono tracking-wider text-cyan-300 uppercase flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                  Pioneer
+                  <div className="pioneer-card-back rounded-2xl bg-[#0A2943] p-6 flex flex-col justify-between">
+                    <div>
+                      <h4 className="font-bebas text-2xl text-white mb-2">{founder.name}</h4>
+                      <p className="text-sm text-slate-200 leading-relaxed">{founder.info}</p>
+                    </div>
+                    <div className="mt-4 text-sm text-slate-300 flex items-center justify-between">
+                      <span>{founder.highlight}</span>
+                      <button className="fd-button px-4 py-2 rounded-md">Read more</button>
+                    </div>
+                  </div>
                 </div>
-
-                <div className="absolute bottom-4 left-4 right-4">
-                  <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-cyan-400 font-semibold block mb-1">
-                    {founder.role}
-                  </span>
-                  <h3 className="font-bebas text-3xl sm:text-4xl text-white tracking-wide leading-none">
-                    {founder.name}
-                  </h3>
-                </div>
-              </div>
-
-              {/* Pioneer story snippet */}
-              <div className="p-5 pb-4 space-y-2 flex-1 bg-slate-900/40">
-                <p className="text-xs sm:text-[13px] font-alata text-slate-400 leading-relaxed line-clamp-3 group-hover:text-slate-200 transition-colors duration-500">
-                  {founder.info}
-                </p>
-              </div>
-
-              {/* Card Footer with Highlight & Link */}
-              <div className="p-5 flex items-center justify-between bg-slate-900/60 border-t border-white/5">
-                <span className="text-xs font-alata text-slate-300 line-clamp-1">
-                  {founder.highlight}
-                </span>
-                <span className="text-cyan-400 group-hover:translate-x-1.5 transition-transform shrink-0 ml-2">
-                  <ArrowRight className="w-4 h-4" />
-                </span>
               </div>
             </div>
           ))}

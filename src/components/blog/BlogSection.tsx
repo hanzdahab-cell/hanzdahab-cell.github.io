@@ -7,7 +7,7 @@ export function BlogSection() {
   const [activePost, setActivePost] = useState<BlogPost | null>(null);
 
   return (
-    <section id="blog" className="relative py-28 px-6 bg-[#0E3453] border-t border-white/5">
+    <section id="blog" className="ocean-surface relative border-t border-white/5 px-6 py-28">
       <div className="max-w-7xl mx-auto relative z-10">
         
         {/* Section Header */}

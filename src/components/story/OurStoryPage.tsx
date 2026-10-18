@@ -261,12 +261,12 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
     .filter((_, idx) => !missingGalleryIndices[idx]);
 
   return (
-    <div className="relative min-h-screen bg-[#0E3453] text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200">
+    <div className="relative min-h-screen bg-transparent text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200">
       
       {/* ==================================================================== */}
       {/* 2) INTRO SECTION: Verbatim narrative text from the brief              */}
       {/* ==================================================================== */}
-      <section id="story-intro" className="relative py-20 sm:py-28 px-6 bg-[#0E3453] border-b border-white/5">
+      <section id="story-intro" className="ocean-surface relative border-b border-white/5 px-6 py-20 sm:py-28">
         <div className="absolute inset-0 architectural-grid-fine opacity-10 pointer-events-none" />
 
         <div className="max-w-4xl mx-auto relative z-10 space-y-8 text-left">
@@ -318,7 +318,7 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
       {/* ==================================================================== */}
       <section
         id="pioneers"
-        className="relative scroll-mt-20 py-24 sm:py-32 px-6 bg-[#0E3453] border-b border-white/5"
+        className="ocean-surface relative scroll-mt-20 border-b border-white/5 px-6 py-24 sm:py-32"
         onPointerMove={(event) => {
           if (event.pointerType !== 'mouse') return;
           const bounds = event.currentTarget.getBoundingClientRect();
@@ -373,7 +373,7 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
       {/* ==================================================================== */}
       {/* 5) CALL TO ACTION: "Dive Deeper" with 3 buttons                     */}
       {/* ==================================================================== */}
-      <section className="relative py-28 sm:py-36 px-6 bg-gradient-to-b from-[#0E3453] via-[#0E3453] to-[#0E3453] overflow-hidden select-none">
+      <section className="ocean-surface relative select-none overflow-hidden px-6 py-28 sm:py-36">
         
         {/* Ambient glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-cyan-500/[0.08] blur-[160px] pointer-events-none rounded-full" />
@@ -418,7 +418,7 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
             {/* Button 3: Contact Us */}
             <button
               onClick={() => onOpenBooking()}
-              className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-white text-[#0E3453] hover:bg-slate-100 font-alata text-xs sm:text-sm font-semibold uppercase tracking-[0.08em] transition-all cursor-pointer flex items-center justify-center gap-2 hover:shadow-lg hover:scale-105 duration-200"
+              className="fd-button flex w-full items-center justify-center gap-2 rounded-full px-7 py-3.5 font-alata text-xs font-semibold uppercase tracking-[0.08em] transition-all duration-200 sm:w-auto sm:text-sm"
             >
               <MessageSquare className="w-4 h-4 text-slate-800" />
               <span>Contact Us</span>

@@ -74,8 +74,19 @@ function flattenMenuLinks(menu: MenuDefinition): MenuLink[] {
   );
 }
 
+function isCurrentNavigationPage(page: PageType, currentPage: PageType): boolean {
+  if (page === currentPage) return true;
+  if (page === 'courses') return currentPage.startsWith('course-');
+  if (page === 'packages') return currentPage.startsWith('package-');
+  if (page === 'calendar') return currentPage.startsWith('event-');
+  if (page === 'accommodation') return currentPage.startsWith('room-');
+  if (page === 'experience') return currentPage.startsWith('activity-');
+  return false;
+}
+
 function MobileDrawer({
   navigationItems,
+  currentPage,
   onSelect,
   onClose,
   onLanguageSelect,
@@ -84,6 +95,7 @@ function MobileDrawer({
   activeLanguage,
 }: {
   navigationItems: TopLevelNavigationItem[];
+  currentPage: PageType;
   onSelect: (item: MenuLink) => void;
   onClose: () => void;
   onLanguageSelect: (language: Language) => void;
@@ -132,6 +144,7 @@ function MobileDrawer({
 
       <nav aria-label="Primary mobile">{navigationItems.map((item) => {
         const menu = item.menu;
+        const isActive = isCurrentNavigationPage(item.page, currentPage);
         const isExpanded = Boolean(menu && expandedMenu === menu.id);
         let iconIndex = 0;
 
@@ -166,7 +179,8 @@ function MobileDrawer({
                   event.preventDefault();
                   onSelect({ label: item.label, page: item.page });
                 }}
-                className={`flex min-h-11 flex-1 items-center px-2 text-left text-[12px] font-mono font-semibold uppercase tracking-[0.11em] text-[#0a5c8c] ${FOCUS}`}
+                aria-current={isActive ? 'page' : undefined}
+                className={`flex min-h-11 flex-1 items-center rounded-lg px-2 text-left text-[12px] font-alata font-semibold uppercase tracking-[0.11em] ${isActive ? 'bg-[#0a5c8c] text-white' : 'text-[#0a5c8c]'} ${FOCUS}`}
               >
                 {item.label}
               </a>
@@ -347,7 +361,7 @@ export function SiteHeader({
         data-current-page={currentPage}
         className="sticky top-0 z-50 h-16 border-b border-white/10 bg-[#081F35]/95 text-slate-100 shadow-lg shadow-black/10 backdrop-blur-md"
       >
-        <div className="relative mx-auto flex h-16 max-w-[1480px] items-center gap-2 px-3 sm:gap-3 sm:px-4">
+        <div className="relative mx-auto flex h-16 max-w-[1480px] items-center gap-1 px-3 sm:gap-3 sm:px-4">
           <button
             type="button"
             onClick={() => onNavigate('home')}
@@ -357,7 +371,7 @@ export function SiteHeader({
             <img
               src="/logo-freedive-dahab.png"
               alt="Freedive Dahab"
-              className="h-12 w-auto object-contain sm:h-14"
+              className="h-12 w-auto object-contain sm:h-[3.75rem]"
             />
           </button>
 
@@ -365,7 +379,12 @@ export function SiteHeader({
             <ul className="flex w-full items-center justify-between gap-0.5">
               {navigationItems.map((item) =>
                 item.menu ? (
-                  <NavDropdown key={item.id} menu={item.menu} onSelect={selectMenuItem} />
+                  <NavDropdown
+                    key={item.id}
+                    menu={item.menu}
+                    isActive={isCurrentNavigationPage(item.page, currentPage)}
+                    onSelect={selectMenuItem}
+                  />
                 ) : (
                   <li key={item.id}>
                     <a
@@ -374,7 +393,8 @@ export function SiteHeader({
                         event.preventDefault();
                         selectMenuItem({ label: item.label, page: item.page });
                       }}
-                      className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-lg px-1 text-[10px] font-mono font-semibold uppercase tracking-[0.05em] text-[#6bbbe8] transition-colors hover:bg-white/10 hover:text-white min-[1680px]:px-1.5 min-[1680px]:text-[11px] ${HEADER_FOCUS}`}
+                      aria-current={isCurrentNavigationPage(item.page, currentPage) ? 'page' : undefined}
+                      className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-full px-2 py-2 text-[11px] font-alata font-semibold uppercase tracking-[0.06em] transition-colors hover:text-white min-[1680px]:px-3 min-[1680px]:text-xs ${isCurrentNavigationPage(item.page, currentPage) ? 'text-white' : 'text-[#6bbbe8]'} ${HEADER_FOCUS}`}
                     >
                       {item.label}
                     </a>
@@ -384,7 +404,7 @@ export function SiteHeader({
             </ul>
           </nav>
 
-          <div className="relative z-10 ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
+          <div className="relative z-10 ml-auto flex shrink-0 items-center gap-1 sm:gap-3">
             <div className="relative" ref={languageMenuRef}>
               <button
                 type="button"
@@ -458,7 +478,7 @@ export function SiteHeader({
               type="button"
               onClick={() => onOpenBooking('ssi-level-1')}
               aria-label="Book Now"
-              className={`inline-flex min-h-10 items-center justify-center rounded-lg px-3 text-xs font-semibold transition-colors sm:px-4 ${OCEAN_BTN} ${HEADER_CTA_FOCUS}`}
+              className={`fd-button inline-flex min-h-10 items-center justify-center rounded-lg px-2 text-xs font-semibold sm:px-4 sm:text-sm ${OCEAN_BTN} ${HEADER_CTA_FOCUS}`}
             >
               Book Now
             </button>
@@ -486,6 +506,7 @@ export function SiteHeader({
             <div id="mobile-navigation">
               <MobileDrawer
                 navigationItems={navigationItems}
+                currentPage={currentPage}
                 onSelect={selectMenuItem}
                 onClose={() => setIsDrawerOpen(false)}
                 onLanguageSelect={selectLanguage}

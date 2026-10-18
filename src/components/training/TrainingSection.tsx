@@ -110,7 +110,7 @@ export function TrainingSection({ onOpenBooking, currency = 'EUR', onNavigate }:
   };
 
   return (
-    <section id="training" className="relative py-24 sm:py-32 px-6 bg-[#0E3453] text-slate-100 overflow-hidden border-t border-white/5">
+    <section id="training" className="ocean-surface relative overflow-hidden border-t border-white/5 px-6 py-24 text-slate-100 sm:py-32">
       {/* Ambient background glows */}
       <div className="absolute top-1/4 -left-48 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 -right-48 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />

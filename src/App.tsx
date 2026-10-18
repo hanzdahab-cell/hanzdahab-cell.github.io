@@ -126,8 +126,10 @@ export default function App() {
   return (
     <I18nextProvider i18n={i18n}>
       <LanguageProvider>
-        <div className="relative min-h-screen bg-[#0E3453] text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200">
+        <div className="relative min-h-screen bg-transparent text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200">
         
+        <CoralDepthBackground />
+
         {/* Precision Luxury Pointer Cursor */}
         <Cursor />
 
@@ -151,8 +153,6 @@ export default function App() {
 
             {/* Immersive Coral Depth Environment (The depth of the corals across all home sections) */}
             <div className="relative">
-              <CoralDepthBackground />
-
               <div className="relative z-10">
                 {/* 3. Dahab & the Blue Hole */}
                 <DahabBlueHoleSection

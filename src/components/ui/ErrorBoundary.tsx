@@ -68,7 +68,7 @@ export class ErrorBoundary extends Component<Props, State> {
               <button
                 type="button"
                 onClick={this.handleReload}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-ocean px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-ocean-light"
+                className="fd-button inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-wider"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
                 Refresh Page

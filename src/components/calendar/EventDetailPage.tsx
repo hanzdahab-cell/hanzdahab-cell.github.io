@@ -87,7 +87,7 @@ export function EventDetailPage({
   const availableMonths = Array.from(new Set(eventDates.map((d) => d.monthName)));
 
   return (
-    <div className="relative min-h-screen bg-[#0E3453] text-slate-100 pb-32">
+    <div className="ocean-surface relative min-h-screen pb-32 text-slate-100">
       
       {/* Subtle Ambient Background Gradients */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[550px] bg-cyan-600/[0.06] blur-[180px] pointer-events-none rounded-full" />
@@ -117,7 +117,7 @@ export function EventDetailPage({
           
           <button
             onClick={() => onOpenBooking(event.id)}
-            className="px-4 py-1.5 rounded-lg bg-ocean hover:bg-ocean-light text-white font-bold uppercase tracking-wider transition-all shadow-md shadow-cyan-500/20 cursor-pointer"
+            className="fd-button rounded-lg px-4 py-1.5 font-bold uppercase tracking-wider"
           >
             Instant Registration
           </button>
@@ -206,7 +206,7 @@ export function EventDetailPage({
                   </a>
                   <button
                     onClick={() => onOpenBooking(event.id)}
-                    className="px-5 py-2 rounded-lg bg-ocean hover:bg-ocean-light text-white font-mono text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-cyan-500/20 text-center"
+                    className="fd-button rounded-lg px-5 py-2 text-center font-mono text-xs font-bold uppercase tracking-wider"
                   >
                     Register Now
                   </button>
@@ -618,7 +618,7 @@ export function EventDetailPage({
 
                   <button
                     type="submit"
-                    className="w-full sm:w-auto px-8 py-3 rounded-xl bg-ocean hover:bg-ocean-light text-white font-mono text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-cyan-500/25 flex items-center justify-center gap-2 cursor-pointer"
+                    className="fd-button flex w-full items-center justify-center gap-2 rounded-xl px-8 py-3 font-mono text-xs font-bold uppercase tracking-wider sm:w-auto"
                   >
                     <span>Request Custom Dates</span>
                     <Send className="w-3.5 h-3.5" />

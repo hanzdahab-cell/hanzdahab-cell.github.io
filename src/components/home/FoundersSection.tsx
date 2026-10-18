@@ -52,7 +52,7 @@ export function FoundersSection({ onNavigate }: FoundersSectionProps = {}) {
   return (
     <section
       id="founders"
-      className="relative overflow-hidden bg-[#0E3453] px-6 py-24 sm:py-32"
+      className="ocean-surface relative overflow-hidden px-6 py-24 sm:py-32"
     >
       {/* Ambient background */}
       <div className="pointer-events-none absolute -left-40 top-1/4 h-[500px] w-[500px] rounded-full bg-cyan-500/[0.04] blur-[140px]" />

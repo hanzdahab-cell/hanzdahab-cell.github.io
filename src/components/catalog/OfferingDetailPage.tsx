@@ -150,7 +150,7 @@ export function OfferingDetailPage({
   }
 
   return (
-    <article className="min-h-screen bg-[#0E3453] pb-24 pt-28 text-white sm:pt-36">
+    <article className="ocean-surface min-h-screen pb-24 pt-28 text-white sm:pt-36">
       <div className="mx-auto max-w-7xl px-5 sm:px-6">
         <button
           type="button"
@@ -199,7 +199,7 @@ export function OfferingDetailPage({
             <button
               type="button"
               onClick={() => onOpenBooking(content.bookingId)}
-              className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-[#081F35] transition-colors hover:bg-[#DCEFFC] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+              className="fd-button inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
               Enquire about this {kind === 'room' ? 'stay' : kind}
               <ArrowRight className="h-4 w-4" aria-hidden="true" />

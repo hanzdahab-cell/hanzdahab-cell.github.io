@@ -32,7 +32,7 @@ export function PageHeader({
   const displayCta = (typeof localizedConfig === 'object' && localizedConfig?.ctaText) || ctaText;
 
   return (
-    <div className="relative pt-28 pb-16 sm:pt-36 sm:pb-20 px-6 bg-gradient-to-b from-[#0E3453] via-[#0E3453] to-[#0E3453] border-b border-white/10 overflow-hidden select-none">
+    <div className="relative overflow-hidden border-b border-white/10 bg-gradient-to-b from-[#0E3453]/85 via-[#0E3453]/72 to-[#0E3453]/55 px-6 pb-16 pt-28 select-none sm:pb-20 sm:pt-36">
       
       {/* Ambient Lighting */}
       <div className="absolute top-0 right-1/4 w-[600px] h-[350px] bg-cyan-500/[0.08] blur-[150px] pointer-events-none rounded-full" />
