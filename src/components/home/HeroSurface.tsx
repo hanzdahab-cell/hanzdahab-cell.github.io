@@ -10,23 +10,23 @@ interface HeroSurfaceProps {
 
 const HERO_SLIDES = [
   {
-    name: 'freedive-dahab-freediving-training-red-sea.webp',
+    name: 'freedive-dahab-freediving-training-red-sea.png',
     alt: 'Freedivers training together in the clear water of Dahab',
   },
   {
-    name: 'linda-paganelli-freedive-dahab-freediving.webp',
+    name: 'linda-paganelli-freedive-dahab-freediving.png',
     alt: 'Linda Paganelli freediving above a coral reef',
   },
   {
-    name: 'ras-mohammed-red-sea-turtle-coral-reef.webp',
+    name: 'ras-mohammed-red-sea-turtle-coral-reef.png',
     alt: 'A sea turtle swimming above a reef at Ras Mohammed',
   },
   {
-    name: 'dahab-lighthouse-bay-freediving-reef.webp',
+    name: 'dahab-lighthouse-bay-freediving-reef.png',
     alt: 'Freediving at Lighthouse Bay in Dahab',
   },
   {
-    name: 'freediving-blue-hole-sinai-red-sea-egypt.webp',
+    name: 'freediving-blue-hole-sinai-red-sea-egypt.png',
     alt: 'A freediver descending at the Blue Hole in Sinai',
   },
 ];
