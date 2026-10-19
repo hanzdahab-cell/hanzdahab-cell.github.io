@@ -1,14 +1,15 @@
 .car-05 {
   position: relative;
   isolation: isolate;
+  min-height: 100svh;
   color: #fff;
   font-family: var(--font-body);
 }
 
 .car-05__deck {
   position: relative;
-  height: min(calc(100svh - 4rem), 68rem);
-  min-height: 40rem;
+  height: 100svh;
+  min-height: min(36rem, 100svh);
   overflow: hidden;
   background: #081f35;
 }
@@ -31,30 +32,50 @@
   transition: opacity 1100ms ease;
 }
 
+.car-05__slide::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background:
+    linear-gradient(0deg, rgb(8 31 53 / 0.54) 0%, rgb(8 31 53 / 0.04) 72%),
+    linear-gradient(90deg, rgb(8 31 53 / 0.2), transparent 72%);
+  content: '';
+}
+
 .car-05__slide.is-active {
   opacity: 1;
 }
 
 .car-05__slide img {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
+}
+
+.car-05__slide-fill {
+  object-fit: cover;
+  filter: blur(8px) brightness(0.72) saturate(1.12);
+  transform: scale(1.04);
+}
+
+.car-05__slide-full {
+  z-index: 1;
   object-fit: contain;
 }
 
 .car-05__shade {
-  background:
-    linear-gradient(0deg, rgb(8 31 53 / 0.86) 0%, transparent 58%),
-    linear-gradient(90deg, rgb(8 31 53 / 0.94) 0%, rgb(8 31 53 / 0.74) 34%, rgb(8 31 53 / 0.24) 68%, rgb(8 31 53 / 0.04) 100%);
+  pointer-events: none;
 }
 
 .car-05__overlay {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   inset-inline-start: 50%;
-  bottom: clamp(5rem, 8vh, 7rem);
+  top: 47%;
   width: min(84rem, calc(100% - 2.5rem));
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   container-type: inline-size;
   display: flex;
   flex-direction: column;
@@ -77,20 +98,22 @@
 
 .car-05__logo {
   display: block;
-  width: clamp(10rem, 18vw, 16rem);
+  width: clamp(8rem, 14vw, 12rem);
   height: auto;
-  margin-top: clamp(1rem, 2.5vw, 1.75rem);
+  margin-top: clamp(0.5rem, 1.1vw, 1rem);
   object-fit: contain;
   object-position: center;
   filter: drop-shadow(0 8px 22px rgb(0 0 0 / 0.4));
 }
 
 .car-05__year {
-  margin-top: 0.15rem;
+  margin-top: clamp(0.75rem, 1.6vw, 1.25rem);
   color: rgb(255 255 255 / 0.9);
   font-family: var(--font-display);
-  font-size: clamp(1.1rem, 1.7vw, 1.5rem);
-  letter-spacing: 0.24em;
+  font-size: clamp(0.95rem, 1.35vw, 1.2rem);
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-shadow: 0 2px 14px rgb(0 0 0 / 0.55);
 }
 
 .car-05__actions {
@@ -150,9 +173,9 @@
   font-family: var(--font-body);
   font-size: clamp(0.65rem, 1.1vw, 0.8rem);
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.11em;
   line-height: 1.6;
-  text-shadow: 0 1px 12px rgb(0 0 0 / 0.65);
+  text-shadow: 0 1px 14px rgb(0 0 0 / 0.8);
 }
 
 .car-05__cta:focus-visible {
@@ -161,45 +184,48 @@
 }
 
 @media (max-width: 640px) {
-  .car-05__deck {
-    display: flex;
-    height: auto;
-    min-height: 0;
-    flex-direction: column;
-  }
-
-  .car-05__image-stack {
-    position: relative;
-    flex: none;
-    aspect-ratio: 16 / 9;
-  }
-
-  .car-05__shade {
-    inset: 0 0 auto;
-    height: auto;
-    aspect-ratio: 16 / 9;
-    background:
-      linear-gradient(0deg, rgb(8 31 53 / 0.35), transparent 42%),
-      linear-gradient(90deg, rgb(8 31 53 / 0.18), transparent 100%);
-  }
-
   .car-05__overlay {
-    position: relative;
-    inset-inline-start: auto;
-    bottom: auto;
-    width: 100%;
-    padding: 1.25rem 1rem 1.75rem;
-    transform: none;
+    top: 48%;
+    width: calc(100% - 2rem);
   }
 
   .car-05__title {
-    font-size: clamp(1rem, 5.6cqi, 5.25rem);
+    font-size: clamp(1rem, 5.6cqi, 2.1rem);
+  }
+
+  .car-05__logo {
+    width: clamp(7rem, 30vw, 9rem);
+  }
+
+  .car-05__year {
+    margin-top: 1rem;
+  }
+
+  .car-05__actions {
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .car-05__cta {
+    min-height: 2.75rem;
+    padding-inline: 1rem;
+    font-size: 0.8rem;
+  }
+
+  .car-05__trust-line {
+    gap: 0.15rem 0.45rem;
+    margin-top: 0.65rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.07em;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .car-05__slide,
-  .car-05__cta {
+  .car-05__cta,
+  .car-05__slide-fill {
     transition: none;
+    filter: blur(8px) brightness(0.72) saturate(1.12);
+    transform: none;
   }
 }

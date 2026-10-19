@@ -503,6 +503,31 @@ html[dir="rtl"] .font-arabic-body {
   border-color: #89ffff;
 }
 
+.site-header {
+  transition:
+    background-color 360ms ease,
+    border-color 360ms ease,
+    box-shadow 360ms ease,
+    backdrop-filter 360ms ease;
+}
+
+.site-header--home {
+  margin-bottom: -4rem;
+  border-color: transparent;
+  background-color: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.site-header--home[data-scrolled='true'] {
+  border-color: rgb(255 255 255 / 0.1);
+  background-color: rgb(8 31 53 / 0.94);
+  box-shadow: 0 12px 28px rgb(0 0 0 / 0.22);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
 /* Elite Glass Card */
 .glass-panel {
   background: rgba(8, 31, 53, 0.6);

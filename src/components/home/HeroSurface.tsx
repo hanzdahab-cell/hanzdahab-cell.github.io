@@ -110,6 +110,15 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
               className={`car-05__slide ${index === activeIndex ? 'is-active' : ''}`}
             >
               <img
+                className="car-05__slide-fill"
+                src={`/images/home-hero/source/${slide.name}`}
+                alt=""
+                aria-hidden="true"
+                loading={index === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+              />
+              <img
+                className="car-05__slide-full"
                 src={`/images/home-hero/source/${slide.name}`}
                 alt=""
                 aria-hidden="true"
@@ -128,13 +137,13 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
             {headlineLead}{' '}
             <span className="car-05__title--accent">{headlineTail}</span>
           </h1>
+          <p className="car-05__year">{foundingYear}</p>
           <img
             src="/logo-freedive-dahab.png"
             alt="Freedive Dahab"
             className="car-05__logo"
             fetchPriority="high"
           />
-          <p className="car-05__year">{foundingYear}</p>
           <div className="car-05__actions">
             <button
               type="button"
