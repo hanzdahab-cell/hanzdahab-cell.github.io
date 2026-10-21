@@ -9,38 +9,31 @@ interface DahabBlueHoleSectionProps {
 const STORY_SLIDES = [
   {
     src: '/images/dahab-story/lighthouse-training.jpg',
-    title: 'Lighthouse Bay',
-    alt: 'Freedivers entering the clear water at Dahab’s Lighthouse Bay',
+    title: 'Why Dahab Is Ideal for Freediving',
+    alt: "Freedivers entering the clear water at Dahab's Lighthouse Bay",
     detail:
-      'On Dahab’s waterfront, Lighthouse Bay pairs easy shore access with sheltered training water. Sessions progress at a calm pace with instructor guidance and buddy checks.',
+      "Dahab's unique geography gives freedivers everything they need, all within a short walk of the shore.",
   },
   {
     src: '/images/dahab-story/blue-hole-training.jpg',
-    title: 'The Blue Hole',
+    title: 'Lighthouse Bay — The Perfect Starting Point',
     alt: 'Freedivers preparing for a supervised session at the Blue Hole',
     detail:
-      'Just north of Dahab in South Sinai, the Blue Hole opens into dramatic deep blue. Local guides help visitors explore it with a plan suited to their experience.',
+      'Lighthouse Bay — The Perfect Starting Point\nShallow, sheltered and calm, Lighthouse Bay is where every freediving journey begins. Easy shore access and gentle conditions make it ideal for first breath-holds, skills practice and confidence-building at any level.',
   },
   {
     src: '/images/dahab-story/lighthouse-sunset.jpg',
-    title: 'A town beside the sea',
-    alt: 'Freedivers sharing the water at sunset along Dahab’s shore',
+    title: 'The Blue Hole — Deep Water, Minutes Away',
+    alt: "Freedivers sharing the water at sunset along Dahab's shore",
     detail:
-      'Dahab is a relaxed Red Sea town in South Sinai, Egypt, where a walkable waterfront, mountain desert and reef-lined water meet.',
+      'A world-famous freediving site, the Blue Hole drops to over 100 metres just meters from the shoreline — no boat required. Its sheer depth and calm, current-free water make it the perfect training ground for divers chasing new personal bests.',
   },
   {
     src: '/images/dahab-story/line-coaching.jpg',
-    title: 'Progress, one session at a time',
+    title: 'Warm Water, Year-Round Visibility',
     alt: 'An instructor guiding a freediver beside the training line',
     detail:
-      'At the training line, divers work on relaxed technique, equalisation and steady returns to the surface. Each session follows personal readiness—not a target depth.',
-  },
-  {
-    src: '/images/dahab-story/freediver-ascent.jpg',
-    title: 'A different perspective',
-    alt: 'A freediver moving slowly through the blue water in Dahab',
-    detail:
-      'Clear Red Sea water brings the reef into view. Take time to notice its life, move gently around coral and enjoy the blue at your own pace.',
+      'With water temperatures rarely dropping below 24°C and visibility often exceeding 20 metres, Dahab offers some of the most consistent conditions in the world — so every session counts, whatever the season.',
   },
 ];
 

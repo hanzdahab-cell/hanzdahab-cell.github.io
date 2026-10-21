@@ -165,10 +165,11 @@ export default function App() {
                 {/* Freedive Dahab legacy and milestones */}
                 <DescentStats onNavigate={navigateTo} />
 
-                {/* Last: Official SSI Partner badges */}
+                {/* Last: Official SSI Partner badges — compact */}
                 <SSICertificates
                   onOpenBooking={() => handleOpenBooking()}
                   onNavigate={navigateTo}
+                  variant="compact"
                 />
               </div>
             </div>

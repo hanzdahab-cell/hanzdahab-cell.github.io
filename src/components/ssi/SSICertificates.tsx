@@ -1,6 +1,7 @@
 import { PageType } from '../../types';
 import { useLanguage } from '../../context/LanguageContext';
 import { ShieldCheck, ArrowRight } from 'lucide-react';
+import { SSI_BADGES } from '../../data/ssiBadges';
 
 export interface SSICertificatesProps {
   onOpenBooking?: () => void;
@@ -53,31 +54,28 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
         aria-label="Official SSI training center badges"
         className="border-b border-white/10 bg-[#081F35] px-6 py-8"
       >
-        <div className="mx-auto grid max-w-6xl grid-cols-2 items-center gap-5 sm:grid-cols-4">
-          {badges.map((badge) => (
-            <div key={badge.id} className="flex min-h-20 items-center justify-center px-4">
-              {badge.format === 'pdf' ? (
-                <div className="aspect-square h-24 max-w-full overflow-hidden rounded-full">
-                    <object
-                      data={`${badge.src}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`}
-                      type="application/pdf"
-                      aria-label={badge.alt}
-                      className="h-full w-full border-0 bg-transparent"
-                    >
-                      <a href={badge.src} className="text-sm text-cyan-300 underline">
-                        View {badge.title}
-                      </a>
-                    </object>
-                </div>
-              ) : (
-                <img
-                    src={badge.src}
-                    alt={badge.alt}
-                    loading="lazy"
-                    decoding="async"
-                    className="max-h-24 w-full max-w-[190px] object-contain"
-                />
-              )}
+        <div className="mx-auto max-w-6xl text-center mb-6">
+          <p className="font-alata text-sm sm:text-base text-slate-300 max-w-3xl mx-auto leading-relaxed">
+            An authorized SSI Freediving Center in the heart of Dahab — dedicated instructor
+            trainers, professional counter-ballast buoys, and a 100% safety record since 2003.
+          </p>
+        </div>
+        <div className="mx-auto flex flex-wrap max-w-6xl items-center justify-center gap-4 sm:gap-6">
+          {SSI_BADGES.map((badge) => (
+            <div
+              key={badge.id}
+              className="flex flex-col items-center gap-1.5 min-w-[80px]"
+            >
+              <img
+                src={badge.src}
+                alt={badge.alt}
+                loading="lazy"
+                decoding="async"
+                className="h-14 w-auto max-w-[100px] object-contain filter grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+              />
+              <span className="font-alata text-xs text-slate-400 text-center leading-snug">
+                {badge.title}
+              </span>
             </div>
           ))}
         </div>

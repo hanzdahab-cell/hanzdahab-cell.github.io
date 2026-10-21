@@ -11,7 +11,6 @@
   height: 100svh;
   min-height: min(36rem, 100svh);
   overflow: hidden;
-  background: #081f35;
 }
 
 .car-05__image-stack,
@@ -30,16 +29,6 @@
   inset: 0;
   opacity: 0;
   transition: opacity 1100ms ease;
-}
-
-.car-05__slide::after {
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  background:
-    linear-gradient(0deg, rgb(8 31 53 / 0.54) 0%, rgb(8 31 53 / 0.04) 72%),
-    linear-gradient(90deg, rgb(8 31 53 / 0.2), transparent 72%);
-  content: '';
 }
 
 .car-05__slide.is-active {
@@ -62,7 +51,7 @@
 
 .car-05__slide-full {
   z-index: 1;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .car-05__shade {
@@ -96,6 +85,11 @@
   text-wrap: balance;
 }
 
+.car-05__title--accent {
+  color: #00cdfe;
+  text-shadow: 0 6px 28px rgb(0 205 254 / 12%);
+}
+
 .car-05__logo {
   display: block;
   width: clamp(8rem, 14vw, 12rem);
@@ -108,7 +102,7 @@
 
 .car-05__year {
   margin-top: clamp(0.75rem, 1.6vw, 1.25rem);
-  color: rgb(255 255 255 / 0.9);
+  color: #fff;
   font-family: var(--font-display);
   font-size: clamp(0.95rem, 1.35vw, 1.2rem);
   font-weight: 600;
@@ -116,15 +110,25 @@
   text-shadow: 0 2px 14px rgb(0 0 0 / 0.55);
 }
 
-.car-05__intro {
-  max-width: 44rem;
-  margin-top: clamp(0.9rem, 1.7vw, 1.4rem);
+.car-05__year-accent {
+  color: #00cdfe;
+}
+
+.car-05__slogan {
+  max-width: 36rem;
+  margin-top: clamp(0.75rem, 1.3vw, 1.1rem);
   padding-inline: 0.5rem;
-  color: rgb(239 255 255 / 0.92);
-  font-family: var(--font-body);
-  font-size: clamp(0.85rem, 1.3vw, 1.05rem);
-  line-height: 1.65;
-  text-shadow: 0 2px 16px rgb(0 0 0 / 0.75);
+  color: #fff;
+  font-family: var(--font-hook);
+  font-size: clamp(0.85rem, 1.6vw, 1.25rem);
+  font-weight: 400;
+  line-height: 1.15;
+  text-shadow: 0 2px 20px rgb(0 0 0 / 0.55);
+  text-wrap: balance;
+}
+
+.car-05__slogan--accent {
+  color: #00cdfe;
 }
 
 .car-05__actions {
@@ -132,7 +136,7 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.75rem;
-  margin-top: clamp(1.25rem, 2.5vw, 1.75rem);
+  margin-top: clamp(1rem, 2vw, 1.5rem);
 }
 
 .car-05__cta {
@@ -197,25 +201,34 @@
   transform: translateY(-2px);
 }
 
-.car-05__title--accent {
-  color: #89ffff;
-  text-shadow: 0 6px 28px rgb(137 255 255 / 8%);
-}
-
-.car-05__trust-line {
+.car-05__badges {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.25rem 0.65rem;
-  margin-top: 0.85rem;
-  color: rgb(239 255 255 / 0.92);
-  font-family: 'Playfair Display', Georgia, serif;
-  font-style: italic;
-  font-size: clamp(0.7rem, 1.15vw, 0.9rem);
-  font-weight: 400;
-  letter-spacing: 0.05em;
-  line-height: 1.6;
-  text-shadow: 0 1px 14px rgb(0 0 0 / 0.8);
+  gap: 0.6rem;
+  margin-top: clamp(1.25rem, 2.2vw, 1.75rem);
+  padding-inline: 0.5rem;
+}
+
+.car-05__badge {
+  display: inline-flex;
+  width: clamp(3.5rem, 8vw, 4.5rem);
+  height: clamp(3.5rem, 8vw, 4.5rem);
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 6px 18px -6px rgb(0 0 0 / 0.6);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.car-05__badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.car-05__badge:hover {
+  transform: scale(1.08);
+  box-shadow: 0 10px 28px -8px rgb(0 205 254 / 0.35);
 }
 
 .car-05__cta:focus-visible {
@@ -239,17 +252,17 @@
 
   .car-05__year {
     margin-top: 1rem;
+    font-size: clamp(0.85rem, 1.2vw, 1rem);
   }
 
-  .car-05__intro {
-    margin-top: 0.85rem;
-    font-size: 0.8rem;
-    line-height: 1.55;
+  .car-05__slogan {
+    margin-top: 0.7rem;
+    font-size: clamp(0.7rem, 1.4vw, 0.9rem);
   }
 
   .car-05__actions {
     gap: 0.5rem;
-    margin-top: 1rem;
+    margin-top: 0.9rem;
   }
 
   .car-05__cta {
@@ -259,11 +272,14 @@
     gap: 0.4rem;
   }
 
-  .car-05__trust-line {
-    gap: 0.15rem 0.45rem;
-    margin-top: 0.65rem;
-    font-size: 0.7rem;
-    letter-spacing: 0.04em;
+  .car-05__badges {
+    gap: 0.4rem;
+    margin-top: 1rem;
+  }
+
+  .car-05__badge {
+    width: clamp(2.75rem, 7vw, 3.25rem);
+    height: clamp(2.75rem, 7vw, 3.25rem);
   }
 }
 
@@ -273,6 +289,10 @@
   .car-05__slide-fill {
     transition: none;
     filter: blur(8px) brightness(0.72) saturate(1.12);
+    transform: none;
+  }
+
+  .car-05__badge:hover {
     transform: none;
   }
 }

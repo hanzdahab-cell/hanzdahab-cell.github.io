@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type FocusEvent } from 'react';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { TRANSLATIONS } from '../../utils/i18n';
+import { SSI_BADGES } from '../../data/ssiBadges';
 import type { PageType } from '../../types';
 import './HeroSurface.css';
 
@@ -11,12 +12,8 @@ interface HeroSurfaceProps {
 
 const HERO_SLIDES = [
   {
-    name: 'dahab-lighthouse-bay-freediving-reef.png',
-    alt: 'Freediving training at Lighthouse Bay in Dahab',
-  },
-  {
-    name: 'linda-paganelli-freedive-dahab-freediving.png',
-    alt: 'Linda Paganelli freediving above a coral reef',
+    name: 'freedive-dahab-freediving-training-red-sea.png',
+    alt: 'Freedivers training together in the clear water of Dahab',
   },
 ];
 
@@ -29,6 +26,10 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
   const headlineWords = headline.split(/\s+/);
   const headlineLead = headlineWords.slice(0, Math.max(0, headlineWords.length - 2)).join(' ');
   const headlineTail = headlineWords.slice(-2).join(' ');
+
+  const yearWords = foundingYear.split(' ');
+  const yearLead = yearWords.slice(0, -1).join(' ');
+  const yearTail = yearWords[yearWords.length - 1];
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
@@ -126,17 +127,19 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
             {headlineLead}{' '}
             <span className="car-05__title--accent">{headlineTail}</span>
           </h1>
-          <p className="car-05__year">{foundingYear}</p>
+          <p className="car-05__year">
+            {yearLead}{' '}
+            <span className="car-05__year-accent">{yearTail}</span>
+          </p>
           <img
             src="/logo-freedive-dahab.png"
             alt="Freedive Dahab"
             className="car-05__logo"
             fetchPriority="high"
           />
-          <p className="car-05__intro">
-            Learn to freedive, build your skills, or continue your training in Dahab. Freedive
-            Dahab welcomes beginners and experienced divers with SSI courses, coached sessions and
-            small-group instruction beside the Red Sea.
+          <p className="car-05__slogan">
+            THE DEEPER YOU GO{' '}
+            <span className="car-05__slogan--accent">THE QUIETER IT BECOMES</span>
           </p>
           <div className="car-05__actions">
             <button
@@ -156,11 +159,13 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
               <ArrowUpRight className="car-05__cta-arrow" aria-hidden="true" />
             </button>
           </div>
-          <p className="car-05__trust-line">
-            4,800+ certified freedivers <span aria-hidden="true">·</span> Small groups{' '}
-            <span aria-hidden="true">·</span> Beginners welcome <span aria-hidden="true">·</span>{' '}
-            SSI Diamond ITC #720079
-          </p>
+          <ul className="car-05__badges" aria-label="SSI certifications">
+            {SSI_BADGES.map((badge) => (
+              <li key={badge.id} className="car-05__badge" title={badge.title}>
+                <img src={badge.src} alt={badge.alt} loading="lazy" decoding="async" />
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>
