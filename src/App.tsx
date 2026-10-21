@@ -3,6 +3,7 @@ import { Cursor } from './components/ui/Cursor';
 import { SiteHeader } from './nav/SiteHeader';
 import { PageHeader } from './components/ui/PageHeader';
 import { HeroSurface } from './components/home/HeroSurface';
+import { CourseCarousel } from './components/CourseCarousel';
 import { CoralDepthBackground } from './components/home/CoralDepthBackground';
 import { SSICertificates } from './components/ssi/SSICertificates';
 import { DahabBlueHoleSection } from './components/home/DahabBlueHoleSection';
@@ -150,6 +151,8 @@ export default function App() {
           <div className="page-dive-in">
             {/* 1. HERO: Dahab, Freedive Dahab, and the founding year */}
             <HeroSurface onNavigate={navigateTo} />
+
+            <CourseCarousel />
 
             {/* Immersive Coral Depth Environment (The depth of the corals across all home sections) */}
             <div className="relative">
