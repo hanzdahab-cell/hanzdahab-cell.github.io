@@ -28,7 +28,7 @@ import { StoryHeroCarousel } from './components/story/StoryHeroCarousel';
 import { OfferingDetailPage } from './components/catalog/OfferingDetailPage';
 import { useSmoothScroll } from './utils/useSmoothScroll';
 import { PageType, EventTypeId } from './types';
-import { LanguageProvider } from './context/LanguageContext';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n';
 
@@ -142,6 +142,7 @@ export default function App() {
         />
 
         <main className="relative z-10">
+        {currentPage !== 'home' && <PriceEstimateNotice />}
         
         {/* ========================================================= */}
         {/* 1. INDIVIDUAL PAGE: HOME SANCTUARY                        */}
@@ -277,8 +278,8 @@ export default function App() {
           <div className="page-dive-in">
             <PageHeader
               title="Expedition & Course Calendar"
-              subtitle="Live schedule of upcoming certified SSI courses, depth camps, equalization coaching, and camel safaris in Dahab. Check remaining spots and book directly."
-              badge="Live 2026 Season Schedule • Instant Seat Reservation"
+              subtitle="Browse scheduled SSI courses, depth camps, equalisation coaching, and trips in Dahab. Ask our team to confirm current dates and availability."
+              badge="2026 schedule • dates and availability confirmed by inquiry"
               currentPage="calendar"
               onNavigate={navigateTo}
               onOpenBooking={() => handleOpenBooking()}
@@ -445,5 +446,18 @@ export default function App() {
     </div>
     </LanguageProvider>
     </I18nextProvider>
+  );
+}
+
+function PriceEstimateNotice() {
+  const { t } = useLanguage();
+
+  return (
+    <aside
+      role="note"
+      className="mx-auto mt-24 w-[min(100%-2rem,80rem)] rounded-xl border border-cyan-200/25 bg-[#0E3453]/90 px-4 py-3 text-sm leading-relaxed text-cyan-50 shadow-lg sm:mt-28 sm:px-5"
+    >
+      {t('ui.priceEstimateNotice')}
+    </aside>
   );
 }
