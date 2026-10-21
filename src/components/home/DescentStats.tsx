@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { ArrowRight } from 'lucide-react';
 import { TextReveal, CountUp, FadeUp } from '../ui/MotionKit';
+import { SSICertificates } from '../ssi/SSICertificates';
 import type { PageType } from '../../types';
 
 /* ==========================================================================
@@ -43,9 +44,6 @@ export function DescentStats({ onNavigate }: { onNavigate: (page: PageType) => v
       <div className="relative max-w-7xl mx-auto px-6 sm:px-10 py-24 sm:py-32">
         {/* Contra-style chapter header: serif italic caps over huge bold line */}
         <div className="mb-16 sm:mb-20">
-          <p className="font-serif italic text-ocean-pale tracking-[0.3em] text-xs sm:text-sm uppercase mb-4">
-            <TextReveal>{t('descentStats.eyebrow')}</TextReveal>
-          </p>
           <h2 className="font-bebas text-white leading-[0.95] tracking-[0.03em] text-6xl sm:text-7xl md:text-8xl uppercase">
             <TextReveal stagger={0.06}>{t('descentStats.title')}</TextReveal>{' '}
             <span className="text-ocean-light">
@@ -92,7 +90,8 @@ export function DescentStats({ onNavigate }: { onNavigate: (page: PageType) => v
             </FadeUp>
           ))}
         </div>
-        <div className="mt-8 flex justify-end">
+        <div className="mt-8 flex flex-col items-center gap-5 sm:flex-row sm:justify-between">
+          <SSICertificates variant="compact" />
           <button
             type="button"
             onClick={() => onNavigate('story')}

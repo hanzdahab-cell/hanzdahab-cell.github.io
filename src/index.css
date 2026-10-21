@@ -90,6 +90,14 @@
 }
 
 @font-face {
+  font-family: 'Alata Hero';
+  src: url('/fonts/Alata-Hero-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Righteous';
   src: url('/fonts/Righteous-Regular.ttf') format('truetype');
   font-weight: 400;
@@ -513,15 +521,15 @@ html[dir="rtl"] .font-arabic-body {
 
 .site-header--home {
   margin-bottom: -4rem;
-  border-color: transparent;
-  background-color: transparent;
-  box-shadow: none;
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
+  border-bottom: 0;
+  background: linear-gradient(180deg, rgb(8 31 53 / 0.44), rgb(8 31 53 / 0.1));
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
 }
 
 .site-header--home[data-scrolled='true'] {
-  border-color: rgb(255 255 255 / 0.1);
+  border-bottom: 0;
   background-color: rgb(8 31 53 / 0.94);
   box-shadow: 0 12px 28px rgb(0 0 0 / 0.22);
   -webkit-backdrop-filter: blur(12px);
@@ -879,57 +887,6 @@ html[dir="rtl"] .font-arabic-body {
   }
 }
 
-/* Repeating course names form a lightweight, decorative marquee. */
-.courses-ticker {
-  overflow: hidden;
-  border-block: 1px solid rgb(169 210 236 / 14%);
-  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-}
-
-.courses-ticker__track {
-  display: flex;
-  width: max-content;
-  animation: courses-ticker-scroll 36s linear infinite;
-}
-
-.courses-ticker__group {
-  display: flex;
-  flex: none;
-  align-items: center;
-  gap: clamp(1.5rem, 4vw, 4rem);
-  padding-inline-end: clamp(1.5rem, 4vw, 4rem);
-}
-
-.courses-ticker__item {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  gap: 0.65rem;
-  color: #efffff;
-  font-family: var(--font-body);
-  font-size: 0.875rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.courses-ticker__item::before {
-  width: 0.45rem;
-  height: 0.45rem;
-  border-radius: 50%;
-  background: #89ffff;
-  content: '';
-}
-
-.courses-ticker:hover .courses-ticker__track {
-  animation-play-state: paused;
-}
-
-@keyframes courses-ticker-scroll {
-  to {
-    transform: translateX(-50%);
-  }
-}
-
 /* Accessible, tap-controlled 3D pioneer cards. */
 .pioneer-card-outer {
   perspective: 1400px;
@@ -1071,24 +1028,6 @@ html[dir="rtl"] .font-arabic-body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .courses-ticker {
-    mask-image: none;
-  }
-
-  .courses-ticker__track {
-    animation: none;
-    width: 100%;
-    flex-wrap: wrap;
-  }
-
-  .courses-ticker__group {
-    flex-wrap: wrap;
-  }
-
-  .courses-ticker__group[aria-hidden='true'] {
-    display: none;
-  }
-
   .pioneer-card-inner {
     transition: none;
   }

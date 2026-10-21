@@ -26,8 +26,8 @@ export const SSI_BADGES: SSIBadge[] = [
   },
   {
     id: 'diamond-center',
-    title: 'SSI Diamond Center',
+    title: 'SSI Pro Center',
     src: '/badge-4t.png',
-    alt: 'SSI Official Partner — Diamond Center badge',
+    alt: 'SSI Official Partner badge',
   },
 ];

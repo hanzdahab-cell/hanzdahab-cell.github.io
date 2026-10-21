@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowRight, ChevronLeft, ChevronRight, Languages, Pause, Play, ShieldCheck } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 import { PageType } from '../../types';
 
 interface StoryHeroCarouselProps {
@@ -32,7 +32,7 @@ const SLIDES = [
     title: 'Progress, one calm dive at a time.',
     description:
       'Follow a clear path from your first freediving session to internationally recognised SSI training with experienced instructors.',
-    detail: 'SSI Diamond Instructor Training Center',
+    detail: 'SSI Pro Instructor Training Center',
   },
   {
     image: '/images/story-carousel/training-line.jpg',
@@ -155,10 +155,6 @@ export function StoryHeroCarousel({ onNavigate }: StoryHeroCarouselProps) {
 
       <div className="relative z-10 mx-auto grid w-full max-w-7xl items-end gap-10 lg:grid-cols-[1.05fr_0.55fr] lg:items-center">
         <div className="max-w-3xl" aria-live={motionPaused ? 'polite' : 'off'} aria-atomic="true">
-          <p className="mb-5 flex items-center gap-2 text-sm font-medium text-[#A9D2EC]">
-            <ShieldCheck className="h-4 w-4 text-cyan-300" aria-hidden="true" />
-            {slide.eyebrow}
-          </p>
           <h1
             key={slide.title}
             className="max-w-[13ch] animate-in fade-in slide-in-from-bottom-3 font-bebas text-5xl leading-[0.98] tracking-[0.025em] text-white duration-500 sm:text-7xl lg:text-8xl"
@@ -173,11 +169,6 @@ export function StoryHeroCarousel({ onNavigate }: StoryHeroCarouselProps) {
           </p>
 
           <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-white/90">
-            <span className="inline-flex items-center gap-2">
-              <Languages className="h-4 w-4 text-cyan-200" aria-hidden="true" />
-              English · العربية · Español · Deutsch
-            </span>
-            <span className="hidden text-white/40 sm:inline" aria-hidden="true">|</span>
             <span>{slide.detail}</span>
           </div>
 
@@ -199,13 +190,7 @@ export function StoryHeroCarousel({ onNavigate }: StoryHeroCarouselProps) {
           </div>
         </div>
 
-        <div className="flex items-end justify-between gap-6 lg:flex-col lg:items-end">
-          <p className="max-w-[20ch] text-right font-bebas text-2xl tracking-wide text-white/90 sm:text-3xl">
-            Dahab
-            <span className="mt-1 block font-alata text-sm font-normal text-[#A9D2EC]">
-              South Sinai, Egypt · Red Sea
-            </span>
-          </p>
+        <div className="flex items-center justify-end gap-6">
           <div className="flex items-center gap-2" aria-label="Choose a school story slide">
             {SLIDES.map((item, index) => (
               <button
@@ -256,11 +241,6 @@ export function StoryHeroCarousel({ onNavigate }: StoryHeroCarouselProps) {
           </div>
         </div>
       </div>
-      {videoUnavailable && (
-        <p role="status" className="absolute bottom-4 left-5 z-20 max-w-[min(24rem,calc(100%-2.5rem))] rounded-lg border border-white/20 bg-[#081F35]/85 px-3 py-2 text-xs text-white sm:left-8">
-          Background video is unavailable; showing a still image instead.
-        </p>
-      )}
       <span className="sr-only" aria-live={motionPaused ? 'polite' : 'off'}>
         Story {activeIndex + 1} of {SLIDES.length}: {slide.eyebrow}
       </span>

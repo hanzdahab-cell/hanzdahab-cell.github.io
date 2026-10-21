@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { PageType } from '../../types';
 
 interface DahabBlueHoleSectionProps {
@@ -76,10 +76,6 @@ export function DahabBlueHoleSection({ onNavigate }: DahabBlueHoleSectionProps) 
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:gap-16">
         <div className="max-w-lg">
-          <p className="mb-5 flex items-center gap-2 text-sm text-[#A9D2EC]">
-            <MapPin className="h-4 w-4 text-cyan-300" aria-hidden="true" />
-            Dahab, South Sinai, Egypt · Red Sea
-          </p>
           <h2 className="font-bebas text-5xl leading-[0.98] tracking-wide text-white sm:text-6xl lg:text-7xl">
             {slide.title}
           </h2>

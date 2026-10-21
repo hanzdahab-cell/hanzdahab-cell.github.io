@@ -1,4 +1,5 @@
 import tailwindcss from '@tailwindcss/vite';
+import {motionStudio} from 'motion-studio';
 import react from '@vitejs/plugin-react';
 import fs from 'fs';
 import path from 'path';
@@ -9,6 +10,7 @@ export default defineConfig(() => {
 
   return {
     plugins: [
+      motionStudio(),
       react(),
       tailwindcss(),
       {

@@ -5,7 +5,6 @@ import { PageHeader } from './components/ui/PageHeader';
 import { HeroSurface } from './components/home/HeroSurface';
 import { CourseCarousel } from './components/CourseCarousel';
 import { CoralDepthBackground } from './components/home/CoralDepthBackground';
-import { SSICertificates } from './components/ssi/SSICertificates';
 import { DahabBlueHoleSection } from './components/home/DahabBlueHoleSection';
 import { DescentStats } from './components/home/DescentStats';
 import { CoursesSection } from './components/courses/CoursesSection';
@@ -127,7 +126,7 @@ export default function App() {
   return (
     <I18nextProvider i18n={i18n}>
       <LanguageProvider>
-        <div className="relative min-h-screen bg-transparent text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200">
+        <div className="relative min-h-screen bg-transparent text-foam selection:bg-cyan-500/30 selection:text-cyan-200">
         
         <CoralDepthBackground />
 
@@ -168,12 +167,6 @@ export default function App() {
                 {/* Freedive Dahab legacy and milestones */}
                 <DescentStats onNavigate={navigateTo} />
 
-                {/* Last: Official SSI Partner badges — compact */}
-                <SSICertificates
-                  onOpenBooking={() => handleOpenBooking()}
-                  onNavigate={navigateTo}
-                  variant="compact"
-                />
               </div>
             </div>
           </div>

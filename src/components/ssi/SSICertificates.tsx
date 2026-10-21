@@ -52,33 +52,21 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
       <section
         id="course-certifications"
         aria-label="Official SSI training center badges"
-        className="border-b border-white/10 bg-[#081F35] px-6 py-8"
+        className="w-full px-0 py-0 sm:w-auto"
       >
-        <div className="mx-auto max-w-6xl text-center mb-6">
-          <p className="font-alata text-sm sm:text-base text-slate-300 max-w-3xl mx-auto leading-relaxed">
-            An authorized SSI Freediving Center in the heart of Dahab — dedicated instructor
-            trainers, professional counter-ballast buoys, and a 100% safety record since 2003.
-          </p>
-        </div>
-        <div className="mx-auto flex flex-wrap max-w-6xl items-center justify-center gap-4 sm:gap-6">
+        <ul className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-3 sm:mx-0 sm:justify-start sm:gap-4">
           {SSI_BADGES.map((badge) => (
-            <div
-              key={badge.id}
-              className="flex flex-col items-center gap-1.5 min-w-[80px]"
-            >
+            <li key={badge.id} title={badge.title}>
               <img
                 src={badge.src}
                 alt={badge.alt}
                 loading="lazy"
                 decoding="async"
-                className="h-14 w-auto max-w-[100px] object-contain filter grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+                className="h-10 w-auto max-w-16 object-contain sm:h-12"
               />
-              <span className="font-alata text-xs text-slate-400 text-center leading-snug">
-                {badge.title}
-              </span>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
     );
   }

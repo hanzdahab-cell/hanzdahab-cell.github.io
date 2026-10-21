@@ -16,7 +16,7 @@ interface PageHeaderProps {
 export function PageHeader({
   title,
   subtitle,
-  badge = 'SSI Diamond Dive Center & ITC #720079',
+  badge = 'SSI Pro Dive Center & ITC #720079',
   currentPage,
   onNavigate,
   onOpenBooking,

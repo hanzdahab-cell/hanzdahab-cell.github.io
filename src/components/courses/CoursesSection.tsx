@@ -106,19 +106,6 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 pt-12 sm:pt-16">
-        <div className="courses-ticker my-2 py-4" aria-hidden="true">
-          <div className="courses-ticker__track">
-            {[0, 1].map((copy) => (
-              <div className="courses-ticker__group" key={copy} aria-hidden={copy === 1}>
-                {coreCards.map((course) => (
-                  <span className="courses-ticker__item" key={course.id}>
-                    {course.title}
-                  </span>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
         <div className="absolute inset-0 architectural-grid-fine opacity-10 pointer-events-none" />
         {/* ========================================================== */}
         {/* CORE COURSE CARDS                                          */}

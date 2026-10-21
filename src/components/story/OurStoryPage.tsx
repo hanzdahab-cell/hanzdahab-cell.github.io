@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { X, ChevronLeft, ChevronRight, BookOpen, Compass, Waves, MessageSquare, Calendar } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, BookOpen, Compass, MessageSquare, Calendar } from 'lucide-react';
 import { PageType } from '../../types';
 import { LuxuryStory } from '../home/LuxuryStory';
 
@@ -261,7 +261,7 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
     .filter((_, idx) => !missingGalleryIndices[idx]);
 
   return (
-    <div className="relative min-h-screen bg-transparent text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200">
+    <div className="relative min-h-screen bg-transparent text-foam selection:bg-cyan-500/30 selection:text-cyan-200">
       
       {/* ==================================================================== */}
       {/* 2) INTRO SECTION: Verbatim narrative text from the brief              */}
@@ -381,11 +381,6 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
 
         <div className="max-w-4xl mx-auto text-center relative z-10 space-y-8">
           
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-300 text-xs font-alata tracking-widest uppercase">
-            <Waves className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Your Next Milestone</span>
-          </div>
-
           <h2 className="font-bebas text-5xl sm:text-6xl md:text-7xl text-white tracking-[0.05em] leading-tight">
             {OUR_STORY_CONFIG.cta.title}
           </h2>

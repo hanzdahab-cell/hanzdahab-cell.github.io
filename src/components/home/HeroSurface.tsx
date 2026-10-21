@@ -1,10 +1,13 @@
-import { useEffect, useRef, useState, type FocusEvent } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState, type FocusEvent } from 'react';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { TRANSLATIONS } from '../../utils/i18n';
-import { SSI_BADGES } from '../../data/ssiBadges';
 import type { PageType } from '../../types';
 import './HeroSurface.css';
+
+const HeroLogo3D = lazy(() =>
+  import('./HeroLogo3D').then((module) => ({ default: module.HeroLogo3D })),
+);
 
 interface HeroSurfaceProps {
   onNavigate: (page: PageType) => void;
@@ -15,6 +18,10 @@ const HERO_SLIDES = [
     name: 'freedive-dahab-freediving-training-red-sea.png',
     alt: 'Freedivers training together in the clear water of Dahab',
   },
+  {
+    name: 'linda-paganelli-freedive-dahab-freediving.png',
+    alt: 'Freediver Linda Paganelli exploring Dahab’s clear Red Sea water',
+  },
 ];
 
 export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
@@ -23,16 +30,7 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
     .split(' — ')
     .map((part) => part.trim());
 
-  const headlineWords = headline.split(/\s+/);
-  const headlineLead = headlineWords.slice(0, Math.max(0, headlineWords.length - 2)).join(' ');
-  const headlineTail = headlineWords.slice(-2).join(' ');
-
-  const yearWords = foundingYear.split(' ');
-  const yearLead = yearWords.slice(0, -1).join(' ');
-  const yearTail = yearWords[yearWords.length - 1];
-
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -58,20 +56,14 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
     return () => mediaQuery.removeEventListener('change', updatePreference);
   }, []);
 
-  const interactionPaused = isHovered || isFocused;
-
   useEffect(() => {
-    if (interactionPaused || reducedMotion || !isVisible) return;
+    if (isFocused || reducedMotion || !isVisible) return;
 
     const timer = window.setInterval(() => {
       setActiveIndex((index) => (index + 1) % HERO_SLIDES.length);
     }, 4000);
     return () => window.clearInterval(timer);
-  }, [interactionPaused, isVisible, reducedMotion]);
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
+  }, [isFocused, isVisible, reducedMotion]);
 
   const handleBlur = (event: FocusEvent<HTMLElement>) => {
     if (event.currentTarget.contains(event.relatedTarget as Node | null)) return;
@@ -85,8 +77,6 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
       aria-label="Freedive Dahab"
       aria-roledescription="carousel"
       className="car-05"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={handleMouseLeave}
       onFocusCapture={() => {
         setIsFocused(true);
       }}
@@ -124,23 +114,19 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
 
         <div className="car-05__overlay">
           <h1 className="car-05__title">
-            {headlineLead}{' '}
-            <span className="car-05__title--accent">{headlineTail}</span>
+            <span>{headline}</span>
+            <span className="car-05__year">{foundingYear}</span>
           </h1>
-          <p className="car-05__year">
-            {yearLead}{' '}
-            <span className="car-05__year-accent">{yearTail}</span>
-          </p>
-          <img
-            src="/logo-freedive-dahab.png"
-            alt="Freedive Dahab"
-            className="car-05__logo"
-            fetchPriority="high"
-          />
-          <p className="car-05__slogan">
-            THE DEEPER YOU GO{' '}
-            <span className="car-05__slogan--accent">THE QUIETER IT BECOMES</span>
-          </p>
+          <Suspense
+            fallback={
+              <div className="car-05__logo-placeholder" aria-hidden="true">
+                <img src="/logo-freedive-dahab.png" alt="" />
+              </div>
+            }
+          >
+            <HeroLogo3D />
+          </Suspense>
+          <p className="car-05__slogan">The deeper you go, the quieter it becomes.</p>
           <div className="car-05__actions">
             <button
               type="button"
@@ -159,13 +145,6 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
               <ArrowUpRight className="car-05__cta-arrow" aria-hidden="true" />
             </button>
           </div>
-          <ul className="car-05__badges" aria-label="SSI certifications">
-            {SSI_BADGES.map((badge) => (
-              <li key={badge.id} className="car-05__badge" title={badge.title}>
-                <img src={badge.src} alt={badge.alt} loading="lazy" decoding="async" />
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
     </section>

@@ -678,7 +678,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       courses: {
         title: 'SSI Freediving Courses',
         subtitle: 'Structured international curriculum from introductory diaphragmatic mechanics and pool technique to elite 40m+ Mouthfill and professional SSI Instructor examination.',
-        badge: 'SSI Diamond ITC Facility #720079 • ISO 24801 & 24802',
+        badge: 'SSI Pro Instructor Training Facility #720079 • ISO 24801 & 24802',
         ctaText: 'Enroll in a Course',
       },
       training: {
@@ -1500,7 +1500,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       courses: {
         title: 'Cursos Certificados de Apnea SSI',
         subtitle: 'Plan de estudios internacional estructurado desde la mecánica diafragmática y técnica en piscina hasta Mouthfill a más de 40m y examen de instructor.',
-        badge: 'Instalación SSI Diamond ITC #720079 • Normas ISO 24801 y 24802',
+        badge: 'Centro de formación de instructores SSI Pro #720079 • Normas ISO 24801 y 24802',
         ctaText: 'Inscribirme en un Curso',
       },
       training: {
@@ -1911,7 +1911,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       courses: {
         title: 'SSI Freitauchkurse & Zertifizierungen',
         subtitle: 'Strukturierte internationale Ausbildung von Zwerchfellmechanik und Pooltechnik bis hin zu 40m+ Mouthfill und professioneller SSI-Tauchlehrerprüfung.',
-        badge: 'SSI Diamond ITC Tauchbasis #720079 • ISO 24801 & 24802',
+        badge: 'SSI Pro Instructor Training Center #720079 • ISO 24801 & 24802',
         ctaText: 'Jetzt für Kurs Anmelden',
       },
       training: {
