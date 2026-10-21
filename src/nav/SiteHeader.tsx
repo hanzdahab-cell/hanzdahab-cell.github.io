@@ -411,7 +411,7 @@ export function SiteHeader({
                         selectMenuItem({ label: item.label, page: item.page });
                       }}
                       aria-current={isCurrentNavigationPage(item.page, currentPage) ? 'page' : undefined}
-                      className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-full px-2 py-2 text-[11px] font-alata font-semibold uppercase tracking-[0.06em] transition-colors hover:text-white min-[1680px]:px-3 min-[1680px]:text-xs ${isCurrentNavigationPage(item.page, currentPage) ? 'text-white' : 'text-[#6bbbe8]'} ${HEADER_FOCUS}`}
+                      className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-full px-2 py-2 text-[11px] font-alata font-semibold uppercase tracking-[0.06em] transition-colors hover:text-[#00cdfe] min-[1680px]:px-3 min-[1680px]:text-xs ${isCurrentNavigationPage(item.page, currentPage) ? 'text-[#00cdfe]' : 'text-[#efffff]'} ${HEADER_FOCUS}`}
                     >
                       {item.label}
                     </a>
@@ -429,7 +429,7 @@ export function SiteHeader({
                 aria-expanded={isLanguageOpen}
                 aria-controls="site-language-menu"
                 onClick={() => setIsLanguageOpen((open) => !open)}
-                className={`flex size-10 items-center justify-center rounded-full border border-[#1b3243] bg-[#0d1d29] text-xs font-semibold text-[#6bbbe8] ${HEADER_FOCUS}`}
+                className={`flex size-10 items-center justify-center rounded-full border border-[#1b3243] bg-[#0d1d29] text-[#efffff] transition-colors hover:text-[#00cdfe] ${HEADER_FOCUS}`}
               >
                 <img src={currentOption.flagUrl} alt="" className="h-5 w-5 rounded-full object-cover" />
               </button>
@@ -466,7 +466,7 @@ export function SiteHeader({
               onClick={toggleAudio}
               aria-label={isAudioPlaying ? 'Mute underwater sound' : 'Play underwater sound'}
               aria-pressed={isAudioPlaying}
-              className={`hidden h-10 w-10 items-center justify-center rounded-full border border-[#1b3243] bg-[#0d1d29] text-[#6bbbe8] xl:flex ${HEADER_FOCUS}`}
+              className={`hidden h-10 w-10 items-center justify-center rounded-full border border-[#1b3243] bg-[#0d1d29] text-[#efffff] transition-colors hover:text-[#00cdfe] xl:flex ${HEADER_FOCUS}`}
             >
               {isAudioPlaying ? (
                 <Volume2 className="h-4 w-4" aria-hidden="true" />
@@ -482,7 +482,7 @@ export function SiteHeader({
               aria-expanded={isSearchOpen}
               aria-controls="site-search-panel"
               title="Search (Ctrl+K)"
-              className={`flex h-10 w-10 items-center justify-center rounded-full border border-[#1b3243] bg-[#0d1d29] text-[#6bbbe8] ${HEADER_FOCUS}`}
+              className={`flex h-10 w-10 items-center justify-center rounded-full border border-[#1b3243] bg-[#0d1d29] text-[#efffff] transition-colors hover:text-[#00cdfe] ${HEADER_FOCUS}`}
             >
               {isSearchOpen ? (
                 <X className="h-4 w-4" aria-hidden="true" />
@@ -507,7 +507,7 @@ export function SiteHeader({
               aria-expanded={isDrawerOpen}
               aria-controls="mobile-navigation"
               onClick={() => setIsDrawerOpen((open) => !open)}
-              className={`grid size-11 place-items-center rounded-lg border border-[#1b3243] bg-[#0d1d29] text-[#6bbbe8] min-[1200px]:hidden ${HEADER_FOCUS}`}
+              className={`grid size-11 place-items-center rounded-lg border border-[#1b3243] bg-[#0d1d29] text-[#efffff] transition-colors hover:text-[#00cdfe] min-[1200px]:hidden ${HEADER_FOCUS}`}
             >
               {isDrawerOpen ? (
                 <X className="size-5" aria-hidden="true" />

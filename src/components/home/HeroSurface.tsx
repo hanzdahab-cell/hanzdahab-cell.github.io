@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FocusEvent } from 'react';
+import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { TRANSLATIONS } from '../../utils/i18n';
 import type { PageType } from '../../types';
@@ -10,24 +11,12 @@ interface HeroSurfaceProps {
 
 const HERO_SLIDES = [
   {
-    name: 'freedive-dahab-freediving-training-red-sea.png',
-    alt: 'Freedivers training together in the clear water of Dahab',
+    name: 'dahab-lighthouse-bay-freediving-reef.png',
+    alt: 'Freediving training at Lighthouse Bay in Dahab',
   },
   {
     name: 'linda-paganelli-freedive-dahab-freediving.png',
     alt: 'Linda Paganelli freediving above a coral reef',
-  },
-  {
-    name: 'ras-mohammed-red-sea-turtle-coral-reef.png',
-    alt: 'A sea turtle swimming above a reef at Ras Mohammed',
-  },
-  {
-    name: 'dahab-lighthouse-bay-freediving-reef.png',
-    alt: 'Freediving at Lighthouse Bay in Dahab',
-  },
-  {
-    name: 'freediving-blue-hole-sinai-red-sea-egypt.png',
-    alt: 'A freediver descending at the Blue Hole in Sinai',
   },
 ];
 
@@ -144,26 +133,33 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
             className="car-05__logo"
             fetchPriority="high"
           />
+          <p className="car-05__intro">
+            Learn to freedive, build your skills, or continue your training in Dahab. Freedive
+            Dahab welcomes beginners and experienced divers with SSI courses, coached sessions and
+            small-group instruction beside the Red Sea.
+          </p>
           <div className="car-05__actions">
             <button
               type="button"
               onClick={() => onNavigate('courses')}
-              className="car-05__cta car-05__cta--sky"
+              className="car-05__cta car-05__cta--primary"
             >
-              Explore SSI Courses
+              SSI Freediving Courses
+              <ArrowRight className="car-05__cta-arrow" aria-hidden="true" />
             </button>
             <button
               type="button"
               onClick={() => onNavigate('calendar')}
-              className="car-05__cta car-05__cta--white"
+              className="car-05__cta car-05__cta--secondary"
             >
-              Our Calendar
+              View Calendar
+              <ArrowUpRight className="car-05__cta-arrow" aria-hidden="true" />
             </button>
           </div>
           <p className="car-05__trust-line">
             4,800+ certified freedivers <span aria-hidden="true">·</span> Small groups{' '}
             <span aria-hidden="true">·</span> Beginners welcome <span aria-hidden="true">·</span>{' '}
-            SSI Pro #720079
+            SSI Diamond ITC #720079
           </p>
         </div>
       </div>

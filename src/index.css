@@ -528,6 +528,15 @@ html[dir="rtl"] .font-arabic-body {
   backdrop-filter: blur(12px);
 }
 
+/* Header CTA: white pill that switches to brand cyan on hover */
+.site-header .fd-button:hover,
+.site-header .fd-button:focus-visible,
+.site-header .fd-button:active {
+  border-color: #00cdfe;
+  background: #00cdfe;
+  color: #0e3453;
+}
+
 /* Elite Glass Card */
 .glass-panel {
   background: rgba(8, 31, 53, 0.6);

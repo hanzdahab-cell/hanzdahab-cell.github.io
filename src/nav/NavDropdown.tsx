@@ -298,7 +298,7 @@ export function NavDropdown({
           if (skipNextFocusOpen.current) skipNextFocusOpen.current = false;
           else open(menu.id);
         }}
-        className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-full px-2 py-2 text-[11px] font-alata font-semibold uppercase tracking-[0.06em] transition-colors hover:text-white min-[1680px]:px-3 min-[1680px]:text-xs ${isActive ? 'text-white' : 'text-[#6bbbe8]'} ${HEADER_FOCUS}`}
+        className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-full px-2 py-2 text-[11px] font-alata font-semibold uppercase tracking-[0.06em] transition-colors hover:text-[#00cdfe] min-[1680px]:px-3 min-[1680px]:text-xs ${isActive ? 'text-[#00cdfe]' : 'text-[#efffff]'} ${HEADER_FOCUS}`}
         aria-current={isActive ? 'page' : undefined}
       >
         {menu.label}
