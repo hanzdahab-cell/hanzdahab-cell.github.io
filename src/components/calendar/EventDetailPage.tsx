@@ -17,6 +17,7 @@ import {
   Users,
   Check,
 } from 'lucide-react';
+import { siteConfig } from '../../data/site';
 import {
   EventTypeDetail,
   EVENT_TYPES_DATA,
@@ -24,6 +25,8 @@ import {
   EventDateSchedule,
   createGoogleCalendarUrl,
   exportToIcs,
+  getLocalTodayIso,
+  getScheduleStatus,
 } from '../../data/calendarSchedule2026';
 import { PageType, EventTypeId } from '../../types';
 
@@ -44,9 +47,9 @@ export function EventDetailPage({
     EVENT_TYPES_DATA[eventTypeId as keyof typeof EVENT_TYPES_DATA] ||
     EVENT_TYPES_DATA['beginner-week'];
   
-  // Filter all 2026 schedule dates for this specific event type
+  const todayIso = getLocalTodayIso();
   const eventDates: EventDateSchedule[] = SCHEDULE_2026_EVENTS.filter(
-    (item) => item.eventTypeId === eventTypeId
+    (item) => item.eventTypeId === eventTypeId && item.endIso >= todayIso
   );
 
   const [selectedMonthFilter, setSelectedMonthFilter] = useState<string>('all');
@@ -56,12 +59,13 @@ export function EventDetailPage({
   const [inquiryDates, setInquiryDates] = useState('');
   const [inquiryMessage, setInquiryMessage] = useState('');
   const [inquirySubmitted, setInquirySubmitted] = useState(false);
+  const [inquiryEmailHref, setInquiryEmailHref] = useState('');
   const [copiedLink, setCopiedLink] = useState(false);
 
   const formatPrice = (eur: number) => {
-    if (currency === 'USD') return `$${Math.round(eur * 1.08)}`;
-    if (currency === 'EGP') return `E£${Math.round(eur * 52)}`;
-    return `€${eur}`;
+    if (currency === 'USD') return `~$${Math.round(eur * 1.08)}`;
+    if (currency === 'EGP') return `~E£${Math.round(eur * 52)}`;
+    return `~€${eur}`;
   };
 
   const handleShare = () => {
@@ -75,6 +79,16 @@ export function EventDetailPage({
   const handleInquirySubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!inquiryName || !inquiryEmail) return;
+    const subject = `Custom dates inquiry: ${event.title}`;
+    const body = [
+      `Event/course: ${event.title}`,
+      `Name: ${inquiryName}`,
+      `Email: ${inquiryEmail}`,
+      `WhatsApp / phone: ${inquiryWhatsapp || 'Not provided'}`,
+      `Preferred dates: ${inquiryDates || 'Flexible'}`,
+      `Goals / questions: ${inquiryMessage || 'None provided'}`,
+    ].join('\n');
+    setInquiryEmailHref(`mailto:${siteConfig.contact.email}?${new URLSearchParams({ subject, body }).toString()}`);
     setInquirySubmitted(true);
   };
 
@@ -312,8 +326,9 @@ export function EventDetailPage({
           {/* Interactive Event Date Cards / Schedule List */}
           <div className="space-y-3">
             {filteredDates.map((item) => {
-              const isPast = item.status === 'past';
-              const isCurrent = item.status === 'current';
+              const itemStatus = getScheduleStatus(item.startIso, item.endIso, todayIso);
+              const isPast = itemStatus === 'past';
+              const isCurrent = itemStatus === 'current';
               const googleCalUrl = createGoogleCalendarUrl(item);
 
               return (
@@ -354,8 +369,8 @@ export function EventDetailPage({
                         )}
 
                         {!isPast && !isCurrent && (
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono text-[10px] font-bold uppercase tracking-wider">
-                            {item.spotsAvailable} spots open
+                          <span className="px-2 py-0.5 rounded-full bg-white/5 text-slate-300 border border-white/10 font-mono text-[10px] font-bold uppercase tracking-wider">
+                            Availability by inquiry
                           </span>
                         )}
 
@@ -369,7 +384,7 @@ export function EventDetailPage({
                       <div className="text-xs text-slate-400 font-mono flex items-center gap-3">
                         <span>{item.location}</span>
                         <span>•</span>
-                        <span>{formatPrice(item.priceEur)}</span>
+                      <span>Est. {formatPrice(item.priceEur)}</span>
                       </div>
                     </div>
                   </div>
@@ -409,7 +424,7 @@ export function EventDetailPage({
                           : 'bg-ocean hover:bg-ocean-light text-white shadow-md shadow-cyan-500/20 cursor-pointer'
                       }`}
                     >
-                      <span>{isPast ? 'Completed' : 'Book Date'}</span>
+                      <span>{isPast ? 'Completed' : 'Ask about dates'}</span>
                     </button>
 
                   </div>
@@ -521,7 +536,7 @@ export function EventDetailPage({
             <div className="text-center max-w-2xl mx-auto space-y-3">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 text-xs font-mono uppercase tracking-widest font-semibold">
                 <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
-                <span>CUSTOM DATES ALL YEAR ROUND</span>
+                <span>REQUEST CUSTOM DATES</span>
               </div>
 
               <h3 className="text-2xl sm:text-4xl font-serif font-bold text-white">
@@ -529,19 +544,25 @@ export function EventDetailPage({
               </h3>
 
               <p className="text-xs sm:text-sm text-cyan-100/80 font-sans font-light leading-relaxed">
-                &ldquo;This is only the calendar for our scheduled events. We run all other courses all year round on request, just let us know your dates!&rdquo;
+                Tell us when you would like to visit and what you hope to learn. Our team can confirm course options, current dates, availability, and pricing.
               </p>
             </div>
 
             {inquirySubmitted ? (
               <div className="p-6 rounded-2xl bg-emerald-950/50 border border-emerald-500/50 text-center space-y-3 animate-in fade-in">
                 <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto" />
-                <h4 className="font-serif text-xl font-bold text-white">Inquiry Received!</h4>
+                <h4 className="font-serif text-xl font-bold text-white">Your inquiry is ready</h4>
                 <p className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto font-sans">
-                  Thank you, <span className="text-white font-semibold">{inquiryName}</span>. Our Dahab sanctuary team will review your custom dates for <span className="text-cyan-300 font-semibold">{event.title}</span> and reply to <span className="text-white font-semibold">{inquiryEmail}</span> within 2 hours.
+                  Review the message in your email app and send it to contact the team. Nothing has been sent yet; dates and availability need confirmation.
                 </p>
+                <a
+                  href={inquiryEmailHref}
+                  className="inline-flex items-center gap-2 rounded-xl bg-cyan-600 px-5 py-3 text-xs font-mono font-bold uppercase text-white hover:bg-cyan-500"
+                >
+                  Open email to send inquiry <Send className="h-3.5 w-3.5" aria-hidden="true" />
+                </a>
                 <button
-                  onClick={() => setInquirySubmitted(false)}
+                  onClick={() => { setInquirySubmitted(false); setInquiryEmailHref(''); }}
                   className="px-4 py-2 rounded-xl bg-white/10 text-xs font-mono uppercase text-slate-300 hover:text-white"
                 >
                   Send Another Inquiry
@@ -551,8 +572,9 @@ export function EventDetailPage({
               <form onSubmit={handleInquirySubmit} className="max-w-2xl mx-auto space-y-4 pt-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-mono text-slate-300 uppercase">Your Name *</label>
+                    <label htmlFor="event-inquiry-name" className="text-xs font-mono text-slate-300 uppercase">Your Name *</label>
                     <input
+                      id="event-inquiry-name"
                       type="text"
                       required
                       placeholder="e.g. Alex Henderson"
@@ -563,8 +585,9 @@ export function EventDetailPage({
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-mono text-slate-300 uppercase">Email Address *</label>
+                    <label htmlFor="event-inquiry-email" className="text-xs font-mono text-slate-300 uppercase">Email Address *</label>
                     <input
+                      id="event-inquiry-email"
                       type="email"
                       required
                       placeholder="e.g. alex@freediving.com"
@@ -577,8 +600,9 @@ export function EventDetailPage({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-mono text-slate-300 uppercase">WhatsApp / Phone</label>
+                    <label htmlFor="event-inquiry-phone" className="text-xs font-mono text-slate-300 uppercase">WhatsApp / Phone</label>
                     <input
+                      id="event-inquiry-phone"
                       type="tel"
                       placeholder="e.g. +44 7123 456789"
                       value={inquiryWhatsapp}
@@ -588,8 +612,9 @@ export function EventDetailPage({
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-mono text-slate-300 uppercase">Preferred Travel Dates</label>
+                    <label htmlFor="event-inquiry-dates" className="text-xs font-mono text-slate-300 uppercase">Preferred Travel Dates</label>
                     <input
+                      id="event-inquiry-dates"
                       type="text"
                       placeholder="e.g. 15-22 November 2026"
                       value={inquiryDates}
@@ -600,8 +625,9 @@ export function EventDetailPage({
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-mono text-slate-300 uppercase">Your Goals / Questions</label>
+                  <label htmlFor="event-inquiry-message" className="text-xs font-mono text-slate-300 uppercase">Your Goals / Questions</label>
                   <textarea
+                    id="event-inquiry-message"
                     rows={3}
                     placeholder="Tell us about your current experience, goals, accommodation needs, or specific questions..."
                     value={inquiryMessage}
@@ -613,14 +639,14 @@ export function EventDetailPage({
                 <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <span className="text-[11px] font-mono text-slate-400 flex items-center gap-1.5">
                     <Shield className="w-3.5 h-3.5 text-cyan-400" />
-                    <span>Instant response within 2 hours • No spam guaranteed</span>
+                    <span>Your email app will open so you can review and send your inquiry.</span>
                   </span>
 
                   <button
                     type="submit"
                     className="fd-button flex w-full items-center justify-center gap-2 rounded-xl px-8 py-3 font-mono text-xs font-bold uppercase tracking-wider sm:w-auto"
                   >
-                    <span>Request Custom Dates</span>
+                    <span>Prepare email inquiry</span>
                     <Send className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -635,3 +661,4 @@ export function EventDetailPage({
     </div>
   );
 }
+

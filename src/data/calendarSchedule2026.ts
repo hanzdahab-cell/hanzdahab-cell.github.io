@@ -478,12 +478,23 @@ export const MONTHS_2026 = [
   { num: 12, name: 'December', short: 'Dec', days: 31 },
 ];
 
-// Helper to determine status given 2026-09-21 current simulated date
-function computeStatus(startIso: string, endIso: string): 'past' | 'current' | 'upcoming' {
-  const simNow = '2026-09-21';
-  if (endIso < simNow) return 'past';
-  if (startIso <= simNow && endIso >= simNow) return 'current';
+export function getLocalTodayIso(date = new Date()): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+export function getScheduleStatus(startIso: string, endIso: string, todayIso = getLocalTodayIso()): 'past' | 'current' | 'upcoming' {
+  if (endIso < todayIso) return 'past';
+  if (startIso <= todayIso && endIso >= todayIso) return 'current';
   return 'upcoming';
+}
+
+function addIsoDays(isoDate: string, days: number): string {
+  const date = new Date(`${isoDate}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
 }
 
 // Complete Normalized Schedule of Events for 2026
@@ -2160,15 +2171,14 @@ export const SCHEDULE_2026_EVENTS: EventDateSchedule[] = [
 // Helper: Generate Google Calendar Link
 export function createGoogleCalendarUrl(event: EventDateSchedule): string {
   const startParam = event.startIso.replace(/-/g, '');
-  // Google Calendar all-day end date is exclusive, so add 1 day or use endIso
-  const endParam = event.endIso.replace(/-/g, '');
+  const endParam = addIsoDays(event.endIso, 1).replace(/-/g, '');
   const url = new URL('https://calendar.google.com/calendar/render');
   url.searchParams.set('action', 'TEMPLATE');
   url.searchParams.set('text', `Freedive Dahab - ${event.eventTitle} (${event.dateLabel})`);
   url.searchParams.set('dates', `${startParam}/${endParam}`);
   url.searchParams.set(
     'details',
-    `Freedive Dahab Official 2026 Scheduled Event: ${event.eventTitle}\nDuration: ${event.durationDays} days\nPrice: €${event.priceEur}\nLocation: ${event.location}\nBook online at: https://freedivedahab.com/#calendar\nDirect WhatsApp / Contact: +20 100 123 4567 | info@freedivedahab.com`
+    `Freedive Dahab scheduled event: ${event.eventTitle}\nDuration: ${event.durationDays} days\nEstimated price: €${event.priceEur}\nLocation: ${event.location}\nDates and availability must be confirmed by inquiry. Contact: info@freedivedahab.com`
   );
   url.searchParams.set('location', `${event.location}, Dahab, South Sinai, Egypt`);
   return url.toString();
@@ -2177,7 +2187,7 @@ export function createGoogleCalendarUrl(event: EventDateSchedule): string {
 // Helper: Download iCal (.ics) file
 export function exportToIcs(event: EventDateSchedule) {
   const startParam = event.startIso.replace(/-/g, '');
-  const endParam = event.endIso.replace(/-/g, '');
+  const endParam = addIsoDays(event.endIso, 1).replace(/-/g, '');
   const nowStamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
 
   const lines = [
@@ -2192,9 +2202,9 @@ export function exportToIcs(event: EventDateSchedule) {
     `DTSTART;VALUE=DATE:${startParam}`,
     `DTEND;VALUE=DATE:${endParam}`,
     `SUMMARY:Freedive Dahab: ${event.eventTitle}`,
-    `DESCRIPTION:${event.eventTitle} - ${event.dateLabel}. Location: ${event.location}. Bookings: info@freedivedahab.com`,
+    `DESCRIPTION:${event.eventTitle} - ${event.dateLabel}. Location: ${event.location}. Estimated price: EUR ${event.priceEur}. Dates and availability must be confirmed by inquiry. Contact: info@freedivedahab.com`,
     `LOCATION:${event.location}, Dahab, Egypt`,
-    'STATUS:CONFIRMED',
+    'STATUS:TENTATIVE',
     'END:VEVENT',
     'END:VCALENDAR',
   ];
@@ -2210,3 +2220,4 @@ export function exportToIcs(event: EventDateSchedule) {
   document.body.removeChild(link);
   window.URL.revokeObjectURL(url);
 }
+

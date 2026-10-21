@@ -33,6 +33,7 @@ export interface TranslationDictionary {
     fullDay: string;
     proAcademy: string;
     home: string;
+    priceEstimateNotice: string;
   };
   dropdowns: {
     home: {
@@ -344,6 +345,7 @@ export interface TranslationDictionary {
     offering: string;
     dates: string;
     experienceLevel: string;
+    diverCount: string;
     expNone: string;
     expL1: string;
     expL2: string;
@@ -351,6 +353,9 @@ export interface TranslationDictionary {
     notes: string;
     notesPlaceholder: string;
     submit: string;
+    requestPrepared: string;
+    requestPreparedBody: string;
+    sendEmailInquiry: string;
     whatsappDirect: string;
     close: string;
   };
@@ -415,6 +420,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       fullDay: 'Full Day',
       proAcademy: 'Pro Academy',
       home: 'Home',
+      priceEstimateNotice: 'Prices marked with ~ are estimates. Currency conversions, dates, and availability must be confirmed with our team.',
     },
     dropdowns: {
       home: {
@@ -701,8 +707,8 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       },
       calendar: {
         title: 'Expedition & Course Calendar',
-        subtitle: 'Live schedule of upcoming certified SSI courses, depth camps, equalization coaching, and camel safaris in Dahab. Check remaining spots and book directly.',
-        badge: 'Live 2026 Season Schedule • Instant Seat Reservation',
+        subtitle: 'Browse scheduled SSI courses, coached training, and trips in Dahab. Contact our team to confirm current dates and availability.',
+        badge: '2026 schedule • dates confirmed by inquiry',
         ctaText: 'Custom Date Request',
       },
       experience: {
@@ -748,7 +754,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
     },
     booking: {
       modalTitle: 'Start Your Freediving Journey',
-      modalSubtitle: 'Direct reservation & personalized inquiry with our senior SSI instructor team in Dahab.',
+      modalSubtitle: 'Send an inquiry to our Dahab team. Your dates and availability are confirmed only after we reply.',
       fullName: 'Your Full Name',
       fullNamePlaceholder: 'e.g. Sarah Miller',
       email: 'Email Address',
@@ -758,13 +764,17 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       offering: 'Select Course, Training, or Package',
       dates: 'Estimated Arrival Date',
       experienceLevel: 'Current Freediving Experience',
+      diverCount: 'Number of Divers',
       expNone: 'Complete Beginner (Never freedived)',
       expL1: 'Level 1 Certified (10m - 20m)',
       expL2: 'Level 2 / Advanced (20m - 30m)',
       expMaster: 'Level 3 / Deep Master (30m - 40m+)',
       notes: 'Special Requests, Equalization Goals, or Notes',
       notesPlaceholder: 'Tell us about your equalisation comfort, preferred dates, or questions...',
-      submit: 'Send Reservation Request',
+      submit: 'Prepare Email Inquiry',
+      requestPrepared: 'Your inquiry is ready',
+      requestPreparedBody: 'Select Open email to send inquiry, then review and send the message. No reservation has been made; our team must confirm dates and availability.',
+      sendEmailInquiry: 'Open email to send inquiry',
       whatsappDirect: 'Chat Instantly on WhatsApp',
       close: 'Close',
     },
@@ -826,6 +836,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       fullDay: 'يوم كامل',
       proAcademy: 'أكاديمية المحترفين',
       home: 'الرئيسية',
+      priceEstimateNotice: 'الأسعار التي تسبقها ~ تقديرية. يرجى تأكيد تحويل العملة والمواعيد والتوافر مع فريقنا.',
     },
     dropdowns: {
       home: {
@@ -1112,8 +1123,8 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       },
       calendar: {
         title: 'جدول الرحلات والدورات التدريبية',
-        subtitle: 'مواعيد حية للدورات المعتمدة، ومعسكرات الأعماق، وورش معادلة الضغط، وسفاري الجمال في دهب. احجز مقعدك مباشرة.',
-        badge: 'جدول موسم 2026 المباشر • حجز المقاعد متاح فوراً',
+        subtitle: 'تعرّف على مواعيد دورات SSI والتدريب والرحلات في دهب. تواصل مع فريقنا لتأكيد المواعيد والتوافر الحالي.',
+        badge: 'جدول 2026 • تأكيد المواعيد عبر الاستفسار',
         ctaText: 'طلب موعد مخصص',
       },
       experience: {
@@ -1159,7 +1170,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
     },
     booking: {
       modalTitle: 'ابدأ رحلتك في الغوص الحر',
-      modalSubtitle: 'حجز مباشر واستفسار مخصص مع نخبة مدربي SSI المعتمدين في دهب.',
+      modalSubtitle: 'أرسل استفسارك إلى فريقنا في دهب. نؤكد المواعيد والتوافر بعد الرد عليك.',
       fullName: 'الاسم الكامل',
       fullNamePlaceholder: 'مثال: أحمد عبد الله',
       email: 'البريد الإلكتروني',
@@ -1169,13 +1180,17 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       offering: 'اختر الدورة، التدريب، أو الباقة المطلوبة',
       dates: 'تاريخ الوصول المتوقع',
       experienceLevel: 'مستوى خبرتك الحالي في الغوص الحر',
+      diverCount: 'عدد الغواصين',
       expNone: 'مبتدئ تماماً (لم أجرب الغوص الحر من قبل)',
       expL1: 'حاصل على المستوى الأول (10م - 20م)',
       expL2: 'مستوى متقدم (20م - 30م)',
       expMaster: 'مستوى خبير أعماق (30م - 40م+)',
       notes: 'أي طلبات خاصة، أهداف لمعادلة الضغط، أو ملاحظات',
       notesPlaceholder: 'أخبرنا عن سهولة معادلة الضغط لديك، مواعيدك المفضلة، أو أي استفسار...',
-      submit: 'إرسال طلب الحجز',
+      submit: 'تجهيز استفسار بالبريد الإلكتروني',
+      requestPrepared: 'استفسارك جاهز',
+      requestPreparedBody: 'اختر فتح البريد لإرسال الاستفسار، ثم راجعه وأرسله. لم يتم تأكيد أي حجز؛ يجب أن يؤكد فريقنا المواعيد والتوافر.',
+      sendEmailInquiry: 'افتح البريد لإرسال الاستفسار',
       whatsappDirect: 'محادثة فورية عبر واتساب',
       close: 'إغلاق',
     },
@@ -1237,6 +1252,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       fullDay: 'Día Completo',
       proAcademy: 'Academia Pro',
       home: 'Inicio',
+      priceEstimateNotice: 'Los precios precedidos por ~ son estimaciones. Confirma con nuestro equipo el cambio de moneda, las fechas y la disponibilidad.',
     },
     dropdowns: {
       home: {
@@ -1523,8 +1539,8 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       },
       calendar: {
         title: 'Calendario de Cursos y Expediciones',
-        subtitle: 'Calendario en tiempo real con cursos programados, semanas de profundidad, clínicas y safaris en Dahab. Reserva tu plaza directamente.',
-        badge: 'Calendario Temporada 2026 en Vivo • Reserva Inmediata',
+        subtitle: 'Consulta los cursos SSI, entrenamientos y excursiones programados en Dahab. Contacta con el equipo para confirmar fechas y disponibilidad.',
+        badge: 'Calendario 2026 • fechas confirmadas por consulta',
         ctaText: 'Solicitar Fechas Personalizadas',
       },
       experience: {
@@ -1570,7 +1586,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
     },
     booking: {
       modalTitle: 'Inicia Tu Viaje en la Apnea',
-      modalSubtitle: 'Reserva directa y consulta personalizada con nuestro equipo de instructores senior en Dahab.',
+      modalSubtitle: 'Envía una consulta al equipo de Dahab. Confirmaremos las fechas y la disponibilidad al responder.',
       fullName: 'Nombre Completo',
       fullNamePlaceholder: 'ej. Carlos Mendoza',
       email: 'Correo Electrónico',
@@ -1580,13 +1596,17 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       offering: 'Selecciona Curso, Entrenamiento o Paquete',
       dates: 'Fecha Estimada de Llegada',
       experienceLevel: 'Experiencia Actual en Apnea',
+      diverCount: 'Número de Apneístas',
       expNone: 'Principiante Absoluto (Nunca he hecho apnea)',
       expL1: 'Certificado Nivel 1 (10m - 20m)',
       expL2: 'Nivel 2 / Avanzado (20m - 30m)',
       expMaster: 'Nivel 3 / Master Profundo (30m - 40m+)',
       notes: 'Objetivos de Ecualización, Solicitudes o Notas',
       notesPlaceholder: 'Cuéntanos sobre tu compensación, fechas preferidas o cualquier duda...',
-      submit: 'Enviar Solicitud de Reserva',
+      submit: 'Preparar Consulta por Correo',
+      requestPrepared: 'Tu consulta está lista',
+      requestPreparedBody: 'Selecciona Abrir correo para enviar la consulta, y luego revísala y envíala. Aún no hay una reserva; nuestro equipo debe confirmar fechas y disponibilidad.',
+      sendEmailInquiry: 'Abrir correo para enviar la consulta',
       whatsappDirect: 'Chatear Inmediatamente por WhatsApp',
       close: 'Cerrar',
     },
@@ -1648,6 +1668,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       fullDay: 'Ganztägig',
       proAcademy: 'Pro Akademie',
       home: 'Startseite',
+      priceEstimateNotice: 'Mit ~ markierte Preise sind Schätzungen. Bitte bestätige Währungsumrechnung, Termine und Verfügbarkeit bei unserem Team.',
     },
     dropdowns: {
       home: {
@@ -1934,8 +1955,8 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       },
       calendar: {
         title: 'Expeditions- und Kurskalender',
-        subtitle: 'Live-Terminübersicht für SSI-Kurse, Tiefencamps, Druckausgleichs-Workshops und Wüstensafaris. Sichere dir deinen Platz direkt.',
-        badge: 'Live Saisonplan 2026 • Sofortige Platzreservierung',
+        subtitle: 'Sieh dir geplante SSI-Kurse, Trainings und Ausflüge in Dahab an. Unser Team bestätigt aktuelle Termine und Verfügbarkeit auf Anfrage.',
+        badge: 'Termine 2026 • Bestätigung auf Anfrage',
         ctaText: 'Wunschtermin Anfragen',
       },
       experience: {
@@ -1981,7 +2002,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
     },
     booking: {
       modalTitle: 'Starte Deine Freitauch-Reise',
-      modalSubtitle: 'Direkte Buchung und persönliche Beratung durch unser Senior-Tauchlehrer-Team in Dahab.',
+      modalSubtitle: 'Sende eine Anfrage an unser Team in Dahab. Termine und Verfügbarkeit bestätigen wir nach unserer Antwort.',
       fullName: 'Dein Vollständiger Name',
       fullNamePlaceholder: 'z.B. Markus Weber',
       email: 'E-Mail-Adresse',
@@ -1991,13 +2012,17 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       offering: 'Kurs, Training oder Paket Auswählen',
       dates: 'Voraussichtliches Anreisedatum',
       experienceLevel: 'Aktuelle Freitauch-Erfahrung',
+      diverCount: 'Anzahl der Freitauchenden',
       expNone: 'Absoluter Anfänger (Noch nie freigewandert)',
       expL1: 'Level 1 Zertifiziert (10m - 20m)',
       expL2: 'Level 2 / Fortgeschritten (20m - 30m)',
       expMaster: 'Level 3 / Deep Master (30m - 40m+)',
       notes: 'Besondere Wünsche, Druckausgleichs-Ziele oder Fragen',
       notesPlaceholder: 'Erzähle uns über deine Druckausgleichserfahrung, Wunschtermine oder Fragen...',
-      submit: 'Reservierungsanfrage Senden',
+      submit: 'E-Mail-Anfrage Vorbereiten',
+      requestPrepared: 'Deine Anfrage ist bereit',
+      requestPreparedBody: 'Wähle E-Mail öffnen und Anfrage senden, um die Nachricht zu prüfen und zu senden. Es wurde noch nichts gebucht; unser Team muss Termine und Verfügbarkeit bestätigen.',
+      sendEmailInquiry: 'E-Mail öffnen und Anfrage senden',
       whatsappDirect: 'Direkt per WhatsApp Chatten',
       close: 'Schließen',
     },
@@ -2032,3 +2057,4 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
 };
 
 export const NAV_TRANSLATIONS = TRANSLATIONS;
+

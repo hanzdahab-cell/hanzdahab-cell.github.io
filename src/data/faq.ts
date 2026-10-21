@@ -1,8 +1,8 @@
 import { FAQItem } from '../types';
 
 export const faqItems: FAQItem[] = [
-  { id: "faq-1", question: "How do I book a course or package?", answer: "Click 'Book Course' or 'Reserve' on any course or package card. You can select your starting date and pay a 30% deposit via bank transfer or card. The remaining balance is payable upon arrival in Dahab.", category: "booking" },
-  { id: "faq-2", question: "What is your cancellation policy?", answer: "Deposits are 100% refundable up to 30 days before your scheduled start date (minus small card processing fees). Cancellations between 30 and 7 days receive a 50% refund, or can be transferred for up to 12 months with zero fee.", category: "booking" },
+  { id: "faq-1", question: "How do I book a course or package?", answer: "Send an inquiry with your preferred course and dates. Our team will confirm availability, current pricing, payment options, and booking terms before you make a reservation.", category: "booking" },
+  { id: "faq-2", question: "What is your cancellation policy?", answer: "Cancellation and refund terms depend on the booking. Please ask the team for the current terms before paying a deposit.", category: "booking" },
   { id: "faq-3", question: "I have never freedived before. Which course do I start with?", answer: "SSI Freediver Level 1 (3 days). No prior freediving experience is required — you just need to be able to swim 200m comfortably. We teach diaphragmatic breath-up, Frenzel equalisation, finning biomechanics, and safety down to 20 meters.", category: "courses" },
   { id: "faq-4", question: "How deep will I dive on Level 1?", answer: "The maximum certification depth is 20 meters. Most students comfortably reach 12-18 meters on their first course. Depth is never forced: relaxation and proper equalisation dictate progression.", category: "courses" },
   { id: "faq-5", question: "Is SSI certification recognized worldwide?", answer: "Yes, SSI is one of the world's premier international diving agencies. Your digital credential is valid worldwide in over 190 countries and never expires.", category: "courses" },

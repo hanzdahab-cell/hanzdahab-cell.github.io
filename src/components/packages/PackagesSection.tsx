@@ -12,9 +12,9 @@ interface PackagesSectionProps {
 
 export function PackagesSection({ onOpenBooking, currency, onNavigate }: PackagesSectionProps) {
   const formatPrice = (eur: number) => {
-    if (currency === 'USD') return `$${Math.round(eur * 1.08)}`;
-    if (currency === 'EGP') return `E£${Math.round(eur * 52)}`;
-    return `€${eur}`;
+    if (currency === 'USD') return `~$${Math.round(eur * 1.08)}`;
+    if (currency === 'EGP') return `~E£${Math.round(eur * 52)}`;
+    return `~€${eur}`;
   };
 
   return (

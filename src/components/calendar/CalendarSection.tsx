@@ -24,6 +24,8 @@ import {
   EventDateSchedule,
   createGoogleCalendarUrl,
   exportToIcs,
+  getLocalTodayIso,
+  getScheduleStatus,
 } from '../../data/calendarSchedule2026';
 import { PageType, EventTypeId } from '../../types';
 
@@ -43,18 +45,25 @@ type CategoryFilter =
   | 'Instructor Course';
 
 export function CalendarSection({ onOpenBooking, onNavigate, currency }: CalendarSectionProps) {
-  // Default to the current season month in 2026 so the schedule opens on the active period.
-  const [selectedMonthIndex, setSelectedMonthIndex] = useState<number>(9); // 9 = October (0-indexed)
+  const [selectedMonthIndex, setSelectedMonthIndex] = useState<number>(() => {
+    const now = new Date();
+    return now.getFullYear() === 2026 ? now.getMonth() : 0;
+  });
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('All');
   const [viewMode, setViewMode] = useState<'cards' | 'calendar'>('cards');
   const [selectedCalendarDay, setSelectedCalendarDay] = useState<number | null>(null);
 
   const currentMonth = MONTHS_2026[selectedMonthIndex];
+  const todayIso = getLocalTodayIso();
+  const visibleScheduleEvents = useMemo(
+    () => SCHEDULE_2026_EVENTS.filter((event) => event.endIso >= todayIso),
+    [todayIso],
+  );
 
   const formatPrice = (eur: number) => {
-    if (currency === 'USD') return `$${Math.round(eur * 1.08)}`;
-    if (currency === 'EGP') return `E£${Math.round(eur * 52)}`;
-    return `€${eur}`;
+    if (currency === 'USD') return `~$${Math.round(eur * 1.08)}`;
+    if (currency === 'EGP') return `~E£${Math.round(eur * 52)}`;
+    return `~€${eur}`;
   };
 
   const handlePrevMonth = () => {
@@ -69,21 +78,21 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
 
   // Filter events for current month and active category
   const currentMonthEvents = useMemo(() => {
-    return SCHEDULE_2026_EVENTS.filter((ev) => {
+    return visibleScheduleEvents.filter((ev) => {
       const matchMonth = ev.monthNum === currentMonth.num;
       const matchCategory = selectedCategory === 'All' || ev.category === selectedCategory;
       return matchMonth && matchCategory;
     });
-  }, [currentMonth.num, selectedCategory]);
+  }, [currentMonth.num, selectedCategory, visibleScheduleEvents]);
 
   // Overall count across all of 2026 per category
   const categoryCounts = useMemo(() => {
-    const counts: Record<string, number> = { All: SCHEDULE_2026_EVENTS.length };
-    SCHEDULE_2026_EVENTS.forEach((e) => {
+    const counts: Record<string, number> = { All: visibleScheduleEvents.length };
+    visibleScheduleEvents.forEach((e) => {
       counts[e.category] = (counts[e.category] || 0) + 1;
     });
     return counts;
-  }, []);
+  }, [visibleScheduleEvents]);
 
   // Category badge colors
   const getCategoryColor = (cat: string) => {
@@ -224,7 +233,7 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
                 <span className="font-mono text-cyan-400 text-base sm:text-lg font-bold">
                   2026
                 </span>
-                {currentMonth.name === 'October' && (
+                {currentMonth.num === new Date().getMonth() + 1 && new Date().getFullYear() === 2026 && (
                   <span className="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-mono text-[10px] uppercase font-bold tracking-wider">
                     Current Season
                   </span>
@@ -274,8 +283,8 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
           <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-12 gap-1.5 pt-2 border-t border-white/5">
             {MONTHS_2026.map((m, idx) => {
               const isSelected = idx === selectedMonthIndex;
-              const hasEvents = SCHEDULE_2026_EVENTS.some((e) => e.monthNum === m.num);
-              const isCurrentSim = m.name === 'September';
+              const hasEvents = visibleScheduleEvents.some((e) => e.monthNum === m.num);
+              const isCurrentSim = m.num === new Date().getMonth() + 1 && new Date().getFullYear() === 2026;
 
               return (
                 <button
@@ -351,7 +360,7 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
                 Showing {currentMonthEvents.length} scheduled events for {currentMonth.name} 2026
                 {selectedCategory !== 'All' ? ` in "${selectedCategory}"` : ''}
               </span>
-              <span>All departures include SSI gear, buoy lines &amp; certification</span>
+              <span>Dates and availability are confirmed by inquiry</span>
             </div>
 
             {currentMonthEvents.length === 0 ? (
@@ -361,21 +370,22 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
                   No scheduled {selectedCategory} events in {currentMonth.name}
                 </h4>
                 <p className="text-xs sm:text-sm text-slate-400 font-sans max-w-md mx-auto">
-                  We run private and tailored courses every single day on request! Contact our team to book your preferred dates.
+                  Ask our team about private or tailored dates. We will confirm course options, availability, and current pricing.
                 </p>
                 <button
                   onClick={() => onOpenBooking()}
                   className="fd-button rounded-xl px-6 py-2.5 font-mono text-xs font-bold uppercase tracking-wider"
                 >
-                  Request Custom Dates in {currentMonth.name}
+                  Ask about dates in {currentMonth.name}
                 </button>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {currentMonthEvents.map((item) => {
                   const eventDetail = EVENT_TYPES_DATA[item.eventTypeId];
-                  const isCurrent = item.status === 'current';
-                  const isPast = item.status === 'past';
+                  const itemStatus = getScheduleStatus(item.startIso, item.endIso, todayIso);
+                  const isCurrent = itemStatus === 'current';
+                  const isPast = itemStatus === 'past';
                   const googleCalUrl = createGoogleCalendarUrl(item);
 
                   return (
@@ -408,8 +418,8 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
                           )}
 
                           {!isPast && !isCurrent && (
-                            <span className="text-[11px] font-mono text-emerald-400 font-bold">
-                              {item.spotsAvailable} spots open
+                            <span className="text-[11px] font-mono text-slate-300 font-bold">
+                              Availability by inquiry
                             </span>
                           )}
 
@@ -451,7 +461,7 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
                       <div className="pt-5 mt-4 border-t border-white/10 space-y-3">
                         <div className="flex items-baseline justify-between">
                           <div>
-                            <span className="text-[10px] font-mono uppercase text-slate-400">All-Inclusive</span>
+                            <span className="text-[10px] font-mono uppercase text-slate-400">Estimated price</span>
                             <div className="font-serif text-xl font-bold text-white">
                               {formatPrice(item.priceEur)}
                             </div>
@@ -490,7 +500,7 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
                             <span className="hidden sm:inline">iCal</span>
                           </button>
 
-                          {/* Instant Booking */}
+                          {/* Availability inquiry */}
                           <button
                             onClick={() => onOpenBooking(`${item.eventTypeId}-${item.id}`)}
                             disabled={isPast}
@@ -500,7 +510,7 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
                                 : 'bg-ocean hover:bg-ocean-light text-white shadow-md shadow-cyan-500/20 cursor-pointer'
                             }`}
                           >
-                            {isPast ? 'Completed' : 'Book Seat'}
+                            {isPast ? 'Completed' : 'Ask about dates'}
                           </button>
                         </div>
                       </div>
@@ -548,7 +558,7 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
                 const dateIso = `2026-${currentMonth.num < 10 ? `0${currentMonth.num}` : currentMonth.num}-${dayStr}`;
                 
                 // Find events active on this date
-                const dayEvents = SCHEDULE_2026_EVENTS.filter((e) => {
+                const dayEvents = currentMonthEvents.filter((e) => {
                   return dateIso >= e.startIso && dateIso <= e.endIso;
                 });
 
@@ -618,7 +628,7 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
                 {(() => {
                   const dayStr = selectedCalendarDay < 10 ? `0${selectedCalendarDay}` : `${selectedCalendarDay}`;
                   const dateIso = `2026-${currentMonth.num < 10 ? `0${currentMonth.num}` : currentMonth.num}-${dayStr}`;
-                  const activeOnDay = SCHEDULE_2026_EVENTS.filter(
+                  const activeOnDay = currentMonthEvents.filter(
                     (e) => dateIso >= e.startIso && dateIso <= e.endIso
                   );
 
@@ -672,3 +682,4 @@ export function CalendarSection({ onOpenBooking, onNavigate, currency }: Calenda
     </section>
   );
 }
+

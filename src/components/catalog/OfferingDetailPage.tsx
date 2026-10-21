@@ -36,9 +36,9 @@ interface OfferingContent {
 }
 
 function formatPrice(eur: number, currency: 'EUR' | 'USD' | 'EGP') {
-  if (currency === 'USD') return `$${Math.round(eur * 1.08)}`;
-  if (currency === 'EGP') return `E£${Math.round(eur * 52)}`;
-  return `€${eur}`;
+  if (currency === 'USD') return `~$${Math.round(eur * 1.08)}`;
+  if (currency === 'EGP') return `~E£${Math.round(eur * 52)}`;
+  return `~€${eur}`;
 }
 
 function toGalleryImage(src: string, alt: string): CourseGalleryImage {
