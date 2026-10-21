@@ -1,4 +1,3 @@
-import { ShieldCheck } from 'lucide-react';
 import { PageType } from '../../types';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +27,6 @@ export function PageHeader({
   const localizedConfig = t(`pageHeaders.${currentPage}`, { returnObjects: true }) as any;
   const displayTitle = (typeof localizedConfig === 'object' && localizedConfig?.title) || title;
   const displaySubtitle = (typeof localizedConfig === 'object' && localizedConfig?.subtitle) || subtitle;
-  const displayBadge = (typeof localizedConfig === 'object' && localizedConfig?.badge) || badge;
   const displayCta = (typeof localizedConfig === 'object' && localizedConfig?.ctaText) || ctaText;
 
   return (
@@ -40,12 +38,6 @@ export function PageHeader({
       <div className="absolute inset-0 architectural-grid opacity-15 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10 space-y-6">
-
-        {/* Badge / Tag */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-300 text-xs font-alata tracking-widest uppercase">
-          <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
-          <span>{displayBadge}</span>
-        </div>
 
         {/* Header Title & Controls */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">

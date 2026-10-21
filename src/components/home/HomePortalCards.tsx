@@ -1,4 +1,4 @@
-import { ArrowRight, Compass, GraduationCap, Waves, Home as HomeIcon, Package as PackageIcon, Calendar as CalendarIcon, BookOpen } from 'lucide-react';
+import { ArrowRight, GraduationCap, Waves, Home as HomeIcon, Package as PackageIcon, Calendar as CalendarIcon, BookOpen } from 'lucide-react';
 import { PageType } from '../../types';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -85,11 +85,6 @@ export function HomePortalCards({ onNavigate }: HomePortalCardsProps) {
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-300 text-xs font-alata tracking-widest uppercase">
-            <Compass className="w-3.5 h-3.5 text-cyan-400" />
-            <span>{t.portal.eyebrow}</span>
-          </div>
-
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-bebas text-white tracking-[0.05em] leading-tight">
             {t.portal.title}
           </h2>

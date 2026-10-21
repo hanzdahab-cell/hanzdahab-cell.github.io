@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { ArrowRight } from 'lucide-react';
 import { TextReveal, CountUp, FadeUp } from '../ui/MotionKit';
-import { SSICertificates } from '../ssi/SSICertificates';
 import type { PageType } from '../../types';
 
 /* ==========================================================================
@@ -90,8 +89,7 @@ export function DescentStats({ onNavigate }: { onNavigate: (page: PageType) => v
             </FadeUp>
           ))}
         </div>
-        <div className="mt-8 flex flex-col items-center gap-5 sm:flex-row sm:justify-between">
-          <SSICertificates variant="compact" />
+        <div className="mt-8 flex justify-center sm:justify-end">
           <button
             type="button"
             onClick={() => onNavigate('story')}

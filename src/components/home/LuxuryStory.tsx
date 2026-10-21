@@ -16,14 +16,6 @@ export function LuxuryStory({ onOpenBooking }: LuxuryStoryProps) {
       <div className="absolute inset-0 architectural-grid opacity-10 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto">
-        
-        {/* Top Editorial Label */}
-        <div className="flex items-center gap-4 mb-16">
-          <span className="w-12 h-px bg-cyan-400" />
-          <span className="text-xs uppercase font-alata tracking-[0.3em] text-cyan-300">
-            {t.story.eyebrow}
-          </span>
-        </div>
 
         {/* 2-Column High-Contrast Split Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
@@ -36,9 +28,6 @@ export function LuxuryStory({ onOpenBooking }: LuxuryStoryProps) {
           {/* Right Column: High-End Editorial Copy */}
           <div className="lg:col-span-6 space-y-8">
             <div className="space-y-4">
-              <span className="text-cyan-400 text-xs uppercase tracking-[0.3em] font-alata font-normal block">
-                {t.story.subheading}
-              </span>
               <h2 className="font-bebas text-5xl sm:text-6xl md:text-7xl leading-[1.05] text-white tracking-[0.05em]">
                 {t.story.titleLine1} <br />
                 <span className="text-cyan-300 drop-shadow-[0_0_24px_rgba(34,211,238,0.4)]">{t.story.titleLine2}</span>

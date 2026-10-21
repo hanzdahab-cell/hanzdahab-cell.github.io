@@ -147,10 +147,6 @@ export function StoryHeroCarousel({ onNavigate }: StoryHeroCarouselProps) {
           aria-hidden="true"
           className="absolute inset-0 bg-gradient-to-r from-[#081F35]/95 via-[#081F35]/75 to-[#081F35]/35 lg:via-[#081F35]/65"
         />
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-[#081F35]/90 via-transparent to-[#081F35]/30 lg:from-[#081F35]/50"
-        />
       </div>
 
       <div className="relative z-10 mx-auto grid w-full max-w-7xl items-end gap-10 lg:grid-cols-[1.05fr_0.55fr] lg:items-center">
@@ -167,10 +163,6 @@ export function StoryHeroCarousel({ onNavigate }: StoryHeroCarouselProps) {
           >
             {slide.description}
           </p>
-
-          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-white/90">
-            <span>{slide.detail}</span>
-          </div>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <button
