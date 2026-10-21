@@ -81,9 +81,7 @@ export function DahabBlueHoleSection({ onNavigate }: DahabBlueHoleSectionProps) 
             Dahab, South Sinai, Egypt · Red Sea
           </p>
           <h2 className="font-bebas text-5xl leading-[0.98] tracking-wide text-white sm:text-6xl lg:text-7xl">
-            Dahab and
-            <br />
-            <span className="text-cyan-300">the Blue Hole</span>
+            {slide.title}
           </h2>
           <p className="mt-6 max-w-md text-base leading-relaxed text-slate-300 sm:text-lg">
             {slide.detail}
