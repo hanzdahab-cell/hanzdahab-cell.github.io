@@ -4,10 +4,12 @@ import { Cookie, Settings2, X } from 'lucide-react';
 interface ConsentPreferences {
   necessary: true;
   analytics: boolean;
+  externalReviews: boolean;
   savedAt: string;
 }
 
 const CONSENT_KEY = 'freedive-dahab-cookie-preferences-v1';
+export const EXTERNAL_REVIEW_CONSENT_EVENT = 'freedive:external-review-consent';
 
 function readConsent(): ConsentPreferences | null {
   const saved = window.localStorage.getItem(CONSENT_KEY);
@@ -27,16 +29,31 @@ function readConsent(): ConsentPreferences | null {
     !('savedAt' in parsed) ||
     parsed.necessary !== true ||
     typeof parsed.analytics !== 'boolean' ||
+    ('externalReviews' in parsed && typeof parsed.externalReviews !== 'boolean') ||
     typeof parsed.savedAt !== 'string'
   ) {
     return null;
   }
 
+  const externalReviews =
+    'externalReviews' in parsed && typeof parsed.externalReviews === 'boolean'
+      ? parsed.externalReviews
+      : false;
+
   return {
     necessary: true,
     analytics: parsed.analytics,
+    externalReviews,
     savedAt: parsed.savedAt,
   };
+}
+
+export function hasExternalReviewConsent() {
+  try {
+    return readConsent()?.externalReviews ?? false;
+  } catch {
+    return false;
+  }
 }
 
 export function CookieConsent() {
@@ -44,6 +61,7 @@ export function CookieConsent() {
   const [isOpen, setIsOpen] = useState(false);
   const [hasConsent, setHasConsent] = useState(false);
   const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
+  const [externalReviewsEnabled, setExternalReviewsEnabled] = useState(false);
   const [storageError, setStorageError] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
@@ -53,6 +71,7 @@ export function CookieConsent() {
       if (saved) {
         setHasConsent(true);
         setAnalyticsEnabled(saved.analytics);
+        setExternalReviewsEnabled(saved.externalReviews);
       } else {
         setIsOpen(true);
       }
@@ -64,19 +83,24 @@ export function CookieConsent() {
     }
   }, []);
 
-  const savePreferences = (analytics: boolean) => {
+  const savePreferences = (analytics: boolean, externalReviews: boolean) => {
     const preferences: ConsentPreferences = {
       necessary: true,
       analytics,
+      externalReviews,
       savedAt: new Date().toISOString(),
     };
     setAnalyticsEnabled(analytics);
+    setExternalReviewsEnabled(externalReviews);
     try {
       window.localStorage.setItem(CONSENT_KEY, JSON.stringify(preferences));
       setHasConsent(true);
       setStorageError(false);
       setIsOpen(false);
       setShowSettings(false);
+      window.dispatchEvent(
+        new CustomEvent<boolean>(EXTERNAL_REVIEW_CONSENT_EVENT, { detail: externalReviews }),
+      );
     } catch {
       setStorageError(true);
       setIsOpen(true);
@@ -87,6 +111,9 @@ export function CookieConsent() {
     setHasConsent(true);
     setIsOpen(false);
     setShowSettings(false);
+    window.dispatchEvent(
+      new CustomEvent<boolean>(EXTERNAL_REVIEW_CONSENT_EVENT, { detail: externalReviewsEnabled }),
+    );
   };
 
   if (!isReady) return null;
@@ -108,11 +135,11 @@ export function CookieConsent() {
               </h2>
               <p className="mt-1 text-xs leading-relaxed text-slate-700 sm:text-sm">
                 We store your language and privacy preferences in this browser. Essential storage
-                supports site settings; optional analytics are not currently active.
+                supports site settings. Analytics are not active; live Google and TripAdvisor review
+                feeds load only when you enable external review content.
               </p>
               <p className="mt-2 text-[11px] leading-relaxed text-slate-600">
-                Choosing “Accept all” records your preference but does not enable third-party
-                tracking on this site.
+                Essential only keeps the review links available without loading third-party widgets.
               </p>
 
               {storageError && (
@@ -139,10 +166,24 @@ export function CookieConsent() {
                       className="h-5 w-5 rounded border-slate-400 accent-teal-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
                     />
                   </label>
+                  <label className="mt-3 flex min-h-11 cursor-pointer items-center justify-between gap-4 text-xs text-slate-700">
+                    <span>
+                      External review feeds
+                      <span className="mt-0.5 block text-[11px] text-slate-500">
+                        Loads live Google and TripAdvisor widgets from their providers.
+                      </span>
+                    </span>
+                    <input
+                      type="checkbox"
+                      checked={externalReviewsEnabled}
+                      onChange={(event) => setExternalReviewsEnabled(event.target.checked)}
+                      className="h-5 w-5 rounded border-slate-400 accent-teal-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+                    />
+                  </label>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <button
                       type="button"
-                      onClick={() => savePreferences(analyticsEnabled)}
+                      onClick={() => savePreferences(analyticsEnabled, externalReviewsEnabled)}
                       className="inline-flex min-h-10 items-center justify-center rounded-lg bg-teal-700 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-teal-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-800"
                     >
                       Save choices
@@ -171,14 +212,14 @@ export function CookieConsent() {
                 <div className="mt-4 flex flex-wrap gap-2">
                   <button
                     type="button"
-                    onClick={() => savePreferences(false)}
+                    onClick={() => savePreferences(false, false)}
                     className="inline-flex min-h-11 items-center justify-center rounded-lg bg-teal-700 px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-teal-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-800"
                   >
                     Essential only
                   </button>
                   <button
                     type="button"
-                    onClick={() => savePreferences(true)}
+                    onClick={() => savePreferences(true, true)}
                     className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 px-4 py-2.5 text-xs font-semibold text-slate-900 transition-colors hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-800"
                   >
                     Accept all

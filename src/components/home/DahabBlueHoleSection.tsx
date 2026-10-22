@@ -6,25 +6,34 @@ interface DahabBlueHoleSectionProps {
   onNavigate: (page: PageType) => void;
 }
 
-const STORY_SLIDES = [
+interface StorySlide {
+  src: string;
+  title: string;
+  alt: string;
+  detail: string;
+  fit?: 'contain';
+}
+
+const STORY_SLIDES: StorySlide[] = [
   {
-    src: '/images/dahab-story/lighthouse-training.jpg',
+    src: '/images/story-carousel/red-sea-blue-hole.jpg',
     title: 'Why Dahab Is Ideal for Freediving',
-    alt: "Freedivers entering the clear water at Dahab's Lighthouse Bay",
+    alt: 'Freedivers exploring the deep blue water of Dahab’s Blue Hole',
     detail:
       "Dahab's unique geography gives freedivers everything they need, all within a short walk of the shore.",
   },
   {
-    src: '/images/dahab-story/blue-hole-training.jpg',
+    src: '/images/dahab-story/lighthouse-training.jpg',
     title: 'Lighthouse Bay — The Perfect Starting Point',
-    alt: 'Freedivers preparing for a supervised session at the Blue Hole',
+    alt: "Freedivers training in the sheltered water of Dahab's Lighthouse Bay",
     detail:
       'Lighthouse Bay — The Perfect Starting Point\nShallow, sheltered and calm, Lighthouse Bay is where every freediving journey begins. Easy shore access and gentle conditions make it ideal for first breath-holds, skills practice and confidence-building at any level.',
   },
   {
-    src: '/images/dahab-story/lighthouse-sunset.jpg',
+    src: '/images/dahab-story/blue-hole-training.jpg',
     title: 'The Blue Hole — Deep Water, Minutes Away',
-    alt: "Freedivers sharing the water at sunset along Dahab's shore",
+    alt: 'A freediver descending vertically in the clear water of Dahab’s Blue Hole with full-length fins visible',
+    fit: 'contain',
     detail:
       'A world-famous freediving site, the Blue Hole drops to over 100 metres just meters from the shoreline — no boat required. Its sheer depth and calm, current-free water make it the perfect training ground for divers chasing new personal bests.',
   },
@@ -109,16 +118,30 @@ export function DahabBlueHoleSection({ onNavigate }: DahabBlueHoleSectionProps) 
           <figure aria-live={paused ? 'polite' : 'off'} aria-atomic="true">
             <div className="relative aspect-[4/3] overflow-hidden rounded-[1.4rem] bg-[#081F35] sm:aspect-[16/10]">
               {STORY_SLIDES.map((item, index) => (
-                <img
+                <div
                   key={item.src}
-                  src={item.src}
-                  alt={item.alt}
-                  className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 motion-reduce:transition-none ${
+                  className={`absolute inset-0 transition-opacity duration-700 motion-reduce:transition-none ${
                     index === activeIndex ? 'opacity-100' : 'opacity-0'
                   }`}
-                  loading={index === 0 ? 'eager' : 'lazy'}
                   aria-hidden={index !== activeIndex}
-                />
+                >
+                  {item.fit === 'contain' && (
+                    <img
+                      src={item.src}
+                      alt=""
+                      className="absolute inset-0 h-full w-full scale-110 object-cover opacity-50 blur-2xl"
+                      loading="lazy"
+                    />
+                  )}
+                  <img
+                    src={item.src}
+                    alt={item.alt}
+                    className={`absolute inset-0 h-full w-full ${
+                      item.fit === 'contain' ? 'object-contain' : 'object-cover'
+                    }`}
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                  />
+                </div>
               ))}
               <div
                 aria-hidden="true"

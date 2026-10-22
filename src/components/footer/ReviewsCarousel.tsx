@@ -1,9 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Pause, Play } from 'lucide-react';
 import { useReducedMotion } from 'framer-motion';
 import { InfiniteMovingCards } from '../ui/infinite-moving-cards';
 import { REVIEW_SOURCES, reviews, ReviewPlatform } from '../../data/reviews';
 import { useLanguage } from '../../context/LanguageContext';
+import {
+  EXTERNAL_REVIEW_CONSENT_EVENT,
+  hasExternalReviewConsent,
+} from '../ui/CookieConsent';
 
 export function PlatformMark({ platform }: { platform: ReviewPlatform }) {
   if (platform === 'tripadvisor') {
@@ -50,8 +54,68 @@ export function ReviewsCarousel() {
   const [isPaused, setIsPaused] = useState(false);
   const [isInteractionPaused, setIsInteractionPaused] = useState(false);
   const [activeReview, setActiveReview] = useState(0);
+  const [externalReviewsEnabled, setExternalReviewsEnabled] = useState(hasExternalReviewConsent);
+  const [widgetsInView, setWidgetsInView] = useState(false);
   const reduceMotion = useReducedMotion() === true;
   const { t } = useLanguage();
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    if (!('IntersectionObserver' in window)) {
+      setWidgetsInView(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setWidgetsInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '300px' },
+    );
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const updateConsent = (event: Event) => {
+      if (event instanceof CustomEvent && typeof event.detail === 'boolean') {
+        setExternalReviewsEnabled(event.detail);
+      }
+    };
+    window.addEventListener(EXTERNAL_REVIEW_CONSENT_EVENT, updateConsent);
+    return () => window.removeEventListener(EXTERNAL_REVIEW_CONSENT_EVENT, updateConsent);
+  }, []);
+
+  useEffect(() => {
+    if (!externalReviewsEnabled || !widgetsInView) return;
+
+    const addScript = (id: string, src: string) => {
+      if (document.getElementById(id)) return;
+      const script = document.createElement('script');
+      script.id = id;
+      script.src = src;
+      script.async = true;
+      script.defer = true;
+      script.referrerPolicy = 'strict-origin-when-cross-origin';
+      document.body.appendChild(script);
+    };
+
+    addScript(
+      'jotform-review-widget-script',
+      'https://www.jotform.com/website-widgets/embed/01a1632c6fb8700089e9632c90b420331d61',
+    );
+    addScript('elfsight-review-widget-script', 'https://elfsightcdn.com/platform.js');
+    return () => {
+      document.getElementById('jotform-review-widget-script')?.remove();
+      document.getElementById('elfsight-review-widget-script')?.remove();
+    };
+  }, [externalReviewsEnabled, widgetsInView]);
 
   useEffect(() => {
     if (isPaused || isInteractionPaused || reduceMotion || reviews.length < 2) return;
@@ -64,6 +128,7 @@ export function ReviewsCarousel() {
 
   return (
     <section
+      ref={sectionRef}
       id="testimonials"
       aria-labelledby="testimonials-title"
       className="ocean-surface relative overflow-hidden border-t border-white/5 px-6 py-24 sm:py-28"
@@ -198,6 +263,67 @@ export function ReviewsCarousel() {
               </article>
             )}
           />
+        </div>
+
+        <div className="mt-14 grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2">
+          <section
+            aria-labelledby="google-live-reviews-title"
+            className="min-w-0 rounded-2xl border border-white/10 bg-[#0A2943]/70 p-4 sm:p-6"
+          >
+            <h3
+              id="google-live-reviews-title"
+              className="mb-4 font-bebas text-2xl tracking-wide text-white"
+            >
+              GOOGLE REVIEWS
+            </h3>
+            {externalReviewsEnabled ? (
+              <div
+                id="JFWebsiteWidget-01a1632c6fb8700089e9632c90b420331d61"
+                className="min-h-72"
+              />
+            ) : (
+              <p className="flex min-h-72 items-center text-sm leading-relaxed text-slate-300">
+                Enable external review feeds in Cookie settings to load the live Google widget.
+              </p>
+            )}
+            <a
+              href={REVIEW_SOURCES.find((source) => source.platform === 'google')?.url}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 inline-flex min-h-11 items-center rounded-lg text-sm text-cyan-200 underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              Open Google reviews
+            </a>
+          </section>
+          <section
+            aria-labelledby="tripadvisor-live-reviews-title"
+            className="min-w-0 rounded-2xl border border-white/10 bg-[#0A2943]/70 p-4 sm:p-6"
+          >
+            <h3
+              id="tripadvisor-live-reviews-title"
+              className="mb-4 font-bebas text-2xl tracking-wide text-white"
+            >
+              TRIPADVISOR REVIEWS
+            </h3>
+            {externalReviewsEnabled ? (
+              <div
+                className="elfsight-app-07e8aff4-b227-4bb3-a052-0a143c636b09 min-h-72"
+                data-elfsight-app-lazy=""
+              />
+            ) : (
+              <p className="flex min-h-72 items-center text-sm leading-relaxed text-slate-300">
+                Enable external review feeds in Cookie settings to load the live TripAdvisor widget.
+              </p>
+            )}
+            <a
+              href={REVIEW_SOURCES.find((source) => source.platform === 'tripadvisor')?.url}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 inline-flex min-h-11 items-center rounded-lg text-sm text-cyan-200 underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              Open TripAdvisor reviews
+            </a>
+          </section>
         </div>
       </div>
     </section>

@@ -3,10 +3,12 @@ import { Cursor } from './components/ui/Cursor';
 import { SiteHeader } from './nav/SiteHeader';
 import { PageHeader } from './components/ui/PageHeader';
 import { HeroSurface } from './components/home/HeroSurface';
+import { PartnerLogoScroller } from './components/home/PartnerLogoScroller';
 import { CourseCarousel } from './components/CourseCarousel';
 import { CoralDepthBackground } from './components/home/CoralDepthBackground';
 import { DahabBlueHoleSection } from './components/home/DahabBlueHoleSection';
 import { DescentStats } from './components/home/DescentStats';
+import { SSICertificates } from './components/ssi/SSICertificates';
 import { CoursesSection } from './components/courses/CoursesSection';
 import { TrainingSection } from './components/training/TrainingSection';
 import { CalendarSection } from './components/calendar/CalendarSection';
@@ -152,6 +154,7 @@ export default function App() {
             <HeroSurface onNavigate={navigateTo} />
 
             <CourseCarousel />
+            <PartnerLogoScroller />
 
             {/* Immersive Coral Depth Environment (The depth of the corals across all home sections) */}
             <div className="relative">
@@ -160,6 +163,8 @@ export default function App() {
                 <DahabBlueHoleSection
                   onNavigate={navigateTo}
                 />
+
+                <SSICertificates variant="home" />
 
                 {/* Diver Voices & Testimonials */}
                 <TestimonialsSection />

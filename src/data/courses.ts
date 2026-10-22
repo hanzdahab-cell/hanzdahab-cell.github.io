@@ -370,7 +370,7 @@ export const specialtyCourses: SpecialtyCourse[] = [
   {
     id: "spec-monofin",
     slug: "monofin-technique",
-    title: "Monofin Technique & Dolphin Kick",
+    title: "SSI Monofin Course",
     shortDesc: "Transform into pure aquatic propulsion with the fluid dolphin wave originating from your core.",
     durationDays: 2,
     priceEur: 210,
@@ -385,7 +385,7 @@ export const specialtyCourses: SpecialtyCourse[] = [
   {
     id: "spec-mouthfill",
     slug: "mouthfill-mastery",
-    title: "Mouthfill Equalisation",
+    title: "FDD Mouthfill Workshop",
     shortDesc: "Unlock deep dives beyond your residual volume without thoracic stress.",
     durationDays: 2,
     priceEur: 240,
@@ -393,15 +393,35 @@ export const specialtyCourses: SpecialtyCourse[] = [
     keySkills: ["Soft palate isolation", "Mouthfill charge at 15–20m", "Cheek & tongue piston dynamics", "Dry pressure gauge drills"],
     fullDesc: "The single biggest roadblock to diving past 30 meters is equalisation. This program breaks down the Mouthfill technique using pressure sensors, Otovent balloons, and specialized in-water drills coached by our deep specialists.",
     image: {
-      url: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1200&q=80",
-      alt: "Freediving coach instructing equalisation mechanics on land and water"
+      url: "/courses/mouthfill-workshop.jpg",
+      alt: "FDD Mouthfill Workshop in open water"
     },
     featured: true
   },
   {
+    id: "fdd-equalization-clinic",
+    slug: "equalization-clinic",
+    title: "FDD Equalization Clinic",
+    shortDesc: "Focused Frenzel and mouthfill coaching with individual feedback in Dahab.",
+    durationDays: 2,
+    priceEur: 220,
+    prerequisites: "Open to freedivers; instructor will tailor sessions to your current level.",
+    keySkills: [
+      "Diagnose Frenzel equalization mechanics",
+      "Practise tongue, soft-palate, and glottis control",
+      "Build a personal dry-drill routine",
+      "Apply equalization skills during coached line sessions"
+    ],
+    fullDesc: "A focused, two-day equalization clinic with land drills, individual diagnostics, and coached open-water practice. Sessions are adapted to each diver and prioritize comfort and control over depth.",
+    image: {
+      url: "/courses/equalization-clinic.webp",
+      alt: "FDD Equalization Clinic with an instructor in clear Red Sea water"
+    }
+  },
+  {
     id: "spec-variable-weight",
     slug: "variable-weight-sled",
-    title: "Variable Weight (VWT) Sled Diving",
+    title: "SSI Variable Weight Course",
     shortDesc: "Experience effortless deep descent via weighted sled and fin back to the surface on your own power.",
     durationDays: 2,
     priceEur: 230,
@@ -416,7 +436,7 @@ export const specialtyCourses: SpecialtyCourse[] = [
   {
     id: "spec-no-fins",
     slug: "no-fins-cnf",
-    title: "Constant Weight No Fins (CNF)",
+    title: "SSI No-Fins Freediving Course",
     shortDesc: "The purest, most challenging discipline: descend and ascend purely with your bare hands and breaststroke kick.",
     durationDays: 2,
     priceEur: 210,
@@ -431,7 +451,7 @@ export const specialtyCourses: SpecialtyCourse[] = [
   {
     id: "spec-training-techniques",
     slug: "training-techniques",
-    title: "Training Techniques & Dry-land Conditioning",
+    title: "SSI Training Techniques Course",
     shortDesc: "Build your customized CO2/O2 table progression, gym lung conditioning, and flexibility routines.",
     durationDays: 2,
     priceEur: 190,
@@ -446,7 +466,7 @@ export const specialtyCourses: SpecialtyCourse[] = [
   {
     id: "spec-react-right",
     slug: "react-right-first-aid",
-    title: "SSI React Right (First Aid, CPR & O2)",
+    title: "SSI React Right Course",
     shortDesc: "Comprehensive emergency response, AED operation, and emergency oxygen administration tailored to dive emergencies.",
     durationDays: 1,
     priceEur: 140,
@@ -481,7 +501,7 @@ export const specialtyCourses: SpecialtyCourse[] = [
   {
     id: "spec-marine-ecology",
     slug: "marine-ecology",
-    title: "SSI Marine Ecology",
+    title: "SSI Marine Ecology Course",
     shortDesc: "Meet the Red Sea's residents — reef fish, corals, and the ecosystem that keeps them alive. A theory specialty for every ocean lover.",
     durationDays: 1,
     priceEur: 150,

@@ -13,6 +13,17 @@ interface CoursesSectionProps {
   currency: 'EUR' | 'USD' | 'EGP';
 }
 
+const SPECIALTY_CARD_ORDER = [
+  'spec-training-techniques',
+  'spec-monofin',
+  'spec-no-fins',
+  'spec-variable-weight',
+  'spec-react-right',
+  'spec-marine-ecology',
+  'fdd-equalization-clinic',
+  'spec-mouthfill',
+] as const;
+
 function GroupHeading({ title }: { title: string }) {
   return (
     <div className="flex items-baseline gap-3 mb-8">
@@ -41,7 +52,9 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
   const coreCourses = ssiCourses.filter((c) => c.id !== 'ssi-basic-freediver');
 
   const coreCards = coreCourses;
-  const specialtyCards = specialtyCourses.filter((c) => c.id !== 'master-freediver');
+  const specialtyCards = SPECIALTY_CARD_ORDER
+    .map((id) => specialtyCourses.find((course) => course.id === id))
+    .filter((course) => course !== undefined);
   const masterCourse = specialtyCourses.find((c) => c.id === 'master-freediver');
   const storySlides: CourseStorySlide[] = coreCards.map((course) => ({
     id: course.id,
@@ -215,6 +228,14 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
                   <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-[#081F35]/70 backdrop-blur-md border border-ocean-pale/25 text-ocean-pale text-[9px] font-mono tracking-widest uppercase">
                     {course.durationDays} day{course.durationDays > 1 ? 's' : ''}
                   </span>
+                  {(course.id === 'fdd-equalization-clinic' || course.id === 'spec-mouthfill') && (
+                    <img
+                      src="/logo-freedive-dahab.png"
+                      alt=""
+                      aria-hidden="true"
+                      className="absolute right-3 top-3 z-10 h-16 w-20 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.75)]"
+                    />
+                  )}
                 </div>
 
                 <div className="fd-tilt-copy-layer flex flex-1 flex-col p-5">

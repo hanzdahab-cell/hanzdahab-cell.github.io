@@ -26,9 +26,17 @@ const HERO_SLIDES = [
 
 export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
   const { language } = useLanguage();
-  const [headline, foundingYear] = TRANSLATIONS[language].hero.line1
+  const [headline, foundingPhrase] = TRANSLATIONS[language].hero.line1
     .split(' — ')
     .map((part) => part.trim());
+  const locationMatch = headline.match(/\s+(in dahab)\s*$/i);
+  const headlineLead = locationMatch
+    ? headline.slice(0, locationMatch.index).trimEnd()
+    : headline;
+  const locationPhrase = locationMatch?.[1] ?? '';
+  const foundingMatch = foundingPhrase.match(/^(.*?)(\d{4})$/);
+  const foundingLabel = foundingMatch?.[1].trimEnd() ?? foundingPhrase;
+  const foundingYear = foundingMatch?.[2];
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isFocused, setIsFocused] = useState(false);
@@ -90,18 +98,12 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
               className={`car-05__slide ${index === activeIndex ? 'is-active' : ''}`}
             >
               <img
-                className="car-05__slide-fill"
+                className="car-05__slide-image"
                 src={`/images/home-hero/source/${slide.name}`}
                 alt=""
                 aria-hidden="true"
-                loading={index === 0 ? 'eager' : 'lazy'}
-                decoding="async"
-              />
-              <img
-                className="car-05__slide-full"
-                src={`/images/home-hero/source/${slide.name}`}
-                alt=""
-                aria-hidden="true"
+                width="1672"
+                height="941"
                 loading={index === 0 ? 'eager' : 'lazy'}
                 fetchPriority={index === 0 ? 'high' : 'auto'}
                 decoding="async"
@@ -114,8 +116,12 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
 
         <div className="car-05__overlay">
           <h1 className="car-05__title">
-            <span>{headline}</span>
-            <span className="car-05__year">{foundingYear}</span>
+            <span>{headlineLead}</span>
+            <span className="car-05__founding">
+              {locationPhrase && <span className="car-05__accent">{locationPhrase}</span>}
+              <span className="car-05__accent">{foundingLabel}</span>
+              {foundingYear && <span className="car-05__year">{foundingYear}</span>}
+            </span>
           </h1>
           <Suspense
             fallback={
@@ -126,7 +132,9 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
           >
             <HeroLogo3D />
           </Suspense>
-          <p className="car-05__slogan">The deeper you go, the quieter it becomes.</p>
+          <p className="car-05__slogan">
+            THE DEEPER YOU GO, THE <span className="car-05__accent">QUIETER</span> IT BECOMES.
+          </p>
           <div className="car-05__actions">
             <button
               type="button"
@@ -145,6 +153,15 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
               <ArrowUpRight className="car-05__cta-arrow" aria-hidden="true" />
             </button>
           </div>
+          <p className="car-05__trust" aria-label="4,800 plus certified divers, small groups, beginners welcome, SSI Pro Instructor Training Center number 720079">
+            <span>4,800+ CERTIFIED</span>
+            <span aria-hidden="true">·</span>
+            <span>SMALL GROUPS</span>
+            <span aria-hidden="true">·</span>
+            <span>BEGINNERS WELCOME</span>
+            <span aria-hidden="true">·</span>
+            <span>SSI PRO ITC #720079</span>
+          </p>
         </div>
       </div>
     </section>

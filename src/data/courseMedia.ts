@@ -38,14 +38,39 @@ export const coursePhotoById: Record<string, CourseGalleryImage> = {
   'spec-advanced-pool': uploadedPhotos.dynamic,
   'spec-performance-pool': uploadedPhotos.lineTraining,
   'spec-photo': uploadedPhotos.reef,
-  'spec-monofin': uploadedPhotos.freediver,
-  'spec-mouthfill': uploadedPhotos.lineTraining,
-  'spec-variable-weight': uploadedPhotos.lineTraining,
-  'spec-no-fins': uploadedPhotos.freediver,
-  'spec-training-techniques': uploadedPhotos.dynamic,
-  'spec-react-right': uploadedPhotos.reefDiver,
+  'spec-monofin': {
+    src: '/courses/monofin.jpg',
+    alt: 'SSI Monofin Course artwork',
+  },
+  'spec-mouthfill': {
+    src: '/courses/mouthfill-workshop.jpg',
+    alt: 'FDD Mouthfill Workshop in open water',
+  },
+  'fdd-equalization-clinic': {
+    src: '/courses/equalization-clinic.webp',
+    alt: 'FDD Equalization Clinic with an instructor in clear Red Sea water',
+  },
+  'spec-variable-weight': {
+    src: '/courses/variable-weight.jpg',
+    alt: 'SSI Variable Weight Course artwork',
+  },
+  'spec-no-fins': {
+    src: '/courses/no-fins-freediving.jpg',
+    alt: 'SSI No-Fins Freediving Course artwork',
+  },
+  'spec-training-techniques': {
+    src: '/courses/training-techniques.jpg',
+    alt: 'SSI Training Techniques Course artwork',
+  },
+  'spec-react-right': {
+    src: '/courses/react-right.jpg',
+    alt: 'SSI React Right Course artwork',
+  },
   'spec-free-immersion': uploadedPhotos.freediver,
-  'spec-marine-ecology': uploadedPhotos.reef,
+  'spec-marine-ecology': {
+    src: '/courses/marine-ecology.jpg',
+    alt: 'SSI Marine Ecology Course artwork',
+  },
   'master-freediver': uploadedPhotos.lineTraining,
   'ssi-basic-instructor': uploadedPhotos.reefDiver,
   'ssi-itc': uploadedPhotos.dynamic,
@@ -97,36 +122,40 @@ export const courseCardArtworkById: Record<string, CourseGalleryImage> = {
     alt: 'Underwater photography specialty course card',
   },
   'spec-monofin': {
-    src: '/cards/catalog/specialty-freediver.jpg',
-    alt: 'Monofin technique specialty course card',
+    src: '/courses/monofin.jpg',
+    alt: 'SSI Monofin Course artwork',
   },
   'spec-mouthfill': {
-    src: '/cards/catalog/specialty-freediver.jpg',
-    alt: 'Mouthfill equalisation specialty course card',
+    src: '/courses/mouthfill-workshop.jpg',
+    alt: 'FDD Mouthfill Workshop in open water',
+  },
+  'fdd-equalization-clinic': {
+    src: '/courses/equalization-clinic.webp',
+    alt: 'FDD Equalization Clinic with an instructor in clear Red Sea water',
   },
   'spec-variable-weight': {
-    src: '/cards/catalog/specialty-freediver.jpg',
-    alt: 'Variable weight sled specialty course card',
+    src: '/courses/variable-weight.jpg',
+    alt: 'SSI Variable Weight Course artwork',
   },
   'spec-no-fins': {
     src: '/cards/specialties/no-fins-freediving.jpg',
     alt: 'Constant weight no-fins specialty course card',
   },
   'spec-training-techniques': {
-    src: '/cards/catalog/specialty-freediver.jpg',
-    alt: 'Freediving training techniques course card',
+    src: '/courses/training-techniques.jpg',
+    alt: 'SSI Training Techniques Course artwork',
   },
   'spec-react-right': {
-    src: '/cards/catalog/sc-frd-cf.jpg',
-    alt: 'SSI React Right first aid course card',
+    src: '/courses/react-right.jpg',
+    alt: 'SSI React Right Course artwork',
   },
   'spec-free-immersion': {
     src: '/cards/catalog/free-immersion.jpg',
     alt: 'SSI Free Immersion specialty course card',
   },
   'spec-marine-ecology': {
-    src: '/cards/catalog/specialty-freediver.jpg',
-    alt: 'SSI Marine Ecology specialty course card',
+    src: '/courses/marine-ecology.jpg',
+    alt: 'SSI Marine Ecology Course artwork',
   },
   'master-freediver': {
     src: '/cards/catalog/master-freediver.jpg',

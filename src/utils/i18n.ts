@@ -555,7 +555,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
           alt: 'Freedivers share a calm training session at the water’s surface',
         },
       ],
-      line1: 'FIRST FREEDIVING CENTER IN DAHAB — SINCE 2003',
+      line1: 'THE FIRST FREEDIVING CENTER IN DAHAB — SINCE 2003',
       line2: 'FIRST SSI FREEDIVING INSTRUCTOR TRAINING CENTER IN THE WORLD — SINCE 2010',
       leadTitle: "You don't need to be a deep diver to begin.",
       leadDesc: "Start with one calm breath in Dahab's sheltered waters. Progress with confidence at your own natural pace.",
