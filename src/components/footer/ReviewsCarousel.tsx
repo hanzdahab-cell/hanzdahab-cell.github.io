@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowRight, Pause, Play } from 'lucide-react';
-import { useReducedMotion } from 'framer-motion';
-import { InfiniteMovingCards } from '../ui/infinite-moving-cards';
-import { REVIEW_SOURCES, reviews, type ReviewPlatform } from '../../data/reviews';
+import { ArrowRight } from 'lucide-react';
+import { REVIEW_SOURCES, type ReviewPlatform } from '../../data/reviews';
 import { useLanguage } from '../../context/LanguageContext';
 import {
   EXTERNAL_REVIEW_CONSENT_EVENT,
@@ -54,14 +52,10 @@ export function PlatformMark({ platform }: { platform: ReviewPlatform }) {
 }
 
 export function ReviewsCarousel() {
-  const [isPaused, setIsPaused] = useState(false);
-  const [isInteractionPaused, setIsInteractionPaused] = useState(false);
-  const [activeReview, setActiveReview] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [externalReviewsEnabled, setExternalReviewsEnabled] = useState(
     hasExternalReviewConsent,
   );
-  const reduceMotion = useReducedMotion() === true;
   const { t } = useLanguage();
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -127,17 +121,6 @@ export function ReviewsCarousel() {
         ?.replaceChildren();
     };
   }, [externalReviewsEnabled, isVisible]);
-
-  useEffect(() => {
-    if (isPaused || isInteractionPaused || reduceMotion || !isVisible || reviews.length < 2) {
-      return;
-    }
-
-    const interval = window.setInterval(() => {
-      setActiveReview((active) => (active + 1) % reviews.length);
-    }, 7600);
-    return () => window.clearInterval(interval);
-  }, [isPaused, isInteractionPaused, isVisible, reduceMotion]);
 
   return (
     <section
@@ -244,107 +227,6 @@ export function ReviewsCarousel() {
           </section>
         </div>
 
-        <div className="mb-5 flex items-center justify-center gap-2">
-          <button
-            type="button"
-            aria-pressed={isPaused || reduceMotion}
-            aria-label={
-              reduceMotion
-                ? 'Automatic review movement is disabled by your motion preference'
-                : isPaused
-                  ? 'Resume reviews'
-                  : 'Pause reviews'
-            }
-            disabled={reduceMotion}
-            onClick={() => setIsPaused((paused) => !paused)}
-            className="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-white/60 bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {isPaused || reduceMotion ? (
-              <Play className="size-4" aria-hidden="true" />
-            ) : (
-              <Pause className="size-4" aria-hidden="true" />
-            )}
-          </button>
-          <div
-            aria-hidden="true"
-            className="flex h-11 items-center gap-2 rounded-full border border-white/40 bg-white/10 px-4"
-          >
-            {reviews.map((review, index) => (
-              <span
-                key={review.id}
-                className={`h-2.5 rounded-full transition-[width,background-color] duration-300 ${
-                  index === activeReview ? 'w-7 bg-white' : 'w-2.5 bg-white/45'
-                }`}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div
-          onMouseEnter={() => setIsInteractionPaused(true)}
-          onMouseLeave={(event) =>
-            setIsInteractionPaused(event.currentTarget.contains(document.activeElement))
-          }
-          onFocusCapture={() => setIsInteractionPaused(true)}
-          onBlurCapture={(event) => {
-            if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-              setIsInteractionPaused(event.currentTarget.matches(':hover'));
-            }
-          }}
-        >
-          <InfiniteMovingCards
-            items={reviews}
-            speed="normal"
-            direction="left"
-            pauseOnHover={false}
-            isPaused={isPaused || isInteractionPaused || !isVisible}
-            className="pb-1"
-            cardClassName="flex"
-            renderItem={(review) => (
-              <article className="flex h-full min-h-64 flex-col gap-5 rounded-2xl border border-white/10 bg-[#0A2943]/90 p-5 shadow-lg sm:p-6">
-                <div className="flex items-center gap-2 text-xs font-semibold text-cyan-200">
-                  <PlatformMark platform={review.platform} />
-                  {review.platform === 'tripadvisor' ? 'TripAdvisor' : 'Google review'}
-                </div>
-                {review.photo && (
-                  <img
-                    src={review.photo.src}
-                    alt={review.photo.alt}
-                    className="aspect-[16/9] w-full rounded-xl object-cover"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                )}
-                <blockquote className="flex-1 font-alata text-sm leading-relaxed text-slate-100">
-                  “{review.text}”
-                </blockquote>
-                <div className="flex items-center gap-3 border-t border-white/10 pt-4">
-                  <span
-                    aria-hidden="true"
-                    className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white/10 text-sm font-semibold text-white"
-                  >
-                    {review.name.slice(0, 1).toUpperCase()}
-                  </span>
-                  <div className="min-w-0 flex-1 leading-tight">
-                    <div className="truncate text-sm font-semibold text-white">{review.name}</div>
-                    {review.date && (
-                      <div className="mt-1 text-xs text-slate-400">{review.date}</div>
-                    )}
-                  </div>
-                  <a
-                    href={review.sourceUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={`Read ${review.platform === 'tripadvisor' ? 'TripAdvisor' : 'Google'} review by ${review.name}`}
-                    className="inline-flex min-h-11 shrink-0 items-center rounded-lg px-2 text-xs font-semibold text-cyan-200 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                  >
-                    View review
-                  </a>
-                </div>
-              </article>
-            )}
-          />
-        </div>
       </div>
     </section>
   );
