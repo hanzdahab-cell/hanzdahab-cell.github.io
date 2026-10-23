@@ -1,11 +1,28 @@
-#JFWebsiteWidget-01a1632c6fb8700089e9632c90b420331d61 .jf-reviews-main {
-  background-color: #020617 !important;
+#JFWebsiteWidget-01a1632c6fb8700089e9632c90b420331d61
+  :is(
+    .jf-reviews-main,
+    .jf-reviews-container,
+    .jf-reviews-section-composition,
+    .jf-reviews-list,
+    .jf-reviews-wrapper,
+    .jf-reviews-title-bar,
+    .jf-reviews-header-card
+  ) {
+  background: transparent !important;
   background-image: none !important;
 }
 
-#JFWebsiteWidget-01a1632c6fb8700089e9632c90b420331d61 .jf-reviews-title,
-#JFWebsiteWidget-01a1632c6fb8700089e9632c90b420331d61 .jf-reviews-header-title {
+#JFWebsiteWidget-01a1632c6fb8700089e9632c90b420331d61
+  :is(.jf-reviews-title, .jf-reviews-header-title) {
   text-transform: uppercase !important;
+}
+
+#tripadvisor-live-reviews-widget,
+#tripadvisor-live-reviews-widget .es-embed-root,
+#tripadvisor-live-reviews-widget .eapps-widget,
+#tripadvisor-live-reviews-widget [class*='tripadvisor-reviews-header'],
+#tripadvisor-live-reviews-widget [class*='tripadvisor-reviews-container'] {
+  background: rgb(10 41 67 / 80%) !important;
 }
 
 #tripadvisor-live-reviews-widget .es-embed-root {
@@ -13,12 +30,17 @@
   padding: 1rem;
   border: 1px solid rgb(255 255 255 / 10%);
   border-radius: 1rem;
-  background-color: #0a2943 !important;
   color: #f1f5f9;
 }
 
-#tripadvisor-live-reviews-widget h1,
-#tripadvisor-live-reviews-widget h2,
-#tripadvisor-live-reviews-widget h3 {
+#tripadvisor-live-reviews-widget
+  :is(
+    h1,
+    h2,
+    h3,
+    [class*='reviews-header-title'],
+    [class*='reviews-title'],
+    [class*='header'] [class*='title']
+  ) {
   text-transform: uppercase !important;
 }
