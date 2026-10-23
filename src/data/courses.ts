@@ -565,7 +565,7 @@ export const instructorCourses: InstructorCourse[] = [
   {
     id: "ssi-itc",
     slug: "ssi-freediving-instructor-itc",
-    title: "SSI Freediving Instructor Course (ITC)",
+    title: "SSI Freediving Instructor Course",
     durationWeeksOrDays: "10 Days",
     priceEur: 1250,
     prerequisites: "SSI Level 3 (or equivalent 40m+ diver), React Right within 24 months, 100+ logged sessions, min age 18.",
@@ -586,7 +586,7 @@ export const instructorCourses: InstructorCourse[] = [
   {
     id: "ssi-advanced-instructor",
     slug: "ssi-advanced-instructor",
-    title: "SSI Advanced Freediving Instructor",
+    title: "SSI Advanced Freediving Instructor Course",
     durationWeeksOrDays: "4 Days",
     priceEur: 650,
     prerequisites: "SSI Freediving Instructor with at least 30 certified Level 1 students, or equivalent experience.",

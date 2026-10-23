@@ -3,7 +3,6 @@ import { Cursor } from './components/ui/Cursor';
 import { SiteHeader } from './nav/SiteHeader';
 import { PageHeader } from './components/ui/PageHeader';
 import { HeroSurface } from './components/home/HeroSurface';
-import { PartnerLogoScroller } from './components/home/PartnerLogoScroller';
 import { CourseCarousel } from './components/CourseCarousel';
 import { CoralDepthBackground } from './components/home/CoralDepthBackground';
 import { DahabBlueHoleSection } from './components/home/DahabBlueHoleSection';
@@ -154,7 +153,6 @@ export default function App() {
             <HeroSurface onNavigate={navigateTo} />
 
             <CourseCarousel />
-            <PartnerLogoScroller />
 
             {/* Immersive Coral Depth Environment (The depth of the corals across all home sections) */}
             <div className="relative">

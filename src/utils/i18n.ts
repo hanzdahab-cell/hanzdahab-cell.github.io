@@ -142,6 +142,7 @@ export interface TranslationDictionary {
       alt: string;
     }[];
     line1: string;
+    line1Highlight: string;
     line2: string;
     leadTitle: string;
     leadDesc: string;
@@ -555,8 +556,9 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
           alt: 'Freedivers share a calm training session at the water’s surface',
         },
       ],
-      line1: 'THE FIRST FREEDIVING CENTER IN DAHAB — SINCE 2003',
-      line2: 'FIRST SSI FREEDIVING INSTRUCTOR TRAINING CENTER IN THE WORLD — SINCE 2010',
+      line1: 'THE FIRST FREEDIVING CENTER IN DAHAB 2003',
+      line1Highlight: 'FIRST FREEDIVING',
+      line2: 'Find your depth in Dahab, one calm breath at a time.',
       leadTitle: "You don't need to be a deep diver to begin.",
       leadDesc: "Start with one calm breath in Dahab's sheltered waters. Progress with confidence at your own natural pace.",
       oneBreath: 'One Breath',
@@ -966,8 +968,9 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
           alt: 'غواصون أحرار يتدربون معاً عند سطح الماء',
         },
       ],
-      line1: 'أول مركز للغوص الحر في دهب — منذ 2003',
-      line2: 'أول مركز تدريب مدربي غوص حر معتمد من SSI في العالم — منذ 2010',
+      line1: 'أول مركز للغوص الحر في دهب منذ عام 2003',
+      line1Highlight: 'أول مركز للغوص الحر',
+      line2: 'اكتشف أعماق دهب، نَفَسًا هادئًا في كل مرة.',
       leadTitle: 'لست بحاجة لأن تكون غواصاً محترفاً لتبدأ.',
       leadDesc: 'ابدأ بنَفَسٍ واحد هادئ في مياه دهب المحمية، وتقدم بثقة وأمان وفق وتيرتك الطبيعية.',
       oneBreath: 'نَفَس واحد',
@@ -1377,8 +1380,9 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
           alt: 'Apneístas comparten una tranquila sesión de entrenamiento en la superficie',
         },
       ],
-      line1: 'PRIMER CENTRO DE APNEA EN DAHAB — DESDE 2003',
-      line2: 'PRIMER CENTRO DE FORMACIÓN DE INSTRUCTORES SSI DEL MUNDO — DESDE 2010',
+      line1: 'EL PRIMER CENTRO DE APNEA EN DAHAB DESDE 2003',
+      line1Highlight: 'PRIMER CENTRO DE APNEA',
+      line2: 'Encuentra tu profundidad en Dahab, una respiración tranquila a la vez.',
       leadTitle: 'No necesitas ser un buceador profundo para comenzar.',
       leadDesc: 'Comienza con una respiración calmada en las aguas protegidas de Dahab. Avanza con confianza a tu propio ritmo natural.',
       oneBreath: 'Una Respiración',
@@ -1788,8 +1792,9 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
           alt: 'Freitauchende teilen eine ruhige Trainingseinheit an der Wasseroberfläche',
         },
       ],
-      line1: 'ERSTE FREEDIVING CENTER IN DAHAB — SEIT 2003',
-      line2: 'ERSTES SSI INSTRUCTOR TRAINING CENTER DER WELT — SEIT 2010',
+      line1: 'DAS ERSTE FREEDIVING-CENTER IN DAHAB SEIT 2003',
+      line1Highlight: 'ERSTE FREEDIVING-CENTER',
+      line2: 'Finde deine Tiefe in Dahab, einen ruhigen Atemzug nach dem anderen.',
       leadTitle: 'Du musst kein Tieftaucher sein, um zu beginnen.',
       leadDesc: 'Starte mit einem ruhigen Atemzug in Dahabs geschützten Buchten. Entwickle dich mit Vertrauen in deinem natürlichen Tempo.',
       oneBreath: 'Ein Atemzug',

@@ -26,17 +26,22 @@ const HERO_SLIDES = [
 
 export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
   const { language } = useLanguage();
-  const [headline, foundingPhrase] = TRANSLATIONS[language].hero.line1
-    .split(' — ')
-    .map((part) => part.trim());
-  const locationMatch = headline.match(/\s+(in dahab)\s*$/i);
-  const headlineLead = locationMatch
-    ? headline.slice(0, locationMatch.index).trimEnd()
-    : headline;
-  const locationPhrase = locationMatch?.[1] ?? '';
-  const foundingMatch = foundingPhrase.match(/^(.*?)(\d{4})$/);
-  const foundingLabel = foundingMatch?.[1].trimEnd() ?? foundingPhrase;
-  const foundingYear = foundingMatch?.[2];
+  const { line1, line1Highlight, line2 } = TRANSLATIONS[language].hero;
+  const highlightStart = line1.toLocaleLowerCase().indexOf(line1Highlight.toLocaleLowerCase());
+  const headlineParts =
+    highlightStart < 0
+      ? [{ text: line1, highlighted: false }]
+      : [
+          { text: line1.slice(0, highlightStart), highlighted: false },
+          {
+            text: line1.slice(highlightStart, highlightStart + line1Highlight.length),
+            highlighted: true,
+          },
+          {
+            text: line1.slice(highlightStart + line1Highlight.length),
+            highlighted: false,
+          },
+        ];
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isFocused, setIsFocused] = useState(false);
@@ -116,12 +121,14 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
 
         <div className="car-05__overlay">
           <h1 className="car-05__title">
-            <span>{headlineLead}</span>
-            <span className="car-05__founding">
-              {locationPhrase && <span className="car-05__accent">{locationPhrase}</span>}
-              <span className="car-05__accent">{foundingLabel}</span>
-              {foundingYear && <span className="car-05__year">{foundingYear}</span>}
-            </span>
+            {headlineParts.map((part, index) => (
+              <span
+                key={`${index}-${part.text}`}
+                className={part.highlighted ? 'car-05__accent' : undefined}
+              >
+                {part.text}
+              </span>
+            ))}
           </h1>
           <Suspense
             fallback={
@@ -132,9 +139,7 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
           >
             <HeroLogo3D />
           </Suspense>
-          <p className="car-05__slogan">
-            THE DEEPER YOU GO, THE <span className="car-05__accent">QUIETER</span> IT BECOMES.
-          </p>
+          <p className="car-05__slogan">{line2}</p>
           <div className="car-05__actions">
             <button
               type="button"

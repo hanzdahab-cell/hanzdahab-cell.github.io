@@ -49,20 +49,32 @@ export function CourseCarousel() {
   return (
     <section
       ref={sectionRef}
-      className={`course-carousel bg-[#020617] py-8 sm:py-10 ${
+      className={`course-carousel ocean-surface film-grain relative overflow-hidden py-8 sm:py-10 ${
         isInView && isPageVisible ? '' : 'course-carousel--paused'
       }`}
       aria-label="Freediving courses; focus to pause scrolling"
       tabIndex={0}
     >
-      <div className="course-carousel__viewport">
+      <div aria-hidden="true" className="course-carousel__glow" />
+      <div className="course-carousel__viewport relative z-10">
         <div className="course-carousel__track flex w-max">
           {[false, true].map((isDuplicate) => (
             <ul
               key={String(isDuplicate)}
-              className="course-carousel__set m-0 flex shrink-0 list-none items-center gap-10 p-0 pr-10 sm:gap-16 sm:pr-16"
+              className="course-carousel__set m-0 flex shrink-0 list-none items-center gap-8 p-0 pr-8 sm:gap-12 sm:pr-12 md:gap-16 md:pr-16"
               aria-hidden={isDuplicate || undefined}
             >
+              <li className="course-carousel__brand shrink-0">
+                <img
+                  src="/logo-freedive-dahab.png"
+                  alt={isDuplicate ? '' : 'Freedive Dahab'}
+                  className="h-8 w-auto max-w-none object-contain sm:h-9 md:h-10"
+                  width="843"
+                  height="645"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </li>
               {COURSES.map((course) => (
                 <li
                   key={course}
@@ -71,6 +83,17 @@ export function CourseCarousel() {
                   {course}
                 </li>
               ))}
+              <li className="course-carousel__brand shrink-0">
+                <img
+                  src="/badges/ssi-logo-white.png"
+                  alt={isDuplicate ? '' : 'SSI Freediving'}
+                  className="h-8 w-auto max-w-none object-contain sm:h-9 md:h-10"
+                  width="2048"
+                  height="456"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </li>
             </ul>
           ))}
         </div>

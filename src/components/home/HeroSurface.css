@@ -73,33 +73,19 @@
 }
 
 .car-05__title {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 100%;
+  display: block;
+  width: 100%;
+  max-width: 68rem;
   margin: 0;
   color: #fff;
   font-family: var(--font-hook);
-  font-size: clamp(1.85rem, 4.7cqi, 4.5rem);
+  font-size: clamp(1.75rem, 3.5cqi, 3.75rem);
   font-weight: 400;
   letter-spacing: 0;
-  line-height: 0.98;
+  line-height: 1.12;
   text-shadow: 0 2px 28px rgb(0 0 0 / 0.52);
   text-wrap: balance;
   text-transform: uppercase;
-}
-
-.car-05__founding {
-  display: inline-flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: 0.24em;
-  direction: inherit;
-}
-
-.car-05__year {
-  color: #89ffff;
-  text-shadow: 0 2px 22px rgb(0 0 0 / 0.58);
 }
 
 .car-05__accent {
@@ -183,14 +169,12 @@
   margin: clamp(0.25rem, 0.8vh, 0.6rem) 0 0;
   padding-inline: 0.5rem;
   color: #fff;
-  font-family: var(--font-hook);
-  font-size: clamp(1rem, 1.65vw, 1.45rem);
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 1.5vw, 1.2rem);
   font-weight: 400;
-  letter-spacing: 0.015em;
-  line-height: 1.3;
+  line-height: 1.45;
   text-shadow: 0 2px 20px rgb(0 0 0 / 0.62);
   text-wrap: balance;
-  text-transform: uppercase;
 }
 
 .car-05__trust {
@@ -294,8 +278,8 @@
   }
 
   .car-05__title {
-    font-size: clamp(1.7rem, 6cqi, 2.4rem);
-    line-height: 1;
+    font-size: clamp(1.5rem, 5.2cqi, 2rem);
+    line-height: 1.12;
   }
 
   .car-05__logo-button,
@@ -306,8 +290,9 @@
   }
 
   .car-05__slogan {
-    margin-top: 0.2rem;
-    font-size: clamp(0.95rem, 4vw, 1.15rem);
+    max-width: 33rem;
+    margin-top: 0.3rem;
+    font-size: 0.95rem;
   }
 
   .car-05__trust {
@@ -346,6 +331,11 @@
     margin-top: 0.25rem;
   }
 
+  .car-05__slogan {
+    margin-top: 0.2rem;
+    font-size: 0.95rem;
+  }
+
   .car-05__actions {
     margin-top: 0.85rem;
   }
@@ -359,6 +349,7 @@
   .car-05__slide,
   .car-05__cta,
   .car-05__logo-button,
+  .car-05__slogan,
   .car-05__logo-fallback {
     transition: none;
   }

@@ -166,12 +166,12 @@ export const courseCardArtworkById: Record<string, CourseGalleryImage> = {
     alt: 'SSI Basic Freediving Instructor course card',
   },
   'ssi-itc': {
-    src: '/cards/specialties/freediving-instructor-training-course.jpg',
-    alt: 'SSI Freediving Instructor Training Course card',
+    src: '/courses/uploaded/ssi-freediving-instructor-course.jpg',
+    alt: 'SSI Freediving Instructor Course card',
   },
   'ssi-advanced-instructor': {
-    src: '/cards/specialties/freediving-instructor-level-2.jpg',
-    alt: 'SSI Advanced Freediving Instructor course card',
+    src: '/courses/uploaded/ssi-advanced-freediving-instructor-course.jpg',
+    alt: 'SSI Advanced Freediving Instructor Course card',
   },
 };
 
