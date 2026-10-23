@@ -198,7 +198,7 @@ function Panel({
               onSelect(item);
             }
           }}
-          className={`group/row flex min-h-11 items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium leading-tight transition-colors uppercase ${OCEAN_TEXT} ${HOVER_BG} ${FOCUS}`}
+          className={`group/row flex min-h-11 items-center gap-2.5 rounded-lg px-3 py-2.5 font-alata text-sm font-medium leading-tight transition-colors uppercase ${OCEAN_TEXT} ${HOVER_BG} ${FOCUS}`}
         >
           <span className="transition-transform duration-200 group-hover/row:scale-110 motion-reduce:transition-none">
             <MenuItemIcon menuId={menu.id} index={index} icon={item.icon} />
@@ -216,7 +216,7 @@ function Panel({
           <motion.p
             variants={rowVariants}
             custom={rowIndex++}
-            className="px-3 pb-1 pt-2 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400"
+            className="px-3 pb-1 pt-2 font-alata text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400"
           >
             {block.group}
           </motion.p>
@@ -327,3 +327,4 @@ export function NavDropdown({
     </li>
   );
 }
+

@@ -1,5 +1,6 @@
 #JFWebsiteWidget-01a1632c6fb8700089e9632c90b420331d61
   :is(
+    .jf-reviews-widget,
     .jf-reviews-main,
     .jf-reviews-container,
     .jf-reviews-section-composition,
@@ -8,7 +9,7 @@
     .jf-reviews-title-bar,
     .jf-reviews-header-card
   ) {
-  background: transparent !important;
+  background: #0A2841 !important;
   background-image: none !important;
 }
 
@@ -19,10 +20,8 @@
 
 #tripadvisor-live-reviews-widget,
 #tripadvisor-live-reviews-widget .es-embed-root,
-#tripadvisor-live-reviews-widget .eapps-widget,
-#tripadvisor-live-reviews-widget [class*='tripadvisor-reviews-header'],
-#tripadvisor-live-reviews-widget [class*='tripadvisor-reviews-container'] {
-  background: rgb(10 41 67 / 80%) !important;
+#tripadvisor-live-reviews-widget .eapps-widget {
+  background: #0A2841 !important;
 }
 
 #tripadvisor-live-reviews-widget .es-embed-root {
@@ -44,3 +43,4 @@
   ) {
   text-transform: uppercase !important;
 }
+

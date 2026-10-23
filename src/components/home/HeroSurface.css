@@ -63,16 +63,20 @@
   inset: 0;
   width: min(84rem, calc(100% - 2rem));
   margin-inline: auto;
-  padding: clamp(8.5rem, 15vh, 10.5rem) 0 clamp(1.5rem, 4vh, 2.5rem);
+  padding: clamp(6.5rem, 12vh, 8.5rem) 0 clamp(1rem, 3vh, 2rem);
   container-type: inline-size;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   text-align: center;
 }
 
 .car-05__title {
+  position: absolute;
+  top: max(4.75rem, env(safe-area-inset-top) + 4rem);
+  left: 50%;
+  transform: translateX(-50%);
   display: block;
   width: 100%;
   max-width: 68rem;
@@ -96,9 +100,10 @@
 .car-05__logo-placeholder {
   position: relative;
   display: block;
-  width: clamp(16.5rem, 32vw, 25rem);
-  height: clamp(8.5rem, 17.5vw, 12.5rem);
-  margin-top: auto;
+  width: clamp(20rem, 38vw, 30rem);
+  height: clamp(11rem, 20vw, 16rem);
+  margin-top: clamp(0.5rem, 1.5vh, 1.25rem);
+  top: -2.5rem;
 }
 
 .car-05__logo-button {
@@ -165,6 +170,8 @@
 }
 
 .car-05__slogan {
+  position: relative;
+  top: clamp(1.5rem, 4vh, 2.5rem);
   max-width: 44rem;
   margin: clamp(0.25rem, 0.8vh, 0.6rem) 0 0;
   padding-inline: 0.5rem;
@@ -179,39 +186,9 @@
   text-transform: uppercase;
 }
 
-.car-05__trust {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 0.25rem 0.85rem;
-  width: fit-content;
-  max-width: 100%;
-  margin: 1rem 0 0;
-  padding-inline: 0.5rem;
-  color: #fff;
-  font-family: 'Alan Sans', sans-serif;
-  font-size: clamp(0.68rem, 1.05vw, 0.86rem);
-  font-weight: 300;
-  letter-spacing: 0.06em;
-  line-height: 1.5;
-  text-shadow: 0 1px 14px rgb(0 0 0 / 0.8);
-  text-transform: uppercase;
-}
-
-.car-05__trust-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  white-space: nowrap;
-}
-
-.car-05__trust-item:not(:first-child)::before {
-  content: '·';
-  color: #89ffff;
-}
-
 .car-05__actions {
+  position: relative;
+  top: clamp(1.5rem, 4vh, 2.5rem);
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -288,41 +265,31 @@
   outline-offset: 4px;
 }
 
-@media (max-width: 760px) {
-  .car-05__trust-item:not(:first-child)::before {
-    content: none;
-  }
-}
-
 @media (max-width: 640px) {
   .car-05__overlay {
     width: calc(100% - 1.25rem);
-    padding-top: max(6.5rem, env(safe-area-inset-top) + 6rem);
-    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+    padding-top: max(5.75rem, env(safe-area-inset-top) + 5.25rem);
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
   }
 
   .car-05__title {
+    top: max(5.25rem, env(safe-area-inset-top) + 4.5rem);
     font-size: clamp(1.5rem, 5.2cqi, 2rem);
     line-height: 1.12;
   }
 
   .car-05__logo-button,
   .car-05__logo-placeholder {
-    width: min(82vw, 20rem);
-    height: clamp(7rem, 29vw, 9rem);
+    width: min(86vw, 22rem);
+    height: clamp(8rem, 32vw, 10.5rem);
+    top: -1.25rem;
   }
 
   .car-05__slogan {
+    top: 1.25rem;
     max-width: 33rem;
     margin-top: 0.3rem;
     font-size: 0.95rem;
-  }
-
-  .car-05__trust {
-    width: fit-content;
-    margin-top: 0.85rem;
-    font-size: 0.66rem;
-    letter-spacing: 0.035em;
   }
 
   .car-05__actions {
@@ -345,14 +312,18 @@
 
 @media (max-height: 44rem) and (min-width: 641px) {
   .car-05__overlay {
-    padding-block: 5.5rem 1rem;
-    justify-content: flex-start;
+    padding-block: 5rem 0.75rem;
+    justify-content: center;
+  }
+
+  .car-05__title {
+    top: 4.75rem;
   }
 
   .car-05__logo-button,
   .car-05__logo-placeholder {
-    width: 19rem;
-    height: 8rem;
+    width: 23rem;
+    height: 11rem;
   }
 
   .car-05__slogan {
@@ -364,9 +335,6 @@
     margin-top: 0.85rem;
   }
 
-  .car-05__trust {
-    margin-top: 0.75rem;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -378,3 +346,4 @@
     transition: none;
   }
 }
+

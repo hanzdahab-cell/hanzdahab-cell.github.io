@@ -106,10 +106,10 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
         <div className="mx-auto w-full max-w-7xl">
           <h2
             id="ssi-centers-title"
-            className="mb-5 text-center font-bebas text-3xl tracking-wide text-white sm:mb-7 sm:text-4xl"
+            className="mb-5 text-center font-bebas text-3xl tracking-wide text-[#89ffff] sm:mb-7 sm:text-4xl"
           >
-            OFFICIAL PRO SSI{' '}
-            <span className="text-[#89ffff]">FREEDIVING TRAINING</span> CENTER
+            <span className="text-white">OFFICIAL PRO SSI</span>{' '}
+            FREEDIVING TRAINING CENTER
           </h2>
 
           <ul className="mx-auto grid w-full grid-cols-1 items-center gap-6 sm:grid-cols-3 sm:gap-8 lg:gap-12">
@@ -420,3 +420,4 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
 }
 
 export default SSICertificates;
+

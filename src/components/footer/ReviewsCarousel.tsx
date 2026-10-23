@@ -122,6 +122,32 @@ export function ReviewsCarousel() {
     };
   }, [externalReviewsEnabled, isVisible]);
 
+  useEffect(() => {
+    if (!externalReviewsEnabled || !isVisible) return;
+
+    const widget = document.getElementById('tripadvisor-live-reviews-widget');
+    if (!widget) return;
+
+    const applyWidgetTheme = () => {
+      const shadowRoot = widget.querySelector('.es-embed-root')?.shadowRoot;
+      if (!shadowRoot || shadowRoot.getElementById('freedive-tripadvisor-theme')) return;
+
+      const style = document.createElement('style');
+      style.id = 'freedive-tripadvisor-theme';
+      style.textContent = `
+        [class*='HeaderContainer__Inner'] { background-color: #000000 !important; }
+        [class*='ReviewBackground__Container'] { background-color: #000000 !important; }
+        a[href*='elfsight.com/tripadvisor-reviews-widget'] { display: none !important; }
+      `;
+      shadowRoot.appendChild(style);
+    };
+
+    applyWidgetTheme();
+    const observer = new MutationObserver(applyWidgetTheme);
+    observer.observe(widget, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [externalReviewsEnabled, isVisible]);
+
   return (
     <section
       ref={sectionRef}
@@ -231,3 +257,4 @@ export function ReviewsCarousel() {
     </section>
   );
 }
+
