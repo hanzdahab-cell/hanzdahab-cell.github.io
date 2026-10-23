@@ -103,7 +103,7 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
         aria-labelledby="ssi-centers-title"
         className="ssi-home-badges relative px-6 py-10 sm:py-12"
       >
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto w-full max-w-7xl">
           <h2
             id="ssi-centers-title"
             className="mb-5 text-center font-bebas text-3xl tracking-wide text-white sm:mb-7 sm:text-4xl"
@@ -112,7 +112,7 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
             <span className="text-[#89ffff]">FREEDIVING TRAINING</span> CENTER
           </h2>
 
-          <ul className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-8 gap-y-4 sm:gap-x-14">
+          <ul className="mx-auto grid w-full grid-cols-1 items-center gap-6 sm:grid-cols-3 sm:gap-8 lg:gap-12">
             {HOME_BADGES.map((badge, index) => (
               <li key={badge.id}>
                 <TiltSurface
@@ -124,16 +124,16 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
                     target="_blank"
                     rel="noreferrer"
                     aria-label={`Verify ${badge.title} on the official SSI website`}
-                    className="flex size-24 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-200 sm:size-28"
+                    className="flex min-h-40 w-full items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-200"
                   >
                     <img
                       src={badge.src}
                       alt={badge.alt}
-                      width="2000"
-                      height="2000"
+                      width="240"
+                      height="240"
                       loading="lazy"
                       decoding="async"
-                      className="h-full w-full object-contain transition-transform duration-500 motion-safe:group-hover:scale-105"
+                      className="h-36 w-[min(100%,15rem)] object-contain transition-transform duration-500 motion-safe:group-hover:scale-105"
                     />
                   </a>
                 </TiltSurface>

@@ -96,9 +96,9 @@
 .car-05__logo-placeholder {
   position: relative;
   display: block;
-  width: clamp(15rem, 29vw, 23rem);
-  height: clamp(7.75rem, 16vw, 11.5rem);
-  margin-top: clamp(0.55rem, 1.5vh, 1rem);
+  width: clamp(16.5rem, 32vw, 25rem);
+  height: clamp(8.5rem, 17.5vw, 12.5rem);
+  margin-top: auto;
 }
 
 .car-05__logo-button {
@@ -182,19 +182,33 @@
 .car-05__trust {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 0.25rem 0.55rem;
-  width: min(100%, 39rem);
-  margin: clamp(0.85rem, 2vh, 1.35rem) 0 0;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem 0.85rem;
+  width: fit-content;
+  max-width: 100%;
+  margin: 1rem 0 0;
   padding-inline: 0.5rem;
   color: #fff;
   font-family: 'Alan Sans', sans-serif;
-  font-size: clamp(0.68rem, 1.15vw, 0.86rem);
+  font-size: clamp(0.68rem, 1.05vw, 0.86rem);
   font-weight: 300;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.06em;
   line-height: 1.5;
   text-shadow: 0 1px 14px rgb(0 0 0 / 0.8);
   text-transform: uppercase;
+}
+
+.car-05__trust-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.car-05__trust-item:not(:first-child)::before {
+  content: '·';
+  color: #89ffff;
 }
 
 .car-05__actions {
@@ -274,6 +288,12 @@
   outline-offset: 4px;
 }
 
+@media (max-width: 760px) {
+  .car-05__trust-item:not(:first-child)::before {
+    content: none;
+  }
+}
+
 @media (max-width: 640px) {
   .car-05__overlay {
     width: calc(100% - 1.25rem);
@@ -288,9 +308,8 @@
 
   .car-05__logo-button,
   .car-05__logo-placeholder {
-    width: min(76vw, 18rem);
-    height: clamp(6rem, 25vw, 8rem);
-    margin-top: 0.4rem;
+    width: min(82vw, 20rem);
+    height: clamp(7rem, 29vw, 9rem);
   }
 
   .car-05__slogan {
@@ -300,12 +319,10 @@
   }
 
   .car-05__trust {
-    width: min(100%, 19rem);
-    max-width: none;
-    justify-content: center;
-    margin-top: 0.65rem;
-    font-size: 0.68rem;
-    letter-spacing: 0.055em;
+    width: fit-content;
+    margin-top: 0.85rem;
+    font-size: 0.66rem;
+    letter-spacing: 0.035em;
   }
 
   .car-05__actions {
@@ -334,9 +351,8 @@
 
   .car-05__logo-button,
   .car-05__logo-placeholder {
-    width: 17rem;
-    height: 7rem;
-    margin-top: 0.25rem;
+    width: 19rem;
+    height: 8rem;
   }
 
   .car-05__slogan {
@@ -349,7 +365,7 @@
   }
 
   .car-05__trust {
-    margin-top: 0.65rem;
+    margin-top: 0.75rem;
   }
 }
 

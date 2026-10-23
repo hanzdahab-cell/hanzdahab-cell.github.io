@@ -8,6 +8,7 @@ import {
   EXTERNAL_REVIEW_CONSENT_EVENT,
   hasExternalReviewConsent,
 } from '../ui/CookieConsent';
+import './ReviewsCarousel.css';
 
 export function PlatformMark({ platform }: { platform: ReviewPlatform }) {
   if (platform === 'tripadvisor') {
@@ -180,7 +181,7 @@ export function ReviewsCarousel() {
           </div>
         </header>
 
-        <div className="mx-auto mb-12 grid max-w-4xl grid-cols-1 gap-6">
+        <div className="mx-auto mb-12 grid w-full grid-cols-1 gap-6">
           <section
             aria-labelledby="google-live-reviews-title"
             className="min-w-0 rounded-2xl border border-white/10 bg-[#0A2943]/80 p-4 shadow-lg sm:p-6"
@@ -223,6 +224,7 @@ export function ReviewsCarousel() {
             </h3>
             {externalReviewsEnabled ? (
               <div
+                id="tripadvisor-live-reviews-widget"
                 className="elfsight-app-07e8aff4-b227-4bb3-a052-0a143c636b09 min-h-72"
                 data-elfsight-app-lazy=""
               />

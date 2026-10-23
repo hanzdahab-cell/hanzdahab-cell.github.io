@@ -188,14 +188,14 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
               <ArrowUpRight className="car-05__cta-arrow" aria-hidden="true" />
             </button>
           </div>
-          <p className="car-05__trust" aria-label="4,800 plus certified divers, small groups, beginners welcome, SSI Pro Instructor Training Center number 720079">
-            <span>4,800+ CERTIFIED</span>
-            <span aria-hidden="true">·</span>
-            <span>SMALL GROUPS</span>
-            <span aria-hidden="true">·</span>
-            <span>BEGINNERS WELCOME</span>
-            <span aria-hidden="true">·</span>
-            <span>SSI PRO ITC #720079</span>
+          <p
+            className="car-05__trust"
+            aria-label="4,800 plus certified divers, small groups, beginners welcome, SSI Pro Instructor Training Center number 720079"
+          >
+            <span className="car-05__trust-item">4,800+ CERTIFIED</span>
+            <span className="car-05__trust-item">SMALL GROUPS</span>
+            <span className="car-05__trust-item">BEGINNERS WELCOME</span>
+            <span className="car-05__trust-item">SSI PRO ITC #720079</span>
           </p>
         </div>
       </div>

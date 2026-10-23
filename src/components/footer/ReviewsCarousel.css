@@ -1,0 +1,24 @@
+#JFWebsiteWidget-01a1632c6fb8700089e9632c90b420331d61 .jf-reviews-main {
+  background-color: #020617 !important;
+  background-image: none !important;
+}
+
+#JFWebsiteWidget-01a1632c6fb8700089e9632c90b420331d61 .jf-reviews-title,
+#JFWebsiteWidget-01a1632c6fb8700089e9632c90b420331d61 .jf-reviews-header-title {
+  text-transform: uppercase !important;
+}
+
+#tripadvisor-live-reviews-widget .es-embed-root {
+  box-sizing: border-box;
+  padding: 1rem;
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 1rem;
+  background-color: #0a2943 !important;
+  color: #f1f5f9;
+}
+
+#tripadvisor-live-reviews-widget h1,
+#tripadvisor-live-reviews-widget h2,
+#tripadvisor-live-reviews-widget h3 {
+  text-transform: uppercase !important;
+}
