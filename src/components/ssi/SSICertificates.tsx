@@ -420,4 +420,3 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
 }
 
 export default SSICertificates;
-

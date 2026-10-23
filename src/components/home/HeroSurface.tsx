@@ -196,4 +196,3 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
 
 export const HeroSection = HeroSurface;
 export default HeroSurface;
-
