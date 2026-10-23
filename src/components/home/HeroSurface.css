@@ -63,12 +63,12 @@
   inset: 0;
   width: min(84rem, calc(100% - 2rem));
   margin-inline: auto;
-  padding: clamp(6.25rem, 13vh, 8.5rem) 0 clamp(1.5rem, 4vh, 2.5rem);
+  padding: clamp(8.5rem, 15vh, 10.5rem) 0 clamp(1.5rem, 4vh, 2.5rem);
   container-type: inline-size;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
 }
 
@@ -169,20 +169,22 @@
   margin: clamp(0.25rem, 0.8vh, 0.6rem) 0 0;
   padding-inline: 0.5rem;
   color: #fff;
-  font-family: var(--font-body);
-  font-size: clamp(0.95rem, 1.5vw, 1.2rem);
+  font-family: var(--font-hook);
+  font-size: clamp(0.95rem, 1.45vw, 1.15rem);
   font-weight: 400;
+  letter-spacing: 0.035em;
   line-height: 1.45;
   text-shadow: 0 2px 20px rgb(0 0 0 / 0.62);
   text-wrap: balance;
+  text-transform: uppercase;
 }
 
 .car-05__trust {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-between;
   gap: 0.25rem 0.55rem;
-  max-width: 52rem;
+  width: min(100%, 39rem);
   margin: clamp(0.85rem, 2vh, 1.35rem) 0 0;
   padding-inline: 0.5rem;
   color: #fff;
@@ -200,11 +202,13 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.75rem;
+  width: min(100%, 39rem);
   margin-top: clamp(1rem, 2.5vh, 1.6rem);
 }
 
 .car-05__cta {
   display: inline-flex;
+  flex: 1 1 0;
   min-height: 3rem;
   align-items: center;
   justify-content: center;
@@ -273,7 +277,7 @@
 @media (max-width: 640px) {
   .car-05__overlay {
     width: calc(100% - 1.25rem);
-    padding-top: max(5.75rem, env(safe-area-inset-top) + 5rem);
+    padding-top: max(6.5rem, env(safe-area-inset-top) + 6rem);
     padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
   }
 
@@ -296,14 +300,16 @@
   }
 
   .car-05__trust {
-    max-width: 23rem;
+    width: min(100%, 19rem);
+    max-width: none;
+    justify-content: center;
     margin-top: 0.65rem;
     font-size: 0.68rem;
     letter-spacing: 0.055em;
   }
 
   .car-05__actions {
-    width: 100%;
+    width: min(100%, 19rem);
     flex-direction: column;
     align-items: center;
     gap: 0.55rem;
@@ -311,7 +317,8 @@
   }
 
   .car-05__cta {
-    width: min(100%, 19rem);
+    width: 100%;
+    flex: none;
     min-height: 2.9rem;
     padding-inline: 1rem;
     font-size: 0.75rem;
@@ -322,6 +329,7 @@
 @media (max-height: 44rem) and (min-width: 641px) {
   .car-05__overlay {
     padding-block: 5.5rem 1rem;
+    justify-content: flex-start;
   }
 
   .car-05__logo-button,

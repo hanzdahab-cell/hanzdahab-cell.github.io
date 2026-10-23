@@ -28,6 +28,10 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
   const { language } = useLanguage();
   const { line1, line1Highlight, line2 } = TRANSLATIONS[language].hero;
   const highlightStart = line1.toLocaleLowerCase().indexOf(line1Highlight.toLocaleLowerCase());
+  const sloganHighlight = language === 'en' ? 'IN THE WORLD SINCE 2010' : '';
+  const sloganHighlightStart = sloganHighlight
+    ? line2.toLocaleUpperCase().indexOf(sloganHighlight)
+    : -1;
   const headlineParts =
     highlightStart < 0
       ? [{ text: line1, highlighted: false }]
@@ -39,6 +43,23 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
           },
           {
             text: line1.slice(highlightStart + line1Highlight.length),
+            highlighted: false,
+          },
+        ];
+  const sloganParts =
+    sloganHighlightStart < 0
+      ? [{ text: line2, highlighted: false }]
+      : [
+          { text: line2.slice(0, sloganHighlightStart), highlighted: false },
+          {
+            text: line2.slice(
+              sloganHighlightStart,
+              sloganHighlightStart + sloganHighlight.length,
+            ),
+            highlighted: true,
+          },
+          {
+            text: line2.slice(sloganHighlightStart + sloganHighlight.length),
             highlighted: false,
           },
         ];
@@ -139,7 +160,16 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
           >
             <HeroLogo3D />
           </Suspense>
-          <p className="car-05__slogan">{line2}</p>
+          <p className="car-05__slogan">
+            {sloganParts.map((part, index) => (
+              <span
+                key={`${index}-${part.text}`}
+                className={part.highlighted ? 'car-05__accent' : undefined}
+              >
+                {part.text}
+              </span>
+            ))}
+          </p>
           <div className="car-05__actions">
             <button
               type="button"

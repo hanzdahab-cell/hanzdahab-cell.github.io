@@ -68,7 +68,7 @@ export function CourseCarousel() {
                 <img
                   src="/logo-freedive-dahab.png"
                   alt={isDuplicate ? '' : 'Freedive Dahab'}
-                  className="h-8 w-auto max-w-none object-contain sm:h-9 md:h-10"
+                  className="h-12 w-auto max-w-none object-contain sm:h-14 md:h-16"
                   width="843"
                   height="645"
                   loading="lazy"

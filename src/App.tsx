@@ -162,13 +162,13 @@ export default function App() {
                   onNavigate={navigateTo}
                 />
 
-                <SSICertificates variant="home" />
-
                 {/* Diver Voices & Testimonials */}
                 <TestimonialsSection />
 
                 {/* Freedive Dahab legacy and milestones */}
                 <DescentStats onNavigate={navigateTo} />
+
+                <SSICertificates variant="home" />
 
               </div>
             </div>

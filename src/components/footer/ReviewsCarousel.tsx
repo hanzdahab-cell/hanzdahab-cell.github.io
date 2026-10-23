@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Pause, Play } from 'lucide-react';
 import { useReducedMotion } from 'framer-motion';
 import { InfiniteMovingCards } from '../ui/infinite-moving-cards';
-import { REVIEW_SOURCES, reviews, ReviewPlatform } from '../../data/reviews';
+import { REVIEW_SOURCES, reviews, type ReviewPlatform } from '../../data/reviews';
 import { useLanguage } from '../../context/LanguageContext';
 import {
   EXTERNAL_REVIEW_CONSENT_EVENT,
@@ -11,14 +11,13 @@ import {
 
 export function PlatformMark({ platform }: { platform: ReviewPlatform }) {
   if (platform === 'tripadvisor') {
-    // Simplified TripAdvisor owl: green disc + binocular eyes
     return (
       <span
-        className="inline-flex w-6 h-6 rounded-full items-center justify-center shrink-0"
+        className="inline-flex size-6 shrink-0 items-center justify-center rounded-full"
         style={{ backgroundColor: '#34E0A1' }}
-        aria-label="TripAdvisor"
+        aria-hidden="true"
       >
-        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" aria-hidden="true">
+        <svg viewBox="0 0 24 24" className="size-4" fill="none">
           <circle cx="7.5" cy="12" r="3.2" stroke="#000" strokeWidth="1.6" />
           <circle cx="16.5" cy="12" r="3.2" stroke="#000" strokeWidth="1.6" />
           <circle cx="7.5" cy="12" r="1" fill="#000" />
@@ -28,10 +27,13 @@ export function PlatformMark({ platform }: { platform: ReviewPlatform }) {
       </span>
     );
   }
-  // Google "G"
+
   return (
-    <span className="inline-flex w-6 h-6 rounded-full bg-white border border-slate-200 items-center justify-center shrink-0" aria-label="Google">
-      <svg viewBox="0 0 24 24" className="w-4 h-4" aria-hidden="true">
+    <span
+      className="inline-flex size-6 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white"
+      aria-hidden="true"
+    >
+      <svg viewBox="0 0 24 24" className="size-4">
         <path
           fill="#4285F4"
           d="M21.6 12.23c0-.68-.06-1.36-.19-2.02H12v3.83h5.4a4.6 4.6 0 0 1-2 3.02v2.5h3.23c1.9-1.74 2.97-4.3 2.97-7.33Z"
@@ -54,8 +56,10 @@ export function ReviewsCarousel() {
   const [isPaused, setIsPaused] = useState(false);
   const [isInteractionPaused, setIsInteractionPaused] = useState(false);
   const [activeReview, setActiveReview] = useState(0);
-  const [externalReviewsEnabled, setExternalReviewsEnabled] = useState(hasExternalReviewConsent);
-  const [widgetsInView, setWidgetsInView] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [externalReviewsEnabled, setExternalReviewsEnabled] = useState(
+    hasExternalReviewConsent,
+  );
   const reduceMotion = useReducedMotion() === true;
   const { t } = useLanguage();
   const sectionRef = useRef<HTMLElement>(null);
@@ -65,14 +69,14 @@ export function ReviewsCarousel() {
     if (!section) return;
 
     if (!('IntersectionObserver' in window)) {
-      setWidgetsInView(true);
+      setIsVisible(true);
       return;
     }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setWidgetsInView(true);
+          setIsVisible(true);
           observer.disconnect();
         }
       },
@@ -93,7 +97,7 @@ export function ReviewsCarousel() {
   }, []);
 
   useEffect(() => {
-    if (!externalReviewsEnabled || !widgetsInView) return;
+    if (!externalReviewsEnabled || !isVisible) return;
 
     const addScript = (id: string, src: string) => {
       if (document.getElementById(id)) return;
@@ -111,20 +115,28 @@ export function ReviewsCarousel() {
       'https://www.jotform.com/website-widgets/embed/01a1632c6fb8700089e9632c90b420331d61',
     );
     addScript('elfsight-review-widget-script', 'https://elfsightcdn.com/platform.js');
+
     return () => {
       document.getElementById('jotform-review-widget-script')?.remove();
       document.getElementById('elfsight-review-widget-script')?.remove();
+      document
+        .getElementById('JFWebsiteWidget-01a1632c6fb8700089e9632c90b420331d61')
+        ?.replaceChildren();
+      document.querySelector('.elfsight-app-07e8aff4-b227-4bb3-a052-0a143c636b09')
+        ?.replaceChildren();
     };
-  }, [externalReviewsEnabled, widgetsInView]);
+  }, [externalReviewsEnabled, isVisible]);
 
   useEffect(() => {
-    if (isPaused || isInteractionPaused || reduceMotion || reviews.length < 2) return;
+    if (isPaused || isInteractionPaused || reduceMotion || !isVisible || reviews.length < 2) {
+      return;
+    }
 
     const interval = window.setInterval(() => {
       setActiveReview((active) => (active + 1) % reviews.length);
     }, 7600);
     return () => window.clearInterval(interval);
-  }, [isPaused, isInteractionPaused, reduceMotion]);
+  }, [isPaused, isInteractionPaused, isVisible, reduceMotion]);
 
   return (
     <section
@@ -150,23 +162,85 @@ export function ReviewsCarousel() {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-            {REVIEW_SOURCES.map((s) => (
+            {REVIEW_SOURCES.map((source) => (
               <a
-                key={s.platform}
-                href={s.url}
+                key={source.platform}
+                href={source.url}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex min-h-11 items-center gap-2 rounded-lg text-xs font-alata text-white/85 transition-colors hover:text-cyan-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
               >
-                <PlatformMark platform={s.platform} />
+                <PlatformMark platform={source.platform} />
                 <span className="inline-flex items-center gap-1">
-                  {s.label}
-                  <ArrowRight className="w-3 h-3" />
+                  {source.label}
+                  <ArrowRight className="size-3" aria-hidden="true" />
                 </span>
               </a>
             ))}
           </div>
         </header>
+
+        <div className="mx-auto mb-12 grid max-w-4xl grid-cols-1 gap-6">
+          <section
+            aria-labelledby="google-live-reviews-title"
+            className="min-w-0 rounded-2xl border border-white/10 bg-[#0A2943]/80 p-4 shadow-lg sm:p-6"
+          >
+            <h3
+              id="google-live-reviews-title"
+              className="mb-4 font-bebas text-2xl tracking-wide text-white"
+            >
+              GOOGLE REVIEWS
+            </h3>
+            {externalReviewsEnabled ? (
+              <div
+                id="JFWebsiteWidget-01a1632c6fb8700089e9632c90b420331d61"
+                className="min-h-72"
+              />
+            ) : (
+              <p className="flex min-h-24 items-center text-sm leading-relaxed text-slate-300">
+                Enable external review feeds in Cookie settings to load the live Google widget.
+              </p>
+            )}
+            <a
+              href={REVIEW_SOURCES.find((source) => source.platform === 'google')?.url}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 inline-flex min-h-11 items-center rounded-lg text-sm text-cyan-200 underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              Open Google reviews
+            </a>
+          </section>
+
+          <section
+            aria-labelledby="tripadvisor-live-reviews-title"
+            className="min-w-0 rounded-2xl border border-white/10 bg-[#0A2943]/80 p-4 shadow-lg sm:p-6"
+          >
+            <h3
+              id="tripadvisor-live-reviews-title"
+              className="mb-4 font-bebas text-2xl tracking-wide text-white"
+            >
+              TRIPADVISOR REVIEWS
+            </h3>
+            {externalReviewsEnabled ? (
+              <div
+                className="elfsight-app-07e8aff4-b227-4bb3-a052-0a143c636b09 min-h-72"
+                data-elfsight-app-lazy=""
+              />
+            ) : (
+              <p className="flex min-h-24 items-center text-sm leading-relaxed text-slate-300">
+                Enable external review feeds in Cookie settings to load the live TripAdvisor widget.
+              </p>
+            )}
+            <a
+              href={REVIEW_SOURCES.find((source) => source.platform === 'tripadvisor')?.url}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 inline-flex min-h-11 items-center rounded-lg text-sm text-cyan-200 underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              Open TripAdvisor reviews
+            </a>
+          </section>
+        </div>
 
         <div className="mb-5 flex items-center justify-center gap-2">
           <button
@@ -181,12 +255,12 @@ export function ReviewsCarousel() {
             }
             disabled={reduceMotion}
             onClick={() => setIsPaused((paused) => !paused)}
-            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/60 bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-white/60 bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isPaused || reduceMotion ? (
-              <Play className="h-4 w-4" aria-hidden="true" />
+              <Play className="size-4" aria-hidden="true" />
             ) : (
-              <Pause className="h-4 w-4" aria-hidden="true" />
+              <Pause className="size-4" aria-hidden="true" />
             )}
           </button>
           <div
@@ -203,9 +277,12 @@ export function ReviewsCarousel() {
             ))}
           </div>
         </div>
+
         <div
           onMouseEnter={() => setIsInteractionPaused(true)}
-          onMouseLeave={(event) => setIsInteractionPaused(event.currentTarget.contains(document.activeElement))}
+          onMouseLeave={(event) =>
+            setIsInteractionPaused(event.currentTarget.contains(document.activeElement))
+          }
           onFocusCapture={() => setIsInteractionPaused(true)}
           onBlurCapture={(event) => {
             if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
@@ -218,7 +295,7 @@ export function ReviewsCarousel() {
             speed="normal"
             direction="left"
             pauseOnHover={false}
-            isPaused={isPaused || isInteractionPaused}
+            isPaused={isPaused || isInteractionPaused || !isVisible}
             className="pb-1"
             cardClassName="flex"
             renderItem={(review) => (
@@ -242,13 +319,15 @@ export function ReviewsCarousel() {
                 <div className="flex items-center gap-3 border-t border-white/10 pt-4">
                   <span
                     aria-hidden="true"
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 text-sm font-semibold text-white"
+                    className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white/10 text-sm font-semibold text-white"
                   >
                     {review.name.slice(0, 1).toUpperCase()}
                   </span>
                   <div className="min-w-0 flex-1 leading-tight">
                     <div className="truncate text-sm font-semibold text-white">{review.name}</div>
-                    {review.date && <div className="mt-1 text-xs text-slate-400">{review.date}</div>}
+                    {review.date && (
+                      <div className="mt-1 text-xs text-slate-400">{review.date}</div>
+                    )}
                   </div>
                   <a
                     href={review.sourceUrl}
@@ -263,67 +342,6 @@ export function ReviewsCarousel() {
               </article>
             )}
           />
-        </div>
-
-        <div className="mt-14 grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2">
-          <section
-            aria-labelledby="google-live-reviews-title"
-            className="min-w-0 rounded-2xl border border-white/10 bg-[#0A2943]/70 p-4 sm:p-6"
-          >
-            <h3
-              id="google-live-reviews-title"
-              className="mb-4 font-bebas text-2xl tracking-wide text-white"
-            >
-              GOOGLE REVIEWS
-            </h3>
-            {externalReviewsEnabled ? (
-              <div
-                id="JFWebsiteWidget-01a1632c6fb8700089e9632c90b420331d61"
-                className="min-h-72"
-              />
-            ) : (
-              <p className="flex min-h-72 items-center text-sm leading-relaxed text-slate-300">
-                Enable external review feeds in Cookie settings to load the live Google widget.
-              </p>
-            )}
-            <a
-              href={REVIEW_SOURCES.find((source) => source.platform === 'google')?.url}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-3 inline-flex min-h-11 items-center rounded-lg text-sm text-cyan-200 underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-            >
-              Open Google reviews
-            </a>
-          </section>
-          <section
-            aria-labelledby="tripadvisor-live-reviews-title"
-            className="min-w-0 rounded-2xl border border-white/10 bg-[#0A2943]/70 p-4 sm:p-6"
-          >
-            <h3
-              id="tripadvisor-live-reviews-title"
-              className="mb-4 font-bebas text-2xl tracking-wide text-white"
-            >
-              TRIPADVISOR REVIEWS
-            </h3>
-            {externalReviewsEnabled ? (
-              <div
-                className="elfsight-app-07e8aff4-b227-4bb3-a052-0a143c636b09 min-h-72"
-                data-elfsight-app-lazy=""
-              />
-            ) : (
-              <p className="flex min-h-72 items-center text-sm leading-relaxed text-slate-300">
-                Enable external review feeds in Cookie settings to load the live TripAdvisor widget.
-              </p>
-            )}
-            <a
-              href={REVIEW_SOURCES.find((source) => source.platform === 'tripadvisor')?.url}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-3 inline-flex min-h-11 items-center rounded-lg text-sm text-cyan-200 underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-            >
-              Open TripAdvisor reviews
-            </a>
-          </section>
         </div>
       </div>
     </section>

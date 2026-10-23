@@ -11,23 +11,20 @@ const HOME_BADGES = [
   {
     id: 'freediving-center',
     title: 'SSI Freediving Center',
-    src: '/badges/ssi-freediving-center-upload.pdf',
+    src: '/badges/ssi-freediving-center.png',
     alt: 'SSI Freediving Center official badge',
-    format: 'pdf',
   },
   {
     id: 'instructor-training-center',
     title: 'SSI Pro Instructor Training Center',
-    src: '/badges/ssi-instructor-training-center-upload.png',
+    src: '/badges/badge-instructor-training-center.png',
     alt: 'SSI Pro Instructor Training Center official badge',
-    format: 'image',
   },
   {
     id: 'mermaid-center',
     title: 'SSI Mermaid Center',
-    src: '/badges/ssi-mermaid-center-upload.pdf',
+    src: '/badges/ssi-mermaid-center.png',
     alt: 'SSI Mermaid Center official badge',
-    format: 'pdf',
   },
 ] as const;
 
@@ -104,81 +101,45 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
       <section
         id="ssi-centers"
         aria-labelledby="ssi-centers-title"
-        className="ocean-surface film-grain relative overflow-hidden px-6 py-16 sm:py-20"
+        className="ssi-home-badges relative px-6 py-10 sm:py-12"
       >
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              'radial-gradient(ellipse 60% 50% at 50% 0%, rgba(34,98,140,0.28) 0%, transparent 70%)',
-          }}
-        />
-        <div className="relative mx-auto max-w-6xl">
+        <div className="mx-auto max-w-5xl">
           <h2
             id="ssi-centers-title"
-            className="mb-10 text-center font-bebas text-4xl tracking-wide text-white sm:mb-12 sm:text-5xl"
+            className="mb-5 text-center font-bebas text-3xl tracking-wide text-white sm:mb-7 sm:text-4xl"
           >
-            OFFICIAL SSI TRAINING CENTERS
+            OFFICIAL PRO SSI{' '}
+            <span className="text-[#89ffff]">FREEDIVING TRAINING</span> CENTER
           </h2>
 
-          <div className="grid grid-cols-1 items-center gap-4 sm:grid-cols-3 sm:gap-6">
+          <ul className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-8 gap-y-4 sm:gap-x-14">
             {HOME_BADGES.map((badge, index) => (
-              <TiltSurface
-                key={badge.id}
-                delay={index * 0.08}
-                className="group h-full rounded-3xl bg-white/[0.025] px-4 py-5 transition-colors duration-300 hover:bg-white/[0.055] sm:px-5 sm:py-6"
-              >
-                <a
-                  href={SSI_FREEDIVE_DAHAB_URL}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={`Verify ${badge.title} on the official SSI website`}
-                  className="flex min-h-60 h-full flex-col items-center justify-center rounded-2xl text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-200"
+              <li key={badge.id}>
+                <TiltSurface
+                  delay={index * 0.08}
+                  className="group flex items-center justify-center [&::before]:hidden [&>.fd-tilt-glare]:hidden"
                 >
-                  <div className="flex h-48 w-full items-center justify-center sm:h-52">
-                    {badge.format === 'pdf' ? (
-                      <object
-                        data={`${badge.src}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`}
-                        type="application/pdf"
-                        aria-label={badge.alt}
-                        className="pointer-events-none h-full w-full border-0 bg-transparent"
-                      />
-                    ) : (
-                      <img
-                        src={badge.src}
-                        alt={badge.alt}
-                        width="2000"
-                        height="2000"
-                        loading="lazy"
-                        decoding="async"
-                        className="h-full w-full object-contain transition-transform duration-500 motion-safe:group-hover:scale-[1.04]"
-                      />
-                    )}
-                  </div>
-                  <h3 className="mt-4 font-alata text-sm font-semibold text-white sm:text-base">
-                    {badge.title}
-                  </h3>
-                </a>
-              </TiltSurface>
+                  <a
+                    href={SSI_FREEDIVE_DAHAB_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`Verify ${badge.title} on the official SSI website`}
+                    className="flex size-24 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-200 sm:size-28"
+                  >
+                    <img
+                      src={badge.src}
+                      alt={badge.alt}
+                      width="2000"
+                      height="2000"
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full object-contain transition-transform duration-500 motion-safe:group-hover:scale-105"
+                    />
+                  </a>
+                </TiltSurface>
+              </li>
             ))}
-          </div>
-
-          <a
-            href={SSI_FREEDIVE_DAHAB_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="mx-auto mt-8 inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-4 py-2 font-alata text-sm font-semibold text-white/90 transition-colors hover:text-cyan-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-          >
-            <span
-              aria-hidden="true"
-              className="grid size-5 place-items-center rounded border border-cyan-200/70 text-cyan-200"
-            >
-              <ShieldCheck className="size-3.5" />
-            </span>
-            SSI Facility #720079 · Verify on SSI
-            <ArrowRight className="size-4" aria-hidden="true" />
-          </a>
+          </ul>
         </div>
       </section>
     );

@@ -16,9 +16,9 @@ interface StorySlide {
 
 const STORY_SLIDES: StorySlide[] = [
   {
-    src: '/images/story-carousel/red-sea-blue-hole.jpg',
+    src: '/images/dahab-story/why-dahab-freediving.webp',
     title: 'Why Dahab Is Ideal for Freediving',
-    alt: 'Freedivers exploring the deep blue water of Dahab’s Blue Hole',
+    alt: 'A freediver surrounded by the clear water and coral reef of Dahab',
     detail:
       "Dahab's unique geography gives freedivers everything they need, all within a short walk of the shore.",
   },

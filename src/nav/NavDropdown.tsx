@@ -198,7 +198,7 @@ function Panel({
               onSelect(item);
             }
           }}
-          className={`group/row flex min-h-11 items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium leading-tight transition-colors ${OCEAN_TEXT} ${HOVER_BG} ${FOCUS}`}
+          className={`group/row flex min-h-11 items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium leading-tight transition-colors uppercase ${OCEAN_TEXT} ${HOVER_BG} ${FOCUS}`}
         >
           <span className="transition-transform duration-200 group-hover/row:scale-110 motion-reduce:transition-none">
             <MenuItemIcon menuId={menu.id} index={index} icon={item.icon} />
