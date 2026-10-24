@@ -4,6 +4,7 @@ import {
   Clock,
   Award,
   Waves,
+  Check,
   CheckCircle,
   ChevronRight,
   Share2,
@@ -492,9 +493,7 @@ export function CourseDetailPage({
                       </h3>
                       <div className="flex items-center justify-between text-xs font-mono text-slate-400">
                         <span>
-                          {'durationDays' in rel
-                            ? `${rel.durationDays} days`
-                            : rel.durationWeeksOrDays}
+                          `${rel.durationDays} days`
                         </span>
                         <span className="text-cyan-300 font-bold">{formatPrice(rel.priceEur)}</span>
                       </div>

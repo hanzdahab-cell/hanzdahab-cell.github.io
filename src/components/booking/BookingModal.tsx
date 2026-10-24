@@ -12,6 +12,18 @@ interface BookingModalProps {
   currency: 'EUR' | 'USD' | 'EGP';
 }
 
+interface BookingOffering {
+  id: string;
+  title: string;
+  priceEur: number;
+  rateNote?: string;
+}
+
+interface BookingOfferingGroup {
+  label: string;
+  offerings: BookingOffering[];
+}
+
 export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: BookingModalProps) {
   const { t, isRtl } = useLanguage();
   const [selectedId, setSelectedId] = useState<string>('ssi-level-1');
@@ -61,7 +73,7 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
   if (!isOpen) return null;
 
   // Find selected course or package
-  const offeringGroups = [
+  const offeringGroups: BookingOfferingGroup[] = [
     {
       label: 'Courses',
       offerings: ssiCourses.map(c => ({ id: c.id, title: c.title, priceEur: c.priceEur })),
