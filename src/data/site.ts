@@ -21,13 +21,13 @@ export const siteConfig: SiteConfig = {
     { href: '#faq', label: 'FAQ' }
   ],
   location: {
-    address: 'Lighthouse Bay, Dahab',
+    address: 'El Fanar Street, opposite German Bakery, Dahab City, 46617, Egypt',
     town: 'Dahab, South Sinai, Egypt',
-    coordinates: { lat: 28.4955, lng: 34.5135 }
+    coordinates: { lat: 28.500013, lng: 34.5193704 }
   },
   contact: {
-    phone: '+20 100 845 2911',
-    whatsappFormatted: '+20 100 845 2911',
+    phone: '+20 109 873 0731',
+    whatsappFormatted: '+20 109 873 0731',
     email: 'info@freedivedahab.com'
   },
   social: {

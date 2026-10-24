@@ -496,8 +496,7 @@ export function SiteHeader({
               onClick={() => onOpenBooking('ssi-level-1')}
               className={`fd-button inline-flex min-h-10 items-center justify-center whitespace-nowrap rounded-full px-2 text-[0.65rem] font-semibold sm:px-4 sm:text-sm ${HEADER_CTA_FOCUS}`}
             >
-              <span className="sm:hidden">Book a Dive</span>
-              <span className="hidden sm:inline">Book Now</span>
+              Book a Dive
             </button>
 
             <button

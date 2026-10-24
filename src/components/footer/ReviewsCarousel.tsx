@@ -135,8 +135,11 @@ export function ReviewsCarousel() {
       const style = document.createElement('style');
       style.id = 'freedive-tripadvisor-theme';
       style.textContent = `
-        [class*='HeaderContainer__Inner'] { background-color: #000000 !important; }
-        [class*='ReviewBackground__Container'] { background-color: #000000 !important; }
+        [class*='HeaderContainer__Inner'],
+        [class*='ReviewBackground__Container'] {
+          background: linear-gradient(180deg, #292D3C 0%, #131620 100%) !important;
+          background-image: linear-gradient(180deg, #292D3C 0%, #131620 100%) !important;
+        }
         a[href*='elfsight.com/tripadvisor-reviews-widget'] { display: none !important; }
       `;
       shadowRoot.appendChild(style);

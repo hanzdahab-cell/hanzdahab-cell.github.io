@@ -749,7 +749,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       backToTop: 'Back to Top',
     },
     booking: {
-      modalTitle: 'Start Your Freediving Journey',
+      modalTitle: 'START YOU FREEDIVING JOURNEY',
       modalSubtitle: 'Direct reservation & personalized inquiry with our senior SSI instructor team in Dahab.',
       fullName: 'Your Full Name',
       fullNamePlaceholder: 'e.g. Sarah Miller',

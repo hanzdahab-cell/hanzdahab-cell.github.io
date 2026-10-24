@@ -112,9 +112,9 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
             FREEDIVING TRAINING CENTER
           </h2>
 
-          <ul className="mx-auto grid w-full grid-cols-1 items-center gap-6 sm:grid-cols-3 sm:gap-8 lg:gap-12">
+          <ul className="mx-auto flex w-full max-w-[27rem] items-center justify-center gap-0">
             {HOME_BADGES.map((badge, index) => (
-              <li key={badge.id}>
+              <li key={badge.id} className="flex w-1/3 min-w-0 justify-center">
                 <TiltSurface
                   delay={index * 0.08}
                   className="group flex items-center justify-center [&::before]:hidden [&>.fd-tilt-glare]:hidden"
@@ -133,7 +133,7 @@ export function SSICertificates({ onOpenBooking, onNavigate, variant = 'full' }:
                       height="240"
                       loading="lazy"
                       decoding="async"
-                      className="h-36 w-[min(100%,15rem)] object-contain transition-transform duration-500 motion-safe:group-hover:scale-105"
+                      className="h-24 w-full max-w-60 object-contain transition-transform duration-500 motion-safe:group-hover:scale-105 sm:h-36"
                     />
                   </a>
                 </TiltSurface>

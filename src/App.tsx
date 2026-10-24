@@ -423,10 +423,7 @@ export default function App() {
       </main>
 
       {/* TECHNICAL ARCHITECTURAL FOOTER (On Every Page with Page Switching) */}
-      <Footer
-        onOpenBooking={() => handleOpenBooking()}
-        onNavigate={navigateTo}
-      />
+      <Footer />
 
       {/* RESERVATION DRAWER & WHATSAPP DIRECT CONNECT */}
       <BookingModal

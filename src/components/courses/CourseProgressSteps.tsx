@@ -82,7 +82,7 @@ export function CourseProgressSteps({ steps, className = '' }: CourseProgressSte
                   height="32"
                   loading="lazy"
                   decoding="async"
-                  className="size-7 object-contain sm:size-8"
+                  className="size-7 object-contain brightness-0 invert sm:size-8"
                 />
               ) : (
                 String(step.number).padStart(2, '0')

@@ -5,11 +5,8 @@ import {
   Award,
   Waves,
   CheckCircle,
-  Shield,
   ChevronRight,
-  Users,
   Share2,
-  Check,
 } from 'lucide-react';
 import { PageType, Course, SpecialtyCourse, InstructorCourse } from '../../types';
 import { ssiCourses, specialtyCourses, instructorCourses } from '../../data/courses';
@@ -86,14 +83,7 @@ export function CourseDetailPage({
 
   const depthLabel = 'maxDepthMeters' in course ? `${course.maxDepthMeters}m max depth` : null;
 
-  const collection: (Course | SpecialtyCourse | InstructorCourse)[] =
-    isCore
-      ? ssiCourses.filter((item) => item.id !== 'ssi-basic-freediver')
-      : isSpecialty
-        ? specialtyCourses
-        : instructorCourses;
-
-  const related = collection.filter((c) => c.slug !== course.slug).slice(0, 3);
+  const related = ssiCourses.filter((item) => item.slug !== course.slug);
 
   const skillsList = isCore
     ? (course as Course).highlights
@@ -118,8 +108,6 @@ export function CourseDetailPage({
     : isSpecialty
     ? (course as SpecialtyCourse).fullDesc
     : (course as InstructorCourse).description;
-
-  const includedList: string[] | null = 'included' in course ? (course as Course).included : null;
 
   const levelBadge =
     'level' in course
@@ -219,20 +207,6 @@ export function CourseDetailPage({
               />
             )}
 
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/90">
-              <span className="inline-flex items-center gap-2">
-                <Clock className="h-4 w-4 text-cyan-200" aria-hidden="true" />
-                {durationLabel}
-              </span>
-              {depthLabel && (
-                <span className="inline-flex items-center gap-2">
-                  <Waves className="h-4 w-4 text-cyan-200" aria-hidden="true" />
-                  {depthLabel}
-                </span>
-              )}
-              <span className="font-semibold text-white">{formatPrice(course.priceEur)}</span>
-            </div>
-
             <div className="flex flex-wrap gap-3 pt-1">
               <button
                 type="button"
@@ -276,7 +250,7 @@ export function CourseDetailPage({
               { id: 'course-highlights', label: 'Course highlights' },
               { id: 'course-skills', label: isInstructor ? 'Course modules' : 'What you will learn' },
               ...(isCore && (course as Course).schedule ? [{ id: 'course-schedule', label: 'Day by day' }] : []),
-              ...(includedList ? [{ id: 'course-included', label: "What's included" }] : []),
+              { id: 'course-gallery', label: 'Photo gallery' },
               { id: 'course-booking', label: 'Price & booking' },
             ].map((item) => (
               <li key={item.id}>
@@ -397,23 +371,18 @@ export function CourseDetailPage({
               </FadeUp>
             )}
 
-            {/* Included (core) or schedule */}
-            {includedList && (
-              <FadeUp id="course-included" className="scroll-mt-32 space-y-5">
-                <h2 className="font-bebas text-3xl sm:text-4xl text-white tracking-[0.05em] flex items-center gap-3">
-                  <Check className="w-5 h-5 text-cyan-400" />
-                  What's included
-                </h2>
-                <div className="space-y-2.5">
-                  {includedList.map((inc, i) => (
-                    <div key={i} className="flex items-start gap-3 text-xs sm:text-sm text-slate-300">
-                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-1.5 shrink-0" />
-                      <span className="font-light">{inc}</span>
-                    </div>
-                  ))}
-                </div>
-              </FadeUp>
-            )}
+            <FadeUp id="course-gallery" className="scroll-mt-32 space-y-5">
+              <h2 className="font-bebas text-3xl tracking-[0.05em] text-white sm:text-4xl">
+                Course photo gallery
+              </h2>
+              <CoursePhotoCarousel
+                slides={gallerySlides}
+                onBook={onOpenBooking}
+                onView={handleNavigateToCourse}
+                onCalendar={() => onNavigate('calendar')}
+                variant="gallery"
+              />
+            </FadeUp>
 
             {isCore && !(course as Course).schedule && (
               <FadeUp className="rounded-2xl border border-ocean-pale/25 bg-gradient-to-r from-[#081F35] via-[#0E3453] to-[#081F35] p-6">
@@ -458,18 +427,9 @@ export function CourseDetailPage({
                   <ChevronRight className="w-4 h-4" />
                 </button>
 
-                <div className="space-y-3 pt-2 border-t border-white/10">
-                  {[
-                    { icon: Shield, text: 'Official SSI certification & digital materials' },
-                    { icon: Users, text: 'Small groups — max 3:1 student-to-instructor' },
-                    { icon: Waves, text: 'Lighthouse Bay & Blue Hole training locations' },
-                  ].map((row, i) => (
-                    <div key={i} className="flex items-center gap-3 text-[11px] text-slate-300">
-                      <row.icon className="w-4 h-4 text-cyan-400 shrink-0" />
-                      <span className="font-light">{row.text}</span>
-                    </div>
-                  ))}
-                </div>
+                <p className="border-t border-white/10 pt-4 text-xs leading-relaxed text-slate-300">
+                  A 30% deposit secures your booking. The remaining balance is due on arrival in Dahab, and free date changes are available up to 14 days before your course starts.
+                </p>
               </div>
 
               {/* Prerequisites */}
@@ -494,7 +454,7 @@ export function CourseDetailPage({
           <FadeUp className="relative z-10 mt-20">
             <div className="flex items-center justify-between mb-8">
               <h2 className="font-bebas text-3xl sm:text-4xl text-white tracking-[0.05em]">
-                Continue your <span className="text-cyan-300">journey</span>
+                Our <span className="text-cyan-300">core courses</span>
               </h2>
               <button
                 onClick={() => onNavigate('courses')}

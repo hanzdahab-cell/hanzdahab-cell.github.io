@@ -8,7 +8,7 @@ interface PointerTilt {
   active: boolean;
 }
 
-export function HeroLogo3D() {
+export function HeroLogo3D({ className = 'car-05__logo-button' }: { className?: string }) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pointerRef = useRef<PointerTilt>({ x: 0, y: 0, active: false });
@@ -181,7 +181,7 @@ export function HeroLogo3D() {
     <button
       ref={buttonRef}
       type="button"
-      className="car-05__logo-button"
+      className={className}
       aria-label="Freedive Dahab 3D logo. Activate to spin."
       title="Move to tilt or tap to spin"
       onPointerMove={handlePointerMove}

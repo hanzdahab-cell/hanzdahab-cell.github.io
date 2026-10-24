@@ -250,14 +250,15 @@ export function CookieConsent() {
       ) : hasConsent ? (
         <button
           type="button"
+          aria-label="Cookie settings"
+          title="Cookie settings"
           onClick={() => {
             setShowSettings(false);
             setIsOpen(true);
           }}
-          className="fixed bottom-3 left-3 z-[60] inline-flex min-h-11 items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-[#081F35] shadow-lg transition-colors hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 sm:bottom-5 sm:left-5"
+          className="fixed bottom-3 left-3 z-[60] inline-flex size-11 items-center justify-center rounded-full border border-slate-200 bg-white p-0 text-[#081F35] shadow-lg transition-colors hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 sm:bottom-5 sm:left-5"
         >
-          <Cookie className="h-4 w-4 text-teal-800" aria-hidden="true" />
-          Cookie settings
+          <Cookie className="h-5 w-5 text-teal-800" aria-hidden="true" />
         </button>
       ) : null}
     </>
