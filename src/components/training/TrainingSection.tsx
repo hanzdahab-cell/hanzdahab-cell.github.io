@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Compass, Waves, Target, Activity, ShieldCheck, CheckCircle2, ArrowRight, Clock, Award, Users, MapPin } from 'lucide-react';
 import { PageType } from '../../types';
+import { OfferingCardStack } from '../ui/OfferingCardStack';
+import { SectionHero } from '../ui/SectionHero';
 
 interface TrainingSectionProps {
   onOpenBooking: (courseId?: string) => void;
@@ -20,6 +22,8 @@ interface TrainingModule {
   tag: string;
   locationName: string;
   siteId: string;
+  imageSrc: string;
+  imageAlt: string;
 }
 
 export function TrainingSection({ onOpenBooking, currency = 'EUR', onNavigate }: TrainingSectionProps) {
@@ -43,6 +47,8 @@ export function TrainingSection({ onOpenBooking, currency = 'EUR', onNavigate }:
       ],
       recommendedFor: 'Certified freedivers looking to safely increase depth and bottom confidence',
       tag: 'DAILY SESSIONS',
+      imageSrc: '/images/story-carousel/training-line.jpg',
+      imageAlt: 'Freediver training beside a line in the Red Sea',
     },
     equalization: {
       id: 'equalization-lab',
@@ -61,6 +67,8 @@ export function TrainingSection({ onOpenBooking, currency = 'EUR', onNavigate }:
       ],
       recommendedFor: 'Divers stuck between 20m–40m or working towards Master & Instructor depth',
       tag: 'MASTERCLASS',
+      imageSrc: '/courses/mouthfill-workshop.jpg',
+      imageAlt: 'Freediver practising equalisation in open water',
     },
     pool: {
       id: 'pool-apnea',
@@ -79,6 +87,8 @@ export function TrainingSection({ onOpenBooking, currency = 'EUR', onNavigate }:
       ],
       recommendedFor: 'All levels seeking longer breath-hold duration and flawless underwater economy',
       tag: 'CONDITIONING',
+      imageSrc: '/images/story-carousel/surface-session.jpg',
+      imageAlt: 'Freedivers practising together in calm water',
     },
     coaching: {
       id: 'master-coaching',
@@ -97,10 +107,25 @@ export function TrainingSection({ onOpenBooking, currency = 'EUR', onNavigate }:
       ],
       recommendedFor: 'Athletes, instructors, and dedicated freedivers preparing for personal bests',
       tag: 'ELITE 1-ON-1',
+      imageSrc: '/images/story-carousel/blue-hole-freediver.jpg',
+      imageAlt: 'Freediver descending on a training line at the Blue Hole',
     },
   };
 
   const current = trainingModules[activeTab];
+  const trainingStackItems = Object.entries(trainingModules).map(([tabId, module]) => ({
+    id: module.id,
+    title: module.title,
+    description: module.description,
+    imageSrc: module.imageSrc,
+    imageAlt: module.imageAlt,
+    tag: module.tag,
+    ctaLabel: 'View training focus',
+    onAction: () => {
+      setActiveTab(tabId as typeof activeTab);
+      document.getElementById('training-active-module')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    },
+  }));
 
   const handleScrollToMap = () => {
     const elem = document.getElementById('coastline-map');
@@ -110,28 +135,34 @@ export function TrainingSection({ onOpenBooking, currency = 'EUR', onNavigate }:
   };
 
   return (
-    <section id="training" className="ocean-surface relative overflow-hidden border-t border-white/5 px-6 py-24 text-slate-100 sm:py-32">
+    <section id="training" className="ocean-surface relative overflow-hidden border-t border-white/5 px-6 pb-24 pt-0 text-slate-100 sm:pb-32">
       {/* Ambient background glows */}
       <div className="absolute top-1/4 -left-48 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 -right-48 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto relative z-10">
-        
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-xs font-alata uppercase tracking-widest">
-            <Compass className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Dedicated Progression Track</span>
+      <SectionHero imageSrc={current.imageSrc} imageAlt={current.imageAlt} className="-mx-6 mb-20 min-h-[50svh]">
+        <div className="mx-auto max-w-4xl space-y-4 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-cyan-500/10 px-3.5 py-1.5 font-alata text-xs uppercase tracking-widest text-cyan-100">
+            <Compass className="h-3.5 w-3.5 text-cyan-200" aria-hidden="true" />
+            <span>Dedicated progression track</span>
           </div>
-
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bebas text-white tracking-[0.05em] leading-tight">
-            FREEDIVING <span className="text-cyan-300 drop-shadow-[0_0_20px_rgba(34,211,238,0.4)]">TRAINING & DEPTH LAB</span>
-          </h2>
-
-          <p className="text-sm sm:text-base text-slate-300 font-alata font-normal leading-relaxed">
-            Beyond certification courses: world-class training lines at the Dahab Blue Hole, private equalization coaching, and performance coaching with SSI Pro Master Instructors.
+          <h1 className="font-bebas text-5xl leading-tight tracking-[0.05em] text-white sm:text-6xl md:text-7xl">
+            Freediving <span className="text-cyan-200">training &amp; depth lab</span>
+          </h1>
+          <p className="mx-auto max-w-3xl text-sm leading-relaxed text-slate-100 sm:text-base">
+            Beyond certification courses: training lines at the Dahab Blue Hole, equalisation coaching,
+            and performance coaching with SSI Pro instructors.
           </p>
         </div>
+      </SectionHero>
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        <OfferingCardStack
+          label="Coached training"
+          title="Choose a training focus"
+          description="Browse the available training options, then jump to the matching focus and session information below."
+          items={trainingStackItems}
+        />
 
         {/* Tab Navigation */}
         <div id="training-modules" className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-12 scroll-mt-32">
@@ -162,7 +193,7 @@ export function TrainingSection({ onOpenBooking, currency = 'EUR', onNavigate }:
         </div>
 
         {/* Active Module Display */}
-        <div className="bg-gradient-to-br from-[#0E3453]/90 to-[#0E3453]/90 border border-white/10 rounded-2xl p-6 sm:p-10 shadow-2xl backdrop-blur-md">
+        <div id="training-active-module" className="scroll-mt-28 bg-gradient-to-br from-[#0E3453]/90 to-[#0E3453]/90 border border-white/10 rounded-2xl p-6 sm:p-10 shadow-2xl backdrop-blur-md">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
             {/* Left Content */}

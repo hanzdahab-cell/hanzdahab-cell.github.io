@@ -15,8 +15,9 @@ import { CourseInfographic, CourseProgressionCard } from './CourseInfographic';
 import { CourseProgressSteps } from './CourseProgressSteps';
 import { FadeUp } from '../ui/MotionKit';
 import { TiltSurface } from '../ui/TiltSurface';
-import { coursePhotoById, getCourseGalleryImages, ssiCourseArtworkBySlug } from '../../data/courseMedia';
-import { CoursePhotoCarousel, CourseStorySlide } from './CoursePhotoCarousel';
+import { courseCardArtworkById, ssiCourseArtworkBySlug } from '../../data/courseMedia';
+import { OfferingCardStack } from '../ui/OfferingCardStack';
+import { getCourseDetailGalleryItems } from '../../data/detailGalleries';
 
 interface CourseDetailPageProps {
   courseSlug: string;
@@ -116,22 +117,19 @@ export function CourseDetailPage({
       : isInstructor
       ? 'Instructor / Pro'
       : 'Specialty';
-  const galleryImages = getCourseGalleryImages(course.id, {
-    src: course.image.url,
-    alt: course.image.alt,
-  });
-  const gallerySlides: CourseStorySlide[] = galleryImages.map((image, index) => ({
-    id: `${course.id}-photo-${index + 1}`,
-    title: course.title,
-    subtitle: levelBadge,
-    detail: subtitleText ?? description.split('\n\n')[0],
-    courseId: course.id,
-    courseSlug: course.slug,
-    duration: durationLabel,
-    depth: depthLabel ?? undefined,
-    ...image,
-  }));
   const ssiArtwork = ssiCourseArtworkBySlug[course.slug];
+  const heroCardImage = ssiArtwork ?? courseCardArtworkById[course.id] ?? course.image;
+  const courseStackItems = getCourseDetailGalleryItems(course.id, course.title);
+  if (courseStackItems.length === 0) {
+    courseStackItems.push({
+      id: `${course.id}-gallery-cover`,
+      title: course.title,
+      description: 'Course cover photo',
+      imageSrc: course.image.url,
+      imageAlt: course.image.alt,
+      tag: 'Course gallery',
+    });
+  }
 
   const handleNavigateToCourse = (slug: string) => {
     // App's navigateTo resets scroll to the surface through Lenis
@@ -155,9 +153,18 @@ export function CourseDetailPage({
       {/* ========================================================== */}
       {/* HERO                                                        */}
       {/* ========================================================== */}
-      <header className="relative overflow-hidden bg-[#081F35]/78 pb-14 pt-28 sm:pb-20 sm:pt-32">
+      <header className="relative isolate flex min-h-[50svh] items-center overflow-hidden bg-[#081F35] pb-14 pt-28 sm:pb-20 sm:pt-32">
+        <img
+          src={heroCardImage.src}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover object-center opacity-50"
+          fetchPriority="high"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#061A2B]/95 via-[#061A2B]/80 to-[#061A2B]/45" aria-hidden="true" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#061A2B]/90 via-transparent to-[#061A2B]/25" aria-hidden="true" />
         <div className="absolute inset-0 architectural-grid-fine opacity-20" aria-hidden="true" />
-        <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-8 px-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12">
+        <div className="relative z-10 mx-auto w-full max-w-7xl px-6">
           <div className="space-y-5">
             <div className="flex items-center justify-between gap-4">
               <button
@@ -199,15 +206,6 @@ export function CourseDetailPage({
               </p>
             )}
 
-            {ssiArtwork && (
-              <img
-                src={ssiArtwork.src}
-                alt={ssiArtwork.alt}
-                className="aspect-[5/3] w-full max-w-[240px] rounded-xl border border-white/15 bg-[#0E3453] object-contain p-1"
-                loading="lazy"
-              />
-            )}
-
             <div className="flex flex-wrap gap-3 pt-1">
               <button
                 type="button"
@@ -228,13 +226,6 @@ export function CourseDetailPage({
             <span className="sr-only" aria-live="polite">{copied ? 'Course link copied to clipboard.' : ''}</span>
           </div>
 
-          <CoursePhotoCarousel
-            slides={gallerySlides}
-            onBook={onOpenBooking}
-            onView={handleNavigateToCourse}
-            onCalendar={() => onNavigate('calendar')}
-            variant="gallery"
-          />
         </div>
       </header>
 
@@ -372,16 +363,12 @@ export function CourseDetailPage({
               </FadeUp>
             )}
 
-            <FadeUp id="course-gallery" className="scroll-mt-32 space-y-5">
-              <h2 className="font-bebas text-3xl tracking-[0.05em] text-white sm:text-4xl">
-                Course photo gallery
-              </h2>
-              <CoursePhotoCarousel
-                slides={gallerySlides}
-                onBook={onOpenBooking}
-                onView={handleNavigateToCourse}
-                onCalendar={() => onNavigate('calendar')}
-                variant="gallery"
+            <FadeUp id="course-gallery" className="scroll-mt-32">
+              <OfferingCardStack
+                label="Course photo gallery"
+                title={`${course.title} gallery`}
+                description="Swipe or use the controls to view the full course photos."
+                items={courseStackItems}
               />
             </FadeUp>
 

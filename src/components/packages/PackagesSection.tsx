@@ -3,6 +3,8 @@ import { CheckCircle2, ArrowRight, ShieldCheck, Waves } from 'lucide-react';
 import { PageType } from '../../types';
 import { freedivingGalleryPhotos } from '../../data/courseMedia';
 import { PhotoCarousel } from '../ui/PhotoCarousel';
+import { OfferingCardStack } from '../ui/OfferingCardStack';
+import { SectionHero } from '../ui/SectionHero';
 
 interface PackagesSectionProps {
   onOpenBooking: (pkgId?: string) => void;
@@ -11,6 +13,28 @@ interface PackagesSectionProps {
 }
 
 export function PackagesSection({ onOpenBooking, currency, onNavigate }: PackagesSectionProps) {
+  const comboPackage = packagesData.find((pkg) => pkg.id === 'pkg-combo-week');
+  const packageStackItems = packagesData.map((pkg) => ({
+    id: pkg.id,
+    title: pkg.title,
+    description: pkg.subtitle,
+    imageSrc: pkg.image.url,
+    imageAlt: pkg.image.alt,
+    tag: pkg.badge ?? pkg.duration,
+    href: `#package-${pkg.slug}`,
+    ctaLabel: 'Explore package',
+  }));
+  const comboWeekItems = (comboPackage?.programs ?? []).map((program, index) => ({
+    id: `${comboPackage?.id ?? 'combo-week'}-${index}`,
+    title: program.title,
+    description: program.overview,
+    imageSrc: comboPackage?.image.url,
+    imageAlt: comboPackage?.image.alt,
+    tag: program.duration,
+    href: `#package-${comboPackage?.slug}`,
+    ctaLabel: 'View week details',
+  }));
+
   const formatPrice = (eur: number) => {
     if (currency === 'USD') return `$${Math.round(eur * 1.08)}`;
     if (currency === 'EGP') return `E£${Math.round(eur * 52)}`;
@@ -18,23 +42,39 @@ export function PackagesSection({ onOpenBooking, currency, onNavigate }: Package
   };
 
   return (
-    <section id="packages" className="ocean-surface relative border-t border-white/5 px-6 py-32">
-      <div className="max-w-7xl mx-auto relative z-10">
-        
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
-          <div className="inline-flex items-center gap-2 text-xs font-alata tracking-[0.3em] uppercase text-cyan-400">
+    <section id="packages" className="ocean-surface relative border-t border-white/5 px-6 pb-24 pt-0 sm:pb-32">
+      <SectionHero imageSrc={packagesData[0]?.image.url ?? '/images/story-carousel/training-line.jpg'} imageAlt="Freediver at Lighthouse Bay" className="-mx-6 mb-20 min-h-[50svh]">
+        <div className="mx-auto max-w-3xl space-y-4 text-center">
+          <div className="inline-flex items-center gap-2 text-xs font-alata tracking-[0.3em] uppercase text-cyan-100">
             <Waves className="w-4 h-4" aria-hidden="true" />
-            <span>FREEDIVING PROGRAMS &amp; TRAINING WEEKS</span>
+            <span>Freediving programs &amp; training weeks</span>
           </div>
-          <h2 className="font-bebas text-5xl sm:text-6xl md:text-7xl text-white tracking-[0.05em] leading-tight">
-            RESIDENCIES & <span className="text-cyan-300 drop-shadow-[0_0_24px_rgba(34,211,238,0.4)]">EXPEDITION PACKAGES</span>
-          </h2>
-          <p className="text-slate-300 font-alata font-normal text-base sm:text-lg leading-relaxed">
+          <h1 className="font-bebas text-5xl leading-tight tracking-[0.05em] text-white sm:text-6xl md:text-7xl">
+            Residencies &amp; <span className="text-cyan-200">expedition packages</span>
+          </h1>
+          <p className="text-base leading-relaxed text-slate-100 sm:text-lg">
             Choose a guided course-and-training week or a longer instructor pathway. Accommodation
             and additional activities depend on the program you select.
           </p>
         </div>
+      </SectionHero>
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        <OfferingCardStack
+          label="Packages"
+          title="Explore Dahab programs"
+          description="Compare the packages and follow each one to its existing details and booking flow."
+          items={packageStackItems}
+        />
+
+        {comboWeekItems.length > 0 && (
+          <OfferingCardStack
+            label="Combination weeks"
+            title="Choose your combo-week plan"
+            description="Explore the published beginner, advanced, and combined week plans. The package page includes the full schedule and brochure pricing notes."
+            items={comboWeekItems}
+          />
+        )}
 
         {/* Packages Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

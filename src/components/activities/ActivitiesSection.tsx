@@ -3,6 +3,8 @@ import { Compass, Clock, Check, ArrowRight } from 'lucide-react';
 import { PageType } from '../../types';
 import { CourseGalleryImage, desertExperiencePhotos, freedivingGalleryPhotos } from '../../data/courseMedia';
 import { PhotoCarousel } from '../ui/PhotoCarousel';
+import { OfferingCardStack } from '../ui/OfferingCardStack';
+import { SectionHero } from '../ui/SectionHero';
 
 interface ActivitiesSectionProps {
   onOpenBooking: (actId?: string) => void;
@@ -11,6 +13,17 @@ interface ActivitiesSectionProps {
 }
 
 export function ActivitiesSection({ onOpenBooking, currency, onNavigate }: ActivitiesSectionProps) {
+  const activityStackItems = activitiesData.map((activity) => ({
+    id: activity.id,
+    title: activity.title,
+    description: activity.description,
+    imageSrc: activity.image.url,
+    imageAlt: activity.image.alt,
+    tag: activity.duration,
+    href: `#activity-${activity.id}`,
+    ctaLabel: 'Explore experience',
+  }));
+
   const formatPrice = (eur: number) => {
     if (currency === 'USD') return `$${Math.round(eur * 1.08)}`;
     if (currency === 'EGP') return `E£${Math.round(eur * 52)}`;
@@ -18,23 +31,29 @@ export function ActivitiesSection({ onOpenBooking, currency, onNavigate }: Activ
   };
 
   return (
-    <section id="safaris" className="ocean-surface relative border-t border-white/5 px-6 py-32">
-      <div className="max-w-7xl mx-auto">
-        
-        {/* Section Header */}
-        <div className="max-w-3xl mb-16 space-y-4">
-          <div className="flex items-center gap-2 text-xs font-mono tracking-[0.3em] uppercase text-cyan-400">
-            <Compass className="w-4 h-4" />
-            <span>RED SEA EXPEDITIONS & SAFARIS</span>
+    <section id="safaris" className="ocean-surface relative border-t border-white/5 px-6 pb-32 pt-0">
+      <SectionHero imageSrc={activitiesData[0]?.image.url ?? '/images/story-carousel/red-sea-reef.jpg'} imageAlt={activitiesData[0]?.image.alt ?? ''} className="-mx-6 mb-20 min-h-[50svh]">
+        <div className="max-w-3xl space-y-4">
+          <div className="flex items-center gap-2 text-xs font-mono tracking-[0.3em] uppercase text-cyan-100">
+            <Compass className="w-4 h-4" aria-hidden="true" />
+            <span>Red Sea expeditions &amp; safaris</span>
           </div>
-          <h2 className="font-serif text-5xl sm:text-6xl font-bold text-white tracking-tight">
-            Beyond the <span className="text-cyan-300 italic font-normal">Buoy</span>
-          </h2>
-          <p className="text-slate-400 text-base font-light">
+          <h1 className="font-bebas text-5xl tracking-[0.04em] text-white sm:text-6xl md:text-7xl">
+            Beyond the <span className="text-cyan-200">buoy</span>
+          </h1>
+          <p className="max-w-2xl text-base leading-relaxed text-slate-100">
             Complement your training with guided trips to Ras Mohamed National Park, coastal drift
             dives along Dahab Canyon, and Bedouin desert evenings beneath the Sinai sky.
           </p>
         </div>
+      </SectionHero>
+      <div className="max-w-7xl mx-auto">
+        <OfferingCardStack
+          label="Dahab activities"
+          title="Choose your next experience"
+          description="Browse the activities in our catalog and open their existing details and booking options."
+          items={activityStackItems}
+        />
 
         {/* Safari Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

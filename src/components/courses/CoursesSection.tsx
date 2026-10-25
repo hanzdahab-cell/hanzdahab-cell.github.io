@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { FadeUp } from '../ui/MotionKit';
 import { TiltSurface } from '../ui/TiltSurface';
 import { coreCoursePhotoById, courseCardArtworkById, coursePhotoById } from '../../data/courseMedia';
+import { SectionHero } from '../ui/SectionHero';
 
 interface CoursesSectionProps {
   onOpenBooking: (courseId?: string) => void;
@@ -96,19 +97,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
 
   return (
     <section id="courses" className="ocean-surface relative pb-20 sm:pb-28 film-grain">
-      <div className="relative isolate min-h-[180px] overflow-hidden bg-[#081F35] sm:min-h-[185px] lg:min-h-[190px]">
-        <img
-          src="/courses/uploaded/dahab-reef-fish.jpg"
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover opacity-45"
-          fetchPriority="high"
-          aria-hidden="true"
-        />
-        <div
-          className="absolute inset-0 bg-gradient-to-r from-[#081F35]/95 via-[#081F35]/75 to-[#081F35]/45"
-          aria-hidden="true"
-        />
-        <div className="relative z-10 mx-auto flex min-h-[180px] max-w-7xl flex-col justify-center px-6 pb-4 pt-12 sm:min-h-[185px] lg:min-h-[190px]">
+      <SectionHero imageSrc={courseCardArtworkById['ssi-level-1'].src} imageAlt="" className="min-h-[50svh]">
           <div className="max-w-3xl space-y-2">
             <p className="flex items-center gap-3 text-[10px] uppercase tracking-[0.12em] text-ocean-pale sm:text-sm sm:tracking-[0.16em]">
               <span className="h-px w-8 bg-ocean-light" aria-hidden="true" />
@@ -122,8 +111,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
               freediving certifications.
             </p>
           </div>
-        </div>
-      </div>
+      </SectionHero>
 
       <div className="relative mx-auto max-w-7xl px-6 pt-12 sm:pt-16">
         <div className="absolute inset-0 architectural-grid-fine opacity-10 pointer-events-none" />

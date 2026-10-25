@@ -9,6 +9,9 @@ import {
 } from '../../data/courseMedia';
 import { Activity, Package, PackageProgram, PageType, RoomType } from '../../types';
 import { PhotoCarousel } from '../ui/PhotoCarousel';
+import { SectionHero } from '../ui/SectionHero';
+import { OfferingCardStack } from '../ui/OfferingCardStack';
+import { getPackageDetailGalleryItems } from '../../data/detailGalleries';
 
 type OfferingKind = 'package' | 'room' | 'activity';
 
@@ -149,26 +152,38 @@ export function OfferingDetailPage({
     );
   }
 
+  const packageGalleryItems = kind === 'package'
+    ? getPackageDetailGalleryItems(slug, content.title)
+    : [];
+  if (kind === 'package' && packageGalleryItems.length === 0 && content.images[0]) {
+    packageGalleryItems.push({
+      id: `${slug}-gallery-cover`,
+      title: content.title,
+      description: 'Package cover photo',
+      imageSrc: content.images[0].src,
+      imageAlt: content.images[0].alt,
+      tag: 'Package gallery',
+    });
+  }
+
   return (
     <article className="ocean-surface min-h-screen pb-24 pt-28 text-white sm:pt-36">
-      <div className="mx-auto max-w-7xl px-5 sm:px-6">
-        <button
-          type="button"
-          onClick={() => onNavigate(backPage)}
-          className="mb-8 inline-flex min-h-11 items-center gap-2 text-sm text-white/75 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-        >
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-          Back to {kind === 'room' ? 'stays' : kind === 'activity' ? 'experiences' : 'packages'}
-        </button>
-
-        <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
-          <PhotoCarousel
-            images={content.images}
-            label={`${content.title} photo gallery`}
-            className="aspect-[4/3] min-h-[280px] rounded-2xl sm:aspect-[16/10]"
-          />
-
-          <div className="space-y-6 rounded-2xl border border-white/10 bg-[#0A2943] p-6 sm:p-8">
+      <SectionHero
+        imageSrc={content.images[0]?.src ?? '/images/story-carousel/blue-hole-freediver.jpg'}
+        imageAlt={content.images[0]?.alt ?? ''}
+        className="min-h-[50svh]"
+        contentClassName="py-10 sm:py-14"
+      >
+        <div className="max-w-3xl">
+          <button
+            type="button"
+            onClick={() => onNavigate(backPage)}
+            className="mb-8 inline-flex min-h-11 items-center gap-2 text-sm text-white/85 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+          >
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            Back to {kind === 'room' ? 'stays' : kind === 'activity' ? 'experiences' : 'packages'}
+          </button>
+          <div className="max-w-2xl space-y-6 rounded-2xl border border-white/15 bg-[#061A2B]/70 p-6 shadow-xl backdrop-blur-sm sm:p-8">
             <div className="space-y-3">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#A9D2EC]">
                 {kind === 'package' ? 'Freedive Dahab package' : kind === 'room' ? 'Sea Lodge stay' : 'Dahab experience'}
@@ -206,6 +221,25 @@ export function OfferingDetailPage({
             </button>
           </div>
         </div>
+      </SectionHero>
+
+      <div className="mx-auto max-w-7xl px-5 pt-10 sm:px-6 sm:pt-14">
+        {kind === 'package' ? (
+          <OfferingCardStack
+            label="Package photo gallery"
+            title={`${content.title} gallery`}
+            description="Swipe or use the controls to view the package photos."
+            items={packageGalleryItems}
+          />
+        ) : (
+          <section aria-label={`${content.title} photo gallery`} className="mb-12">
+            <PhotoCarousel
+              images={content.images}
+              label={`${content.title} photo gallery`}
+              className="aspect-[4/3] min-h-[280px] rounded-2xl sm:aspect-[16/10]"
+            />
+          </section>
+        )}
 
         {content.programs && (
           <div className="mt-12 space-y-6">
