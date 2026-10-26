@@ -66,7 +66,6 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
   const specialtyCards = SPECIALTY_CARD_ORDER
     .map((id) => specialtyCourses.find((course) => course.id === id))
     .filter((course) => course !== undefined);
-  const masterCourse = specialtyCourses.find((c) => c.id === 'master-freediver');
   const professionalCards: ProfessionalCourseCard[] = [
     ...instructorCourses
       .filter((course) => course.id === 'ssi-itc' || course.id === 'ssi-advanced-instructor')
@@ -97,7 +96,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
 
   return (
     <section id="courses" className="ocean-surface relative pb-20 sm:pb-28 film-grain">
-      <SectionHero imageSrc={courseCardArtworkById['ssi-level-1'].src} imageAlt="" className="min-h-[50svh]">
+      <SectionHero imageSrc={courseCardArtworkById['ssi-level-1'].src} imageAlt="" className="min-h-[50svh]" alignStart>
           <div className="max-w-3xl space-y-2">
             <p className="flex items-center gap-3 text-[10px] uppercase tracking-[0.12em] text-ocean-pale sm:text-sm sm:tracking-[0.16em]">
               <span className="h-px w-8 bg-ocean-light" aria-hidden="true" />
@@ -197,59 +196,6 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
             </TiltSurface>
           ))}
           </div>
-          {masterCourse && (
-            <TiltSurface className="group mt-6 grid grid-cols-1 overflow-hidden rounded-2xl border border-ocean-light/20 bg-[#0A2943] transition-colors duration-300 hover:border-ocean-light/60 lg:grid-cols-2">
-              <div className="fd-tilt-photo-layer relative aspect-[16/10] overflow-hidden bg-[#081F35] lg:aspect-auto lg:min-h-[300px]">
-                <img
-                  src={(courseCardArtworkById[masterCourse.id] ?? coursePhotoById[masterCourse.id] ?? masterCourse.image).src}
-                  alt={(courseCardArtworkById[masterCourse.id] ?? coursePhotoById[masterCourse.id] ?? masterCourse.image).alt}
-                  className="h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#081F35]/70 via-transparent to-transparent lg:bg-gradient-to-r" />
-                <span className="absolute left-4 top-4 rounded-full border border-ocean-pale/25 bg-[#081F35]/70 px-3 py-1 text-[10px] font-mono uppercase tracking-widest text-ocean-pale backdrop-blur-md">
-                  Advanced recreational certification
-                </span>
-              </div>
-              <div className="fd-tilt-copy-layer flex flex-col justify-between gap-6 p-6 sm:p-8">
-                <div className="space-y-3">
-                  <h3 className="font-serif text-2xl font-bold text-white transition-colors group-hover:text-ocean-pale sm:text-3xl">
-                    <button
-                      type="button"
-                      onClick={() => navigateToCourse(masterCourse.slug)}
-                      className="text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                    >
-                      {masterCourse.title}
-                    </button>
-                  </h3>
-                  <p className="text-sm font-light leading-relaxed text-slate-300">
-                    {masterCourse.shortDesc}
-                  </p>
-                  <div className="flex flex-wrap gap-x-6 gap-y-2 pt-1 text-xs text-slate-300">
-                    <span>{masterCourse.durationDays} days</span>
-                    <span className="font-bold text-ocean-pale">{formatPrice(masterCourse.priceEur)}</span>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-3 sm:flex-row">
-                  <button
-                    type="button"
-                    onClick={() => onOpenBooking(masterCourse.id)}
-                    className="fd-button inline-flex min-h-11 flex-1 items-center justify-center rounded-xl px-5 py-3 text-xs font-semibold uppercase tracking-wide focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                  >
-                    Enroll in course
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => onNavigate('calendar')}
-                    className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-white/45 px-5 py-3 text-xs font-semibold uppercase tracking-wide text-white transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                  >
-                    Our calendar
-                    <ChevronRight className="h-4 w-4" aria-hidden="true" />
-                  </button>
-                </div>
-              </div>
-            </TiltSurface>
-          )}
         </div>
 
         {/* ========================================================== */}

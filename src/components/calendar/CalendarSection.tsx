@@ -1,31 +1,7 @@
-import { useState, useMemo } from 'react';
-import {
-  Calendar as CalendarIcon,
-  ChevronLeft,
-  ChevronRight,
-  Filter,
-  ArrowRight,
-  Clock,
-  MapPin,
-  Waves,
-  Download,
-  CalendarCheck,
-  Grid,
-  List,
-  CheckCircle2,
-  ExternalLink,
-  Compass,
-  Award,
-} from 'lucide-react';
-import {
-  MONTHS_2026,
-  SCHEDULE_2026_EVENTS,
-  EVENT_TYPES_DATA,
-  EventDateSchedule,
-  createGoogleCalendarUrl,
-  exportToIcs,
-} from '../../data/calendarSchedule2026';
-import { PageType, EventTypeId } from '../../types';
+import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { EventTypeId, PageType } from '../../types';
+import { SCHEDULE_2026_EVENTS } from '../../data/calendarSchedule2026';
 
 interface CalendarSectionProps {
   onOpenBooking: (courseId?: string) => void;
@@ -33,642 +9,456 @@ interface CalendarSectionProps {
   currency: 'EUR' | 'USD' | 'EGP';
 }
 
-type CategoryFilter =
-  | 'All'
-  | 'Beginner'
-  | 'Advanced'
-  | 'Training'
-  | 'Ras Mohamed trip'
-  | 'Zero to Hero'
-  | 'Instructor Course';
-
-export function CalendarSection({ onOpenBooking, onNavigate, currency }: CalendarSectionProps) {
-  // Default to the current season month in 2026 so the schedule opens on the active period.
-  const [selectedMonthIndex, setSelectedMonthIndex] = useState<number>(9); // 9 = October (0-indexed)
-  const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('All');
-  const [viewMode, setViewMode] = useState<'cards' | 'calendar'>('cards');
-  const [selectedCalendarDay, setSelectedCalendarDay] = useState<number | null>(null);
-
-  const currentMonth = MONTHS_2026[selectedMonthIndex];
-
-  const formatPrice = (eur: number) => {
-    if (currency === 'USD') return `$${Math.round(eur * 1.08)}`;
-    if (currency === 'EGP') return `E£${Math.round(eur * 52)}`;
-    return `€${eur}`;
-  };
-
-  const handlePrevMonth = () => {
-    setSelectedMonthIndex((prev) => (prev > 0 ? prev - 1 : 11));
-    setSelectedCalendarDay(null);
-  };
-
-  const handleNextMonth = () => {
-    setSelectedMonthIndex((prev) => (prev < 11 ? prev + 1 : 0));
-    setSelectedCalendarDay(null);
-  };
-
-  // Filter events for current month and active category
-  const currentMonthEvents = useMemo(() => {
-    return SCHEDULE_2026_EVENTS.filter((ev) => {
-      const matchMonth = ev.monthNum === currentMonth.num;
-      const matchCategory = selectedCategory === 'All' || ev.category === selectedCategory;
-      return matchMonth && matchCategory;
+/** The original Elfsight calendar widget. Calendar content is managed in Elfsight. */
+export function CalendarSection({ onOpenBooking, onNavigate }: CalendarSectionProps) {
+  const widgetRef = useRef<HTMLDivElement>(null);
+  const [calendarPortalHost, setCalendarPortalHost] = useState<HTMLElement | null>(null);
+  const [selectedCalendarYear, setSelectedCalendarYear] = useState(() => Math.min(2028, Math.max(2026, new Date().getFullYear())));
+  const active2026Events = SCHEDULE_2026_EVENTS.filter((event) =>
+    event.eventTypeId !== 'instructor-course' &&
+    event.startIso >= '2026-10-26' &&
+    event.startIso < '2027-01-01',
+  );
+  const combo2026Events = SCHEDULE_2026_EVENTS
+    .filter((event) => event.eventTypeId === 'beginner-week')
+    .flatMap((beginner) => {
+      const advancedStart = new Date(`${beginner.startIso}T12:00:00`);
+      advancedStart.setDate(advancedStart.getDate() + 2);
+      const advancedStartIso = `${advancedStart.getFullYear()}-${String(advancedStart.getMonth() + 1).padStart(2, '0')}-${String(advancedStart.getDate()).padStart(2, '0')}`;
+      const advanced = SCHEDULE_2026_EVENTS.find((event) =>
+        event.eventTypeId === 'advanced-week' && event.startIso === advancedStartIso,
+      );
+      if (!advanced || beginner.startIso < '2026-10-26' || beginner.startIso >= '2027-01-01') return [];
+      const formatDate = (iso: string) => {
+        const month = new Date(`${iso}T12:00:00`).toLocaleString('en-US', { month: 'short' });
+        const year = iso.slice(0, 4) === '2026' ? '' : ` ${iso.slice(0, 4)}`;
+        return `${Number(iso.slice(8, 10))} ${month}${year}`;
+      };
+      return [{
+        ...beginner,
+        id: `combo-${beginner.id}`,
+        eventTypeId: 'beginner-advanced-combo' as const,
+        eventTitle: 'Beginner + Advanced Combo',
+        category: 'Beginner + Advanced Combo' as const,
+        dateLabel: `${formatDate(beginner.startIso)} - ${formatDate(advanced.endIso)}`,
+        endIso: advanced.endIso,
+      }];
     });
-  }, [currentMonth.num, selectedCategory]);
+  const remaining2026Events = [...active2026Events, ...combo2026Events]
+    .sort((a, b) => a.startIso.localeCompare(b.startIso));
+  const eventsByMonth = remaining2026Events.reduce<Record<string, typeof remaining2026Events>>((groups, event) => {
+    (groups[event.monthName] ||= []).push(event);
+    return groups;
+  }, {});
 
-  // Overall count across all of 2026 per category
-  const categoryCounts = useMemo(() => {
-    const counts: Record<string, number> = { All: SCHEDULE_2026_EVENTS.length };
-    SCHEDULE_2026_EVENTS.forEach((e) => {
-      counts[e.category] = (counts[e.category] || 0) + 1;
-    });
-    return counts;
+  const routeForScheduleEvent = (eventTypeId: EventTypeId | 'beginner-advanced-combo'): PageType => {
+    if (eventTypeId === 'beginner-advanced-combo') return 'package-ultimate-dahab-combo-week';
+    return eventTypeId === 'ras-mohamed' ? 'activity-ras-mohamed' : `event-${eventTypeId}`;
+  };
+
+  const colorForScheduleEvent = (eventTypeId: EventTypeId) => {
+    if (eventTypeId === 'zero-to-hero') return '#068B88';
+    if (eventTypeId === 'beginner-week') return '#2980B9';
+    if (eventTypeId === 'beginner-advanced-combo') return '#3498DB';
+    if (eventTypeId === 'advanced-week') return '#5DADE2';
+    if (eventTypeId === 'training-week') return '#89CFF0';
+    if (eventTypeId === 'ras-mohamed') return '#A2D5F2';
+    return '#3498DB';
+  };
+
+  useEffect(() => {
+    const scriptId = 'elfsight-calendar-platform-script';
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement('script');
+      script.id = scriptId;
+      script.src = 'https://elfsightcdn.com/platform.js';
+      script.async = true;
+      document.body.appendChild(script);
+    }
   }, []);
 
-  // Category badge colors
-  const getCategoryColor = (cat: string) => {
-    switch (cat) {
-      case 'Beginner':
-        return 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30';
-      case 'Advanced':
-        return 'bg-blue-500/10 text-blue-300 border-blue-500/30';
-      case 'Training':
-        return 'bg-amber-500/10 text-amber-300 border-amber-500/30';
-      case 'Ras Mohamed trip':
-        return 'bg-teal-500/10 text-teal-300 border-teal-500/30';
-      case 'Zero to Hero':
-        return 'bg-purple-500/10 text-purple-300 border-purple-500/30';
-      case 'Instructor Course':
-        return 'bg-rose-500/10 text-rose-300 border-rose-500/30';
-      default:
-        return 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30';
-    }
-  };
+  useEffect(() => {
+    const widget = widgetRef.current;
+    if (!widget) return;
 
-  const categories: CategoryFilter[] = [
-    'All',
-    'Beginner',
-    'Advanced',
-    'Training',
-    'Ras Mohamed trip',
-    'Zero to Hero',
-    'Instructor Course',
-  ];
+    const styleId = 'freedive-calendar-site-overrides';
+    const widgetCss = `
+      .eapp-events-calendar-events-calendar-title { display: none !important; }
+      .eapp-events-calendar-events-calendar-component > a[href*="elfsight.com/event-calendar-widget"] { display: none !important; }
+      .eapp-events-calendar-list-item *:not(button):not(button *):not(a):not(a *) {
+        color: #fff !important;
+        opacity: 1 !important;
+      }
+      .fd-elfsight-month-heading {
+        margin: 24px 0 12px;
+        color: #fff;
+        font: 700 16px/1.25 system-ui, sans-serif;
+      }
+      .fd-elfsight-month-heading:first-child { margin-top: 0; }
+      [class*="ListItem__Component"] .freedive-calendar-book-now {
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        margin-inline-start: auto;
+        padding: 0 20px;
+        border: 0;
+        border-radius: 999px;
+        background: #f8fafc;
+        color: #111827;
+        font: 700 14px/1.2 system-ui, sans-serif;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: background-color 160ms ease;
+      }
+      [class*="ListItem__Component"] .freedive-calendar-book-now:hover {
+        background: #e2e8f0;
+      }
+      [class*="ListItem__Component"] .freedive-calendar-book-now:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 3px;
+      }
+      @media (max-width: 520px) {
+        [class*="ListItem__Component"] .freedive-calendar-book-now {
+          min-height: 38px;
+          padding-inline: 14px;
+          font-size: 12px;
+        }
+      }
+    `;
+    const applyTextColor = () => {
+      const shadowRoot = widget.querySelector('.es-embed-root')?.shadowRoot;
+      if (!shadowRoot) return;
 
-  // Dedicated Event Pages quick list
-  const eventTypesList = Object.values(EVENT_TYPES_DATA);
+      shadowRoot.querySelectorAll<HTMLElement>('a[href*="elfsight.com/event-calendar-widget"]').forEach((credit) => {
+        credit.style.setProperty('display', 'none', 'important');
+      });
+
+      let style = shadowRoot.getElementById(styleId) as HTMLStyleElement | null;
+      if (!style) {
+        style = document.createElement('style');
+        style.id = styleId;
+        shadowRoot.appendChild(style);
+      }
+      if (style.textContent !== widgetCss) style.textContent = widgetCss;
+    };
+
+    const eventTitleForCard = (card: HTMLElement) =>
+      card.querySelector<HTMLElement>('.eapp-events-calendar-list-item-name')?.innerText.trim() || card.innerText;
+
+    const routeForEvent = (card: HTMLElement) => {
+      const title = eventTitleForCard(card).toLowerCase().replace(/\s+/g, ' ');
+      if (title.includes('zero to hero')) return 'event-zero-to-hero' as PageType;
+      if (title.includes('beginner week')) return 'event-beginner-week' as PageType;
+      if (title.includes('beginner + advanced') || title.includes('beginner+advanced')) return 'package-ultimate-dahab-combo-week' as PageType;
+      if (title.includes('advanced week')) return 'event-advanced-week' as PageType;
+      if (title.includes('training week')) return 'event-training-week' as PageType;
+      if (title.includes('ras mohamed')) return 'activity-ras-mohamed' as PageType;
+      return undefined;
+    };
+
+    const bookingIdForEvent = (card: HTMLElement) => {
+      const title = eventTitleForCard(card).toLowerCase();
+      if (title.includes('beginner') || title.includes('advanced')) return 'pkg-combo-week';
+      if (title.includes('training week')) return 'pkg-training-week';
+      if (title.includes('ras mohamed')) return undefined;
+      return undefined;
+    };
+
+    const colorForEvent = (card: HTMLElement) => {
+      const title = eventTitleForCard(card).toLowerCase().replace(/\s+/g, ' ');
+      if (title.includes('zero to hero')) return '#068B88';
+      if (title.includes('beginner week')) return '#2980B9';
+      if (title.includes('beginner + advanced') || title.includes('beginner+advanced')) return '#3498DB';
+      if (title.includes('advanced week')) return '#5DADE2';
+      if (title.includes('training week')) return '#89CFF0';
+      if (title.includes('ras mohamed')) return '#A2D5F2';
+      return undefined;
+    };
+
+    const findCard = (path: EventTarget[], target: EventTarget | null, root: ShadowRoot) => {
+      const fromPath = path.find(
+        (node) => node instanceof HTMLElement && node.matches('[class*="ListItem__Component"]'),
+      );
+      if (fromPath instanceof HTMLElement && root.contains(fromPath)) return fromPath;
+      if (!(target instanceof Element)) return null;
+      const card = target.closest('[class*="ListItem__Component"]');
+      return card instanceof HTMLElement && root.contains(card) ? card : null;
+    };
+
+    const root = () => widget.querySelector('.es-embed-root')?.shadowRoot;
+    const ensureCalendarPortalHost = (shadowRoot: ShadowRoot) => {
+      const list = shadowRoot.querySelector<HTMLElement>('.List__Component-sc-e9913e45-0');
+      if (!list?.parentElement) return;
+      let host = shadowRoot.querySelector<HTMLElement>('#freedive-calendar-2026-portal');
+      if (!host) {
+        host = document.createElement('div');
+        host.id = 'freedive-calendar-2026-portal';
+        list.parentElement.insertBefore(host, list);
+      }
+      setCalendarPortalHost((current) => current === host ? current : host);
+    };
+    const updateCalendarYearGroups = (shadowRoot: ShadowRoot) => {
+      const list = shadowRoot.querySelector<HTMLElement>('.List__Component-sc-e9913e45-0');
+      if (!list) return;
+
+      [...list.children].forEach((group) => {
+        if (!(group instanceof HTMLElement)) return;
+        const year = group.querySelector<HTMLElement>('.List__Name-sc-e9913e45-2')?.innerText.trim();
+        if (!year || !/^20\d{2}$/.test(year)) return;
+        group.hidden = Number(year) !== selectedCalendarYear;
+
+        const events = group.querySelector<HTMLElement>('.List__EventsContainer-sc-e9913e45-3');
+        if (!events) return;
+        let previousMonth = '';
+        const cards = [...events.querySelectorAll<HTMLElement>(':scope > [class*="ListItem__Component"]')];
+        cards.forEach((card) => {
+          const monthToken = card.querySelector<HTMLElement>('.eapp-events-calendar-date-element-month')?.innerText.trim().toUpperCase();
+          if (!monthToken) return;
+          const date = new Date(`${monthToken} 1, ${year}`);
+          if (Number.isNaN(date.getTime())) return;
+          const monthName = date.toLocaleString('en-US', { month: 'long' });
+          const heading = card.previousElementSibling instanceof HTMLElement && card.previousElementSibling.classList.contains('fd-elfsight-month-heading')
+            ? card.previousElementSibling
+            : null;
+
+          if (monthToken !== previousMonth && !heading) {
+            const monthHeading = document.createElement('h3');
+            monthHeading.className = 'fd-elfsight-month-heading';
+            monthHeading.textContent = `${monthName} ${year}`;
+            monthHeading.setAttribute('aria-label', `${monthName} ${year}`);
+            card.before(monthHeading);
+          }
+          previousMonth = monthToken;
+        });
+      });
+    };
+    const onCalendarClick = (event: Event) => {
+      const currentRoot = root();
+      const path = event.composedPath();
+      const card = currentRoot && findCard(path, event.target, currentRoot);
+      if (!currentRoot || !card) return;
+
+      const action = path.find(
+        (node) => node instanceof HTMLElement && /^(book\s*now)$/i.test(node.innerText.trim()) && /^(A|BUTTON)$/.test(node.tagName),
+      );
+      if (action) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        onOpenBooking(bookingIdForEvent(card));
+        return;
+      }
+
+      const route = routeForEvent(card);
+      if (!route || !onNavigate) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      onNavigate(route);
+    };
+
+    const onCalendarKeyDown = (event: Event) => {
+      const keyboardEvent = event as KeyboardEvent;
+      if (keyboardEvent.key !== 'Enter' && keyboardEvent.key !== ' ') return;
+      const currentRoot = root();
+      const card = currentRoot && findCard(keyboardEvent.composedPath(), keyboardEvent.target, currentRoot);
+      if (!currentRoot || !card || (keyboardEvent.target as Element)?.closest('a, button')) return;
+      const route = routeForEvent(card);
+      if (!route || !onNavigate) return;
+      keyboardEvent.preventDefault();
+      onNavigate(route);
+    };
+
+    let observedRoot: ShadowRoot | undefined;
+    const bindCalendar = () => {
+      applyTextColor();
+      const shadowRoot = root();
+      if (!shadowRoot) return;
+      ensureCalendarPortalHost(shadowRoot);
+      updateCalendarYearGroups(shadowRoot);
+      shadowRoot.removeEventListener('click', onCalendarClick, true);
+      shadowRoot.addEventListener('click', onCalendarClick, true);
+      shadowRoot.removeEventListener('keydown', onCalendarKeyDown, true);
+      shadowRoot.addEventListener('keydown', onCalendarKeyDown, true);
+      shadowRoot.querySelectorAll<HTMLElement>('[class*="ListItem__Component"]').forEach((card) => {
+        const route = routeForEvent(card);
+        const eventTitle = eventTitleForCard(card);
+        const eventColor = colorForEvent(card);
+        if (eventColor) card.style.setProperty('background-color', eventColor, 'important');
+        card.tabIndex = 0;
+        card.setAttribute('role', 'group');
+        if (route) card.setAttribute('aria-label', `Open ${eventTitle}`);
+        card.style.cursor = 'pointer';
+        if (!card.querySelector('.freedive-calendar-book-now')) {
+          const bookButton = document.createElement('button');
+          bookButton.type = 'button';
+          bookButton.className = 'freedive-calendar-book-now';
+          bookButton.textContent = 'Book Now';
+          bookButton.setAttribute('aria-label', `Book ${eventTitle}`);
+          card.appendChild(bookButton);
+        }
+      });
+    };
+
+    const shadowObserver = new MutationObserver(bindCalendar);
+    const bindWidgetRoot = () => {
+      const shadowRoot = root();
+      if (shadowRoot && observedRoot !== shadowRoot) {
+        shadowObserver.observe(shadowRoot, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ['style'],
+        });
+        observedRoot = shadowRoot;
+      }
+      bindCalendar();
+    };
+    const widgetObserver = new MutationObserver(bindWidgetRoot);
+    widgetObserver.observe(widget, { childList: true, subtree: true });
+    bindWidgetRoot();
+
+    return () => {
+      widgetObserver.disconnect();
+      shadowObserver.disconnect();
+      const currentRoot = root();
+      currentRoot?.removeEventListener('click', onCalendarClick, true);
+      currentRoot?.removeEventListener('keydown', onCalendarKeyDown, true);
+    };
+  }, [onOpenBooking, onNavigate, selectedCalendarYear]);
 
   return (
-    <section className="ocean-surface relative px-4 py-12 text-slate-100 sm:px-8 sm:py-16">
-      
-      {/* Background Ambience */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[1000px] h-[450px] bg-cyan-600/[0.04] blur-[150px] pointer-events-none rounded-full" />
-      <div className="absolute inset-0 architectural-grid opacity-10 pointer-events-none" />
-
-      <div className="relative z-10 max-w-7xl mx-auto space-y-10">
-
-        {/* ======================================================== */}
-        {/* TOP NOTICE BANNER (AS REQUIRED BY USER)                  */}
-        {/* ======================================================== */}
-        <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-cyan-950/70 via-[#0E3453] to-cyan-950/70 border border-cyan-400/40 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-start gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center shrink-0 text-cyan-300">
-              <Waves className="w-5 h-5" aria-hidden="true" />
-            </div>
-            <div className="space-y-1">
-              <div className="flex flex-wrap items-center gap-2.5">
-                <span className="text-[11px] font-mono uppercase tracking-widest text-cyan-400 font-bold">
-                  YEAR-ROUND FLEXIBILITY NOTE
-                </span>
-                <span
-                  role="status"
-                  className="inline-flex min-h-6 items-center gap-2 rounded-full border border-emerald-300/30 bg-emerald-400/10 px-2.5 text-[9px] font-mono font-semibold uppercase tracking-wider text-emerald-200"
-                >
-                  <span className="relative flex h-2 w-2" aria-hidden="true">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-60 motion-reduce:animate-none" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-300" />
-                  </span>
-                  2026 dates published
-                </span>
-              </div>
-              <p className="text-sm sm:text-base font-serif italic text-white leading-snug">
-                &ldquo;This is only the calendar for our scheduled events. We run all other courses all year round on request, just let us know your dates!&rdquo;
-              </p>
-            </div>
-          </div>
-
-          <button
-            onClick={() => onOpenBooking()}
-            className="fd-button shrink-0 rounded-xl px-5 py-2.5 text-center font-mono text-xs font-bold uppercase tracking-wider"
-          >
-            Custom Date Inquiry
-          </button>
-        </div>
-
-        {/* ======================================================== */}
-        {/* DEDICATED EVENT TYPE SHORTCUTS BAR                       */}
-        {/* ======================================================== */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-mono uppercase tracking-widest text-slate-400 font-semibold flex items-center gap-1.5">
-              <Award className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Dedicated Event Hubs (Click for detailed syllabus &amp; 2026 dates)</span>
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
-            {eventTypesList.map((et) => (
-              <button
-                key={et.id}
-                onClick={() => onNavigate && onNavigate(`event-${et.id}` as PageType)}
-                className="p-3 rounded-xl bg-[#0E3453] hover:bg-[#0E3453] border border-white/10 hover:border-cyan-400/40 transition-all text-left flex flex-col justify-between group cursor-pointer"
-              >
-                <div>
-                  <span className="text-[10px] font-mono text-cyan-400 font-semibold uppercase tracking-wider block">
-                    {et.category}
-                  </span>
-                  <div className="font-serif font-bold text-white text-xs sm:text-sm group-hover:text-cyan-300 transition-colors mt-0.5 line-clamp-1">
-                    {et.title}
-                  </div>
+    <>
+      <div
+        ref={widgetRef}
+        className="elfsight-app-c51f9643-e0c3-490b-83a2-e8505eadc348"
+        data-elfsight-app-lazy
+      />
+      {calendarPortalHost && createPortal(
+        <>
+          <style>{`
+            .fd-calendar-year-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 22px; color: #fff; }
+            .fd-calendar-year-nav button { display: inline-flex; min-width: 42px; min-height: 40px; align-items: center; justify-content: center; border: 1px solid rgba(148, 190, 218, .45); border-radius: 9px; background: rgba(5, 31, 52, .42); color: #fff; font: 600 14px/1 system-ui, sans-serif; cursor: pointer; transition: background-color 160ms ease, border-color 160ms ease; }
+            .fd-calendar-year-nav button:hover:not(:disabled) { border-color: rgba(148, 190, 218, .8); background: rgba(36, 104, 146, .35); }
+            .fd-calendar-year-nav button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+            .fd-calendar-year-nav button:disabled { cursor: not-allowed; opacity: .45; }
+            .fd-calendar-year-label { color: #fff; font-size: 18px; font-weight: 700; }
+            .fd-2026-calendar { width: 100%; color: #fff; font-family: inherit; }
+            .fd-2026-month + .fd-2026-month { margin-top: 24px; }
+            .fd-2026-month-heading { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; color: #fff; font-size: 16px; font-weight: 700; line-height: 1.25; }
+            .fd-2026-events { display: grid; gap: 20px; }
+            .fd-2026-card { display: flex; align-items: center; box-sizing: border-box; width: 100%; min-height: 86px; padding: 0 20px 0 28px; overflow: hidden; border: 0; border-radius: 24px; color: #fff; }
+            .fd-2026-card-link { display: flex; flex: 1 1 auto; min-width: 0; align-items: center; gap: 16px; color: #fff; text-decoration: none; outline: none; }
+            .fd-2026-card-link:focus-visible { border-radius: 8px; outline: 2px solid #fff; outline-offset: 4px; }
+            .fd-2026-date { display: flex; flex: 0 0 auto; align-items: center; gap: 7px; color: #fff; text-transform: uppercase; }
+            .fd-2026-date-start { display: flex; min-width: 34px; flex-direction: column; align-items: center; line-height: 1; }
+            .fd-2026-date-month { font-size: 12px; font-weight: 500; }
+            .fd-2026-date-day { font-size: 22px; font-weight: 700; }
+            .fd-2026-date-end { align-self: center; font-size: 9px; font-weight: 600; line-height: 1.05; }
+            .fd-2026-info { display: block; min-width: 0; }
+            .fd-2026-category { display: block; margin-bottom: 3px; color: #fff; font-size: 12px; font-weight: 500; line-height: 1.1; text-transform: uppercase; }
+            .fd-2026-title { display: block; overflow: hidden; color: #fff; font-size: 16px; font-weight: 700; line-height: 1.2; text-overflow: ellipsis; }
+            .fd-2026-book { display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center; min-height: 40px; margin-inline-start: 16px; padding: 0 20px; border: 0; border-radius: 999px; background: #f8fafc; color: #111827; font: 700 14px/1.2 system-ui, sans-serif; white-space: nowrap; cursor: pointer; transition: background-color 160ms ease; }
+            .fd-2026-book:hover { background: #e2e8f0; }
+            .fd-2026-book:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+            @media (max-width: 600px) {
+              .fd-calendar-year-nav { margin-bottom: 18px; }
+              .fd-calendar-year-label { font-size: 16px; }
+              .fd-2026-month + .fd-2026-month { margin-top: 20px; }
+              .fd-2026-month-heading { margin-bottom: 10px; }
+              .fd-2026-events { gap: 14px; }
+              .fd-2026-card { min-height: 80px; padding-inline: 16px; border-radius: 20px; }
+              .fd-2026-card-link { gap: 10px; }
+              .fd-2026-date { gap: 4px; }
+              .fd-2026-date-start { min-width: 30px; }
+              .fd-2026-date-month { font-size: 10px; }
+              .fd-2026-date-day { font-size: 20px; }
+              .fd-2026-date-end { font-size: 8px; }
+              .fd-2026-category { font-size: 10px; }
+              .fd-2026-title { font-size: 14px; }
+              .fd-2026-book { min-height: 38px; margin-inline-start: 8px; padding-inline: 14px; font-size: 12px; }
+            }
+            @media (max-width: 380px) {
+              .fd-2026-card { padding-inline: 12px; }
+              .fd-2026-card-link { gap: 8px; }
+              .fd-2026-date-end { display: none; }
+              .fd-2026-book { margin-inline-start: 5px; padding-inline: 11px; }
+            }
+          `}</style>
+          <nav className="fd-calendar-year-nav" aria-label="Calendar year">
+            <button
+              type="button"
+              onClick={() => setSelectedCalendarYear((year) => Math.max(2026, year - 1))}
+              disabled={selectedCalendarYear <= 2026}
+              aria-label="Show previous year"
+            >
+              Previous
+            </button>
+            <span className="fd-calendar-year-label" aria-live="polite">{selectedCalendarYear}</span>
+            <button
+              type="button"
+              onClick={() => setSelectedCalendarYear((year) => Math.min(2028, year + 1))}
+              disabled={selectedCalendarYear >= 2028}
+              aria-label="Show next year"
+            >
+              Next
+            </button>
+          </nav>
+          <div className="fd-2026-calendar" aria-label="Remaining 2026 events" hidden={selectedCalendarYear !== 2026}>
+            {Object.entries(eventsByMonth).map(([month, events]) => (
+              <section className="fd-2026-month" key={month} aria-labelledby={`fd-calendar-${month.toLowerCase()}-2026`}>
+                <h2 className="fd-2026-month-heading" id={`fd-calendar-${month.toLowerCase()}-2026`}>
+                  <span>{month}</span><span>2026</span>
+                </h2>
+                <div className="fd-2026-events">
+                  {events.map((event) => {
+                    const route = routeForScheduleEvent(event.eventTypeId);
+                    const startMonth = new Date(`${event.startIso}T12:00:00`).toLocaleString('en-US', { month: 'short' });
+                    const endMonth = new Date(`${event.endIso}T12:00:00`).toLocaleString('en-US', { month: 'short' });
+                    const startDay = String(Number(event.startIso.slice(8, 10)));
+                    const endDay = String(Number(event.endIso.slice(8, 10)));
+                    const category = event.eventTypeId === 'training-week' ? 'Training' : event.eventTypeId === 'ras-mohamed' ? 'Trips' : 'Package';
+                    return (
+                      <article
+                        className="fd-2026-card"
+                        key={event.id}
+                        data-freedive-2026-event
+                        data-event-title={event.eventTitle.toLowerCase()}
+                        data-event-month={month.toLowerCase()}
+                        data-event-category={category.toLowerCase()}
+                        style={{ backgroundColor: colorForScheduleEvent(event.eventTypeId) }}
+                      >
+                        <a
+                          className="fd-2026-card-link"
+                          href={`#${route}`}
+                          aria-label={`${event.eventTitle}, ${event.dateLabel}. View event details`}
+                          onClick={onNavigate ? (clickEvent) => {
+                            clickEvent.preventDefault();
+                            onNavigate(route);
+                          } : undefined}
+                        >
+                          <span className="fd-2026-date" aria-hidden="true">
+                            <span className="fd-2026-date-start"><span className="fd-2026-date-month">{startMonth}</span><span className="fd-2026-date-day">{startDay}</span></span>
+                            {event.startIso !== event.endIso && <span className="fd-2026-date-end">{endMonth}<br />{endDay}</span>}
+                          </span>
+                          <span className="fd-2026-info">
+                            <span className="fd-2026-category">{category}</span>
+                            <span className="fd-2026-title">{event.eventTitle}</span>
+                          </span>
+                        </a>
+                        <button type="button" className="fd-2026-book" onClick={() => onOpenBooking()} aria-label={`Book ${event.eventTitle}`}>
+                          Book Now
+                        </button>
+                      </article>
+                    );
+                  })}
                 </div>
-                <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 mt-2 pt-2 border-t border-white/5">
-                  <span>{formatPrice(et.basePriceEur)}</span>
-                  <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform text-cyan-400" />
-                </div>
-              </button>
+              </section>
             ))}
           </div>
-        </div>
-
-        {/* ======================================================== */}
-        {/* 2026 MONTH NAVIGATION & CYCLING STRIP                    */}
-        {/* ======================================================== */}
-        <div className="p-5 sm:p-6 rounded-3xl bg-[#0E3453] border border-white/10 space-y-6">
-          
-          {/* Header with Month Selector & View Toggle */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            
-            <div className="flex items-center gap-3">
-              <button
-                onClick={handlePrevMonth}
-                className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white border border-white/10 transition-colors cursor-pointer"
-                title="Previous month"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-
-              <div className="flex items-baseline gap-2.5">
-                <h3 className="font-serif text-2xl sm:text-3xl font-bold text-white">
-                  {currentMonth.name}
-                </h3>
-                <span className="font-mono text-cyan-400 text-base sm:text-lg font-bold">
-                  2026
-                </span>
-                {currentMonth.name === 'October' && (
-                  <span className="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-mono text-[10px] uppercase font-bold tracking-wider">
-                    Current Season
-                  </span>
-                )}
-              </div>
-
-              <button
-                onClick={handleNextMonth}
-                className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white border border-white/10 transition-colors cursor-pointer"
-                title="Next month"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* View Mode Toggle: Cards vs Calendar Grid */}
-            <div className="flex items-center gap-2">
-              <div className="flex items-center p-1 rounded-xl bg-black/40 border border-white/10 text-xs font-mono">
-                <button
-                  onClick={() => setViewMode('cards')}
-                  className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all cursor-pointer ${
-                    viewMode === 'cards'
-                      ? 'bg-ocean text-white font-bold'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <List className="w-3.5 h-3.5" />
-                  <span>List View</span>
-                </button>
-                <button
-                  onClick={() => setViewMode('calendar')}
-                  className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all cursor-pointer ${
-                    viewMode === 'calendar'
-                      ? 'bg-ocean text-white font-bold'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <Grid className="w-3.5 h-3.5" />
-                  <span>Calendar Grid</span>
-                </button>
-              </div>
-            </div>
-
-          </div>
-
-          {/* 12-Month Quick Selector Tabs */}
-          <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-12 gap-1.5 pt-2 border-t border-white/5">
-            {MONTHS_2026.map((m, idx) => {
-              const isSelected = idx === selectedMonthIndex;
-              const hasEvents = SCHEDULE_2026_EVENTS.some((e) => e.monthNum === m.num);
-              const isCurrentSim = m.name === 'September';
-
-              return (
-                <button
-                  key={m.num}
-                  onClick={() => {
-                    setSelectedMonthIndex(idx);
-                    setSelectedCalendarDay(null);
-                  }}
-                  className={`py-2 px-1 rounded-xl text-center font-mono text-xs transition-all relative cursor-pointer ${
-                    isSelected
-                      ? 'bg-ocean text-white font-bold shadow-md shadow-cyan-500/25'
-                      : isCurrentSim
-                      ? 'bg-cyan-950/40 text-cyan-300 border border-cyan-500/30'
-                      : 'bg-white/[0.03] text-slate-400 hover:text-white hover:bg-white/[0.08]'
-                  }`}
-                >
-                  <span className="block">{m.short}</span>
-                  {hasEvents && (
-                    <span
-                      className={`w-1 h-1 rounded-full mx-auto mt-1 ${
-                        isSelected ? 'bg-black' : 'bg-cyan-400'
-                      }`}
-                    />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* ======================================================== */}
-          {/* EVENT CATEGORY FILTER PILLS                              */}
-          {/* ======================================================== */}
-          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-white/5">
-            <span className="text-xs font-mono text-slate-400 uppercase tracking-wider mr-1 flex items-center gap-1">
-              <Filter className="w-3 h-3 text-cyan-400" />
-              <span>Filter:</span>
-            </span>
-
-            {categories.map((cat) => {
-              const isActive = selectedCategory === cat;
-              return (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-3 py-1 rounded-full text-xs font-mono transition-all cursor-pointer flex items-center gap-1.5 ${
-                    isActive
-                      ? 'bg-ocean text-white font-bold shadow-md shadow-cyan-500/20'
-                      : 'bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10'
-                  }`}
-                >
-                  <span>{cat}</span>
-                  <span
-                    className={`px-1.5 py-0.2 rounded-full text-[10px] ${
-                      isActive ? 'bg-black/30 text-black' : 'bg-white/10 text-slate-400'
-                    }`}
-                  >
-                    {categoryCounts[cat] || 0}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-        </div>
-
-        {/* ======================================================== */}
-        {/* VIEW 1: DETAILED EVENT CARDS VIEW                        */}
-        {/* ======================================================== */}
-        {viewMode === 'cards' && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between text-xs font-mono text-slate-400 px-1">
-              <span>
-                Showing {currentMonthEvents.length} scheduled events for {currentMonth.name} 2026
-                {selectedCategory !== 'All' ? ` in "${selectedCategory}"` : ''}
-              </span>
-              <span>All departures include SSI gear, buoy lines &amp; certification</span>
-            </div>
-
-            {currentMonthEvents.length === 0 ? (
-              <div className="p-12 rounded-3xl bg-[#0E3453] border border-white/10 text-center space-y-4">
-                <CalendarIcon className="w-12 h-12 text-slate-500 mx-auto" />
-                <h4 className="font-serif text-xl font-bold text-white">
-                  No scheduled {selectedCategory} events in {currentMonth.name}
-                </h4>
-                <p className="text-xs sm:text-sm text-slate-400 font-sans max-w-md mx-auto">
-                  We run private and tailored courses every single day on request! Contact our team to book your preferred dates.
-                </p>
-                <button
-                  onClick={() => onOpenBooking()}
-                  className="fd-button rounded-xl px-6 py-2.5 font-mono text-xs font-bold uppercase tracking-wider"
-                >
-                  Request Custom Dates in {currentMonth.name}
-                </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {currentMonthEvents.map((item) => {
-                  const eventDetail = EVENT_TYPES_DATA[item.eventTypeId];
-                  const isCurrent = item.status === 'current';
-                  const isPast = item.status === 'past';
-                  const googleCalUrl = createGoogleCalendarUrl(item);
-
-                  return (
-                    <div
-                      key={item.id}
-                      className={`p-6 rounded-2xl border transition-all duration-300 flex flex-col justify-between group relative overflow-hidden ${
-                        isCurrent
-                          ? 'bg-[#0E3453] border-cyan-400/60 shadow-[0_0_30px_rgba(56,189,248,0.2)] ring-1 ring-cyan-400/30'
-                          : isPast
-                          ? 'bg-[#0E3453] border-white/5 opacity-70'
-                          : 'bg-[#0E3453] border-white/10 hover:border-cyan-400/40 hover:bg-[#0E3453]'
-                      }`}
-                    >
-                      {/* Top Row: Date Pill & Status */}
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between gap-2">
-                          <span
-                            className={`px-2.5 py-1 rounded-full border text-[10px] font-mono font-bold uppercase tracking-wider ${getCategoryColor(
-                              item.category
-                            )}`}
-                          >
-                            {item.category}
-                          </span>
-
-                          {isCurrent && (
-                            <span className="px-2 py-0.5 rounded-full bg-ocean-light text-white font-mono text-[10px] font-black uppercase tracking-wider flex items-center gap-1">
-                              <span className="w-1.5 h-1.5 rounded-full bg-black animate-ping" />
-                              Active Now
-                            </span>
-                          )}
-
-                          {!isPast && !isCurrent && (
-                            <span className="text-[11px] font-mono text-emerald-400 font-bold">
-                              {item.spotsAvailable} spots open
-                            </span>
-                          )}
-
-                          {isPast && (
-                            <span className="text-[10px] font-mono text-slate-500 uppercase">
-                              Past Event
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Title & Date */}
-                        <div>
-                          <div className="text-xl font-serif font-bold text-white group-hover:text-cyan-300 transition-colors">
-                            {item.eventTitle}
-                          </div>
-                          <div className="font-mono text-sm text-cyan-300 font-semibold mt-1">
-                            {item.dateLabel}
-                          </div>
-                        </div>
-
-                        <p className="text-xs text-slate-300 font-sans font-light line-clamp-2 leading-relaxed">
-                          {eventDetail?.description || 'SSI certified training immersion in Dahab.'}
-                        </p>
-
-                        {/* Specs */}
-                        <div className="pt-2 grid grid-cols-2 gap-2 text-[11px] font-mono text-slate-400 border-t border-white/5">
-                          <div className="flex items-center gap-1.5">
-                            <Clock className="w-3.5 h-3.5 text-cyan-400" />
-                            <span>{item.durationDays} Days</span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <MapPin className="w-3.5 h-3.5 text-cyan-400" />
-                            <span className="truncate">{item.location}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Bottom: Price, Link to Detail Page & Export Tools */}
-                      <div className="pt-5 mt-4 border-t border-white/10 space-y-3">
-                        <div className="flex items-baseline justify-between">
-                          <div>
-                            <span className="text-[10px] font-mono uppercase text-slate-400">All-Inclusive</span>
-                            <div className="font-serif text-xl font-bold text-white">
-                              {formatPrice(item.priceEur)}
-                            </div>
-                          </div>
-
-                          {/* Link to Dedicated Page */}
-                          <button
-                            onClick={() => onNavigate && onNavigate(`event-${item.eventTypeId}` as PageType)}
-                            className="inline-flex items-center gap-1 text-xs font-mono text-cyan-300 hover:text-white transition-colors cursor-pointer group/link"
-                          >
-                            <span>Full Details</span>
-                            <ArrowRight className="w-3 h-3 group-link-hover:translate-x-1 transition-transform" />
-                          </button>
-                        </div>
-
-                        <div className="flex items-center gap-2 pt-1">
-                          {/* Google Calendar export */}
-                          <a
-                            href={googleCalUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10 text-xs font-mono transition-colors flex items-center gap-1"
-                            title="Add to Google Calendar"
-                          >
-                            <CalendarCheck className="w-3.5 h-3.5 text-cyan-400" />
-                            <span className="hidden sm:inline">Google</span>
-                          </a>
-
-                          {/* iCal export */}
-                          <button
-                            onClick={() => exportToIcs(item)}
-                            className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10 text-xs font-mono transition-colors flex items-center gap-1 cursor-pointer"
-                            title="Download iCal file"
-                          >
-                            <Download className="w-3.5 h-3.5 text-cyan-400" />
-                            <span className="hidden sm:inline">iCal</span>
-                          </button>
-
-                          {/* Instant Booking */}
-                          <button
-                            onClick={() => onOpenBooking(`${item.eventTypeId}-${item.id}`)}
-                            disabled={isPast}
-                            className={`flex-1 py-2 px-3 rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all text-center ${
-                              isPast
-                                ? 'bg-white/5 text-slate-500 cursor-not-allowed border border-white/5'
-                                : 'bg-ocean hover:bg-ocean-light text-white shadow-md shadow-cyan-500/20 cursor-pointer'
-                            }`}
-                          >
-                            {isPast ? 'Completed' : 'Book Seat'}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ======================================================== */}
-        {/* VIEW 2: INTERACTIVE MONTHLY CALENDAR GRID VIEW           */}
-        {/* ======================================================== */}
-        {viewMode === 'calendar' && (
-          <div className="p-6 sm:p-8 rounded-3xl bg-[#0E3453] border border-white/10 space-y-6">
-            
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
-              <div>
-                <h4 className="font-serif text-xl font-bold text-white">
-                  {currentMonth.name} 2026 Interactive Calendar
-                </h4>
-                <p className="text-xs text-slate-400 font-sans">
-                  Click any active day block to reveal scheduled departures and click into their dedicated pages.
-                </p>
-              </div>
-            </div>
-
-            {/* Day of week headers */}
-            <div className="grid grid-cols-7 gap-2 text-center font-mono text-xs uppercase text-slate-400 font-semibold">
-              <span>Mon</span>
-              <span>Tue</span>
-              <span>Wed</span>
-              <span>Thu</span>
-              <span>Fri</span>
-              <span>Sat</span>
-              <span>Sun</span>
-            </div>
-
-            {/* Calendar Days Matrix */}
-            <div className="grid grid-cols-7 gap-2">
-              {Array.from({ length: currentMonth.days }).map((_, dIdx) => {
-                const dayNum = dIdx + 1;
-                const dayStr = dayNum < 10 ? `0${dayNum}` : `${dayNum}`;
-                const dateIso = `2026-${currentMonth.num < 10 ? `0${currentMonth.num}` : currentMonth.num}-${dayStr}`;
-                
-                // Find events active on this date
-                const dayEvents = SCHEDULE_2026_EVENTS.filter((e) => {
-                  return dateIso >= e.startIso && dateIso <= e.endIso;
-                });
-
-                const isSelectedDay = selectedCalendarDay === dayNum;
-                const hasEvents = dayEvents.length > 0;
-
-                return (
-                  <div
-                    key={dayNum}
-                    onClick={() => hasEvents && setSelectedCalendarDay(dayNum)}
-                    className={`min-h-[85px] sm:min-h-[105px] p-2 rounded-xl border transition-all flex flex-col justify-between ${
-                      hasEvents ? 'cursor-pointer hover:border-cyan-400/50' : 'cursor-default opacity-40'
-                    } ${
-                      isSelectedDay
-                        ? 'bg-cyan-950/60 border-cyan-400 ring-2 ring-cyan-400/40'
-                        : hasEvents
-                        ? 'bg-[#0E3453] border-white/10'
-                        : 'bg-black/20 border-white/5'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between text-xs font-mono">
-                      <span className={`font-bold ${hasEvents ? 'text-white' : 'text-slate-600'}`}>
-                        {dayNum}
-                      </span>
-                      {hasEvents && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-                      )}
-                    </div>
-
-                    {/* Mini event tags */}
-                    <div className="space-y-1 mt-1">
-                      {dayEvents.slice(0, 2).map((ev) => (
-                        <div
-                          key={ev.id}
-                          className="px-1.5 py-0.5 rounded text-[9px] font-mono truncate bg-cyan-500/20 text-cyan-200 border border-cyan-400/30"
-                          title={`${ev.eventTitle}: ${ev.dateLabel}`}
-                        >
-                          {ev.eventTitle}
-                        </div>
-                      ))}
-                      {dayEvents.length > 2 && (
-                        <div className="text-[9px] font-mono text-cyan-400 font-bold pl-1">
-                          +{dayEvents.length - 2} more
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Selected Day Details Panel */}
-            {selectedCalendarDay && (
-              <div className="p-5 rounded-2xl bg-[#0E3453] border border-cyan-400/40 space-y-4 animate-in fade-in">
-                <div className="flex items-center justify-between">
-                  <div className="font-serif font-bold text-white text-lg">
-                    Events Active on {currentMonth.name} {selectedCalendarDay}, 2026
-                  </div>
-                  <button
-                    onClick={() => setSelectedCalendarDay(null)}
-                    className="text-xs font-mono text-slate-400 hover:text-white"
-                  >
-                    Close Day
-                  </button>
-                </div>
-
-                {(() => {
-                  const dayStr = selectedCalendarDay < 10 ? `0${selectedCalendarDay}` : `${selectedCalendarDay}`;
-                  const dateIso = `2026-${currentMonth.num < 10 ? `0${currentMonth.num}` : currentMonth.num}-${dayStr}`;
-                  const activeOnDay = SCHEDULE_2026_EVENTS.filter(
-                    (e) => dateIso >= e.startIso && dateIso <= e.endIso
-                  );
-
-                  return (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                      {activeOnDay.map((e) => (
-                        <div
-                          key={e.id}
-                          className="p-4 rounded-xl bg-black/40 border border-white/10 space-y-2"
-                        >
-                          <span
-                            className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider ${getCategoryColor(
-                              e.category
-                            )}`}
-                          >
-                            {e.category}
-                          </span>
-                          <h5 className="font-serif font-bold text-white text-base">
-                            {e.eventTitle}
-                          </h5>
-                          <div className="text-xs font-mono text-cyan-300">
-                            {e.dateLabel} ({e.durationDays} Days)
-                          </div>
-                          <div className="pt-2 flex items-center justify-between">
-                            <button
-                              onClick={() => onNavigate && onNavigate(`event-${e.eventTypeId}` as PageType)}
-                              className="text-xs font-mono text-cyan-400 hover:underline flex items-center gap-1 cursor-pointer"
-                            >
-                              <span>Dedicated Page</span>
-                              <ExternalLink className="w-3 h-3" />
-                            </button>
-                            <button
-                              onClick={() => onOpenBooking(e.id)}
-                              className="px-3 py-1 rounded-lg bg-ocean text-white text-xs font-mono font-bold uppercase cursor-pointer"
-                            >
-                              Book
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  );
-                })()}
-              </div>
-            )}
-
-          </div>
-        )}
-
-      </div>
-    </section>
+        </>,
+        calendarPortalHost,
+      )}
+    </>
   );
 }

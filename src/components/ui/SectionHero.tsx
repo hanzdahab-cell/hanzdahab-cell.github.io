@@ -7,6 +7,7 @@ interface SectionHeroProps {
   className?: string;
   contentClassName?: string;
   minHeightClassName?: string;
+  alignStart?: boolean;
 }
 
 export function SectionHero({
@@ -16,9 +17,10 @@ export function SectionHero({
   className = '',
   contentClassName = '',
   minHeightClassName = 'min-h-[50svh]',
+  alignStart = false,
 }: SectionHeroProps) {
   return (
-    <header className={`relative isolate flex ${minHeightClassName} items-center overflow-hidden bg-[#061A2B] ${className}`}>
+    <header className={`relative isolate flex ${minHeightClassName} ${alignStart ? 'items-start' : 'items-center'} overflow-hidden bg-[#061A2B] ${className}`}>
       <img
         src={imageSrc}
         alt={imageAlt}

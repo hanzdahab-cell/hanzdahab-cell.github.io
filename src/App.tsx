@@ -275,13 +275,15 @@ export default function App() {
         {currentPage === 'calendar' && (
           <div className="page-dive-in">
             <PageHeader
-              title="Expedition & Course Calendar"
-              subtitle="Live schedule of upcoming certified SSI courses, depth camps, equalization coaching, and camel safaris in Dahab. Check remaining spots and book directly."
+              title="FREEDIVE DAHAB LIVE CALENDER"
+              subtitle="PLANING YOUR DAHAB FREEDIVING EXPERIENCE ? HERE'S THE CALENDAR FOR OUR SCHEDULED EVENTS. WE RUN ALL OTHER COURSES ALL YEAR ROUND ON REQUEST, JUST LET US KNOW YOUR DATES!"
               badge="Live 2026 Season Schedule • Instant Seat Reservation"
               currentPage="calendar"
               onNavigate={navigateTo}
               onOpenBooking={() => handleOpenBooking()}
               ctaText="Custom Date Request"
+              compact
+              subtitleFontFamily="system-ui, sans-serif"
             />
 
             <CalendarSection

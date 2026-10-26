@@ -10,6 +10,8 @@ interface PageHeaderProps {
   onNavigate: (page: PageType) => void;
   onOpenBooking?: () => void;
   ctaText?: string;
+  compact?: boolean;
+  subtitleFontFamily?: string;
 }
 
 export function PageHeader({
@@ -20,6 +22,8 @@ export function PageHeader({
   onNavigate,
   onOpenBooking,
   ctaText = 'Book / Inquire',
+  compact = false,
+  subtitleFontFamily,
 }: PageHeaderProps) {
   const { isRtl } = useLanguage();
   const { t } = useTranslation();
@@ -28,9 +32,10 @@ export function PageHeader({
   const displayTitle = (typeof localizedConfig === 'object' && localizedConfig?.title) || title;
   const displaySubtitle = (typeof localizedConfig === 'object' && localizedConfig?.subtitle) || subtitle;
   const displayCta = (typeof localizedConfig === 'object' && localizedConfig?.ctaText) || ctaText;
+  const isCalendarPage = currentPage === 'calendar';
 
   return (
-    <div className="relative overflow-hidden border-b border-white/10 bg-gradient-to-b from-[#0E3453]/85 via-[#0E3453]/72 to-[#0E3453]/55 px-6 pb-16 pt-28 select-none sm:pb-20 sm:pt-36">
+    <div className={`relative overflow-hidden border-b border-white/10 bg-gradient-to-b from-[#0E3453]/85 via-[#0E3453]/72 to-[#0E3453]/55 px-6 select-none ${compact ? 'pb-8 pt-20 sm:pb-10 sm:pt-24' : 'pb-16 pt-28 sm:pb-20 sm:pt-36'}`}>
       
       {/* Ambient Lighting */}
       <div className="absolute top-0 right-1/4 w-[600px] h-[350px] bg-cyan-500/[0.08] blur-[150px] pointer-events-none rounded-full" />
@@ -52,12 +57,15 @@ export function PageHeader({
                 return (
                   <>
                     <span className="text-white">{firstPart} </span>
-                    <span className="text-cyan-300 drop-shadow-[0_0_20px_rgba(34,211,238,0.35)]">{secondPart}</span>
+                    <span className={isCalendarPage ? 'text-[#03D0F8] drop-shadow-[0_0_20px_rgba(3,208,248,0.35)]' : 'text-cyan-300 drop-shadow-[0_0_20px_rgba(34,211,238,0.35)]'}>{secondPart}</span>
                   </>
                 );
               })()}
             </h1>
-            <p className="text-sm sm:text-base md:text-lg text-slate-300 font-alata font-normal leading-relaxed max-w-2xl">
+            <p
+              className={`text-sm sm:text-base md:text-lg text-slate-300 ${subtitleFontFamily ? '' : 'font-alata'} font-normal leading-relaxed max-w-2xl`}
+              style={subtitleFontFamily ? { fontFamily: subtitleFontFamily } : undefined}
+            >
               {displaySubtitle}
             </p>
           </div>
@@ -66,7 +74,7 @@ export function PageHeader({
             <div className="flex items-center gap-3">
               <button
                 onClick={onOpenBooking}
-                className="px-7 py-3 rounded-full bg-cyan-400 hover:bg-cyan-300 text-[#0E3453] font-semibold text-xs sm:text-sm font-alata tracking-wider uppercase transition-all shadow-[0_0_20px_rgba(56,189,248,0.3)] hover:shadow-[0_0_30px_rgba(56,189,248,0.5)] cursor-pointer"
+                className={`px-7 py-3 rounded-full ${isCalendarPage ? 'bg-white hover:bg-slate-100' : 'bg-cyan-400 hover:bg-cyan-300'} text-[#0E3453] font-semibold text-xs sm:text-sm font-alata tracking-wider uppercase transition-all shadow-[0_0_20px_rgba(56,189,248,0.3)] hover:shadow-[0_0_30px_rgba(56,189,248,0.5)] cursor-pointer`}
               >
                 {displayCta}
               </button>
