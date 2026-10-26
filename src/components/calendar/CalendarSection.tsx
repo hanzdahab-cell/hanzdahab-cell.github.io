@@ -56,7 +56,7 @@ export function CalendarSection({ onOpenBooking, onNavigate }: CalendarSectionPr
     return eventTypeId === 'ras-mohamed' ? 'activity-ras-mohamed' : `event-${eventTypeId}`;
   };
 
-  const colorForScheduleEvent = (eventTypeId: EventTypeId) => {
+  const colorForScheduleEvent = (eventTypeId: EventTypeId | 'beginner-advanced-combo') => {
     if (eventTypeId === 'zero-to-hero') return '#068B88';
     if (eventTypeId === 'beginner-week') return '#2980B9';
     if (eventTypeId === 'beginner-advanced-combo') return '#3498DB';
