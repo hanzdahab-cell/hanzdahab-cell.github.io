@@ -95,6 +95,9 @@ export function CalendarSection({ onOpenBooking, onNavigate }: CalendarSectionPr
         font: 700 16px/1.25 system-ui, sans-serif;
       }
       .fd-elfsight-month-heading:first-child { margin-top: 0; }
+      .List__Item-sc-e9913e45-1 + .List__Item-sc-e9913e45-1 > .List__Name-sc-e9913e45-2 {
+        margin-top: 24px !important;
+      }
       [class*="ListItem__Component"] .freedive-calendar-book-now {
         display: inline-flex;
         flex: 0 0 auto;
@@ -337,12 +340,13 @@ export function CalendarSection({ onOpenBooking, onNavigate }: CalendarSectionPr
       {calendarPortalHost && createPortal(
         <>
           <style>{`
-            .fd-calendar-year-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 22px; color: #fff; }
+            .fd-calendar-year-nav { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; margin: 0 0 12px; color: #fff; }
+            .fd-calendar-year-nav button:last-child { justify-self: end; }
             .fd-calendar-year-nav button { display: inline-flex; min-width: 42px; min-height: 40px; align-items: center; justify-content: center; border: 1px solid rgba(148, 190, 218, .45); border-radius: 9px; background: rgba(5, 31, 52, .42); color: #fff; font: 600 14px/1 system-ui, sans-serif; cursor: pointer; transition: background-color 160ms ease, border-color 160ms ease; }
             .fd-calendar-year-nav button:hover:not(:disabled) { border-color: rgba(148, 190, 218, .8); background: rgba(36, 104, 146, .35); }
             .fd-calendar-year-nav button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
             .fd-calendar-year-nav button:disabled { cursor: not-allowed; opacity: .45; }
-            .fd-calendar-year-label { color: #fff; font-size: 18px; font-weight: 700; }
+            .fd-calendar-year-label { grid-column: 1 / -1; grid-row: 2; color: #fff; font-size: 18px; font-weight: 700; }
             .fd-2026-calendar { width: 100%; color: #fff; font-family: inherit; }
             .fd-2026-month + .fd-2026-month { margin-top: 24px; }
             .fd-2026-month-heading { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; color: #fff; font-size: 16px; font-weight: 700; line-height: 1.25; }
@@ -394,7 +398,6 @@ export function CalendarSection({ onOpenBooking, onNavigate }: CalendarSectionPr
             >
               Previous
             </button>
-            <span className="fd-calendar-year-label" aria-live="polite">{selectedCalendarYear}</span>
             <button
               type="button"
               onClick={() => setSelectedCalendarYear((year) => Math.min(2028, year + 1))}
@@ -403,6 +406,7 @@ export function CalendarSection({ onOpenBooking, onNavigate }: CalendarSectionPr
             >
               Next
             </button>
+            <span className="fd-calendar-year-label" aria-live="polite">{selectedCalendarYear}</span>
           </nav>
           <div className="fd-2026-calendar" aria-label="Remaining 2026 events" hidden={selectedCalendarYear !== 2026}>
             {Object.entries(eventsByMonth).map(([month, events]) => (

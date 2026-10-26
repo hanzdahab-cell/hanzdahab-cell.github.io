@@ -292,7 +292,6 @@ export default function App() {
               currency={currency}
             />
 
-            <BlogSection />
           </div>
         )}
 
