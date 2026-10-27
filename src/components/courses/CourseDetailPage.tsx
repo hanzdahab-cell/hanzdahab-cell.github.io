@@ -16,7 +16,7 @@ import { CourseProgressSteps } from './CourseProgressSteps';
 import { FadeUp } from '../ui/MotionKit';
 import { TiltSurface } from '../ui/TiltSurface';
 import { courseCardArtworkById, ssiCourseArtworkBySlug } from '../../data/courseMedia';
-import { OfferingCardStack } from '../ui/OfferingCardStack';
+import { CoursePhotoGallery } from '../ui/CoursePhotoGallery';
 import { getCourseDetailGalleryItems } from '../../data/detailGalleries';
 
 interface CourseDetailPageProps {
@@ -363,15 +363,6 @@ export function CourseDetailPage({
               </FadeUp>
             )}
 
-            <FadeUp id="course-gallery" className="scroll-mt-32">
-              <OfferingCardStack
-                label="Course photo gallery"
-                title={`${course.title} gallery`}
-                description="Swipe or use the controls to view the full course photos."
-                items={courseStackItems}
-              />
-            </FadeUp>
-
             {isCore && !(course as Course).schedule && (
               <FadeUp className="rounded-2xl border border-ocean-pale/25 bg-gradient-to-r from-[#081F35] via-[#0E3453] to-[#081F35] p-6">
                 <div className="text-[10px] font-mono uppercase tracking-[0.25em] text-cyan-400 mb-2">
@@ -420,6 +411,10 @@ export function CourseDetailPage({
                 </p>
               </div>
 
+              <div id="course-gallery" className="scroll-mt-32">
+                <CoursePhotoGallery images={courseStackItems} label={`${course.title} photo gallery`} />
+              </div>
+
               {/* Prerequisites */}
               {course.prerequisites && (
                 <div className="glass-panel rounded-2xl border border-white/10 p-6 space-y-2">
@@ -432,6 +427,7 @@ export function CourseDetailPage({
                 </div>
               )}
             </div>
+
           </div>
         </div>
 

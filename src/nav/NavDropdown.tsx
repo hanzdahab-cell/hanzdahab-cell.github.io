@@ -298,10 +298,20 @@ export function NavDropdown({
           if (skipNextFocusOpen.current) skipNextFocusOpen.current = false;
           else open(menu.id);
         }}
-        className={`inline-flex min-h-11 items-center whitespace-nowrap rounded-full px-2 py-2 text-[11px] font-alata font-semibold uppercase tracking-[0.06em] transition-colors hover:text-[#00cdfe] min-[1680px]:px-3 min-[1680px]:text-xs ${isActive ? 'text-[#00cdfe]' : 'text-[#efffff]'} ${HEADER_FOCUS}`}
+        className={`relative isolate inline-flex min-h-11 items-center whitespace-nowrap rounded-full px-2 py-2 text-[11px] font-alata font-semibold uppercase tracking-[0.06em] transition-colors hover:text-[#00cdfe] min-[1680px]:px-3 min-[1680px]:text-xs ${isActive ? 'text-[#00cdfe]' : 'text-[#efffff]'} ${HEADER_FOCUS}`}
         aria-current={isActive ? 'page' : undefined}
       >
-        {menu.label}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.span
+              layoutId="primary-nav-hover-bg"
+              aria-hidden="true"
+              className="absolute inset-0 -z-10 rounded-full bg-[#00cdfe]/10"
+              transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+            />
+          )}
+        </AnimatePresence>
+        <span className="relative z-10">{menu.label}</span>
       </a>
 
       <AnimatePresence>

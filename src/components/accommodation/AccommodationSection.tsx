@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { roomTypes } from '../../data/accommodation';
-import { Wifi, Check, Users, Home, ArrowRight, ShoppingBag, ShieldCheck, Tag } from 'lucide-react';
-import storeImg from '../../assets/images/dahab_freedive_store_1789742281859.jpg';
+import { Check, Users, Home, ArrowRight, Moon, Waves, Compass } from 'lucide-react';
 import { PageType } from '../../types';
 import { PhotoCarousel } from '../ui/PhotoCarousel';
 
@@ -14,6 +13,29 @@ interface AccommodationSectionProps {
 export function AccommodationSection({ onOpenBooking, currency, onNavigate }: AccommodationSectionProps) {
   const [activeRoomId, setActiveRoomId] = useState(roomTypes[0].id);
   const activeRoom = roomTypes.find(r => r.id === activeRoomId) || roomTypes[0];
+  const recommendedActivities = [
+    {
+      title: 'Night Dive',
+      image: null,
+      alt: '',
+      icon: Moon,
+      page: 'activity-night-freediving' as PageType,
+    },
+    {
+      title: 'Icebath',
+      image: null,
+      alt: '',
+      icon: Waves,
+      page: 'experience' as PageType,
+    },
+    {
+      title: 'Explore Sinai',
+      image: '/images/desert-experience/sinai-desert-04.webp',
+      alt: 'Sinai desert landscape at sunset',
+      icon: Compass,
+      page: 'activity-desert-sunset' as PageType,
+    },
+  ];
 
   const formatPrice = (eur: number) => {
     if (currency === 'USD') return `$${Math.round(eur * 1.08)}`;
@@ -33,17 +55,11 @@ export function AccommodationSection({ onOpenBooking, currency, onNavigate }: Ac
               <span>THE SEA LODGE • LIGHTHOUSE BAY</span>
             </div>
             <h2 className="font-bebas text-5xl sm:text-6xl font-normal text-white tracking-[0.05em] leading-tight">
-              OCEANFRONT <span className="text-cyan-300 drop-shadow-[0_0_24px_rgba(34,211,238,0.4)]">SANCTUARY</span>
+              FREEDIVE DAHAB GUEST ROOMS
             </h2>
             <p className="text-slate-300 text-base font-alata font-normal max-w-xl leading-relaxed">
-              Wake up to panoramic Red Sea views, step directly onto the training bay, 
-              and unwind on our private sunset yoga and coworking terrace with 100Mbps+ fiber.
+              For short or long stays, we offer 4 spacious rooms located right above our Freedive Dahab school.
             </p>
-          </div>
-
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900 border border-white/10 text-xs font-mono text-cyan-300">
-            <Wifi className="w-4 h-4 text-cyan-400" />
-            <span>100Mbps+ Fiber • Nomad Friendly</span>
           </div>
         </div>
 
@@ -168,135 +184,38 @@ export function AccommodationSection({ onOpenBooking, currency, onNavigate }: Ac
 
         </div>
 
-        {/* ======================================================== */}
-        {/* THE FREEDIVE DAHAB PRO STORE PICS & GEAR SHOWCASE       */}
-        {/* ======================================================== */}
-        <div className="mt-28 pt-16 border-t border-white/10">
-          
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs font-mono tracking-[0.3em] uppercase text-cyan-400">
-                <ShoppingBag className="w-4 h-4" />
-                <span>EQUIPMENT SHOWROOM • LIGHTHOUSE PROMENADE</span>
-              </div>
-              <h3 className="font-serif text-4xl sm:text-5xl font-bold text-white tracking-tight">
-                The Freedive <span className="text-cyan-300 italic font-normal">Pro Store</span>
-              </h3>
-              <p className="text-slate-400 text-sm font-light max-w-xl">
-                South Sinai’s most comprehensive freediving pro shop. Carbon fiber fins, low volume masks, custom Yamamoto suits, and precision equalisation gear with in-bay trial privileges.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono">
-                ✓ Try Before You Buy in Lighthouse Bay
-              </span>
-            </div>
+        {/* Recommended activities */}
+        <section aria-labelledby="recommended-activities-heading" className="mt-20 border-t border-white/10 pt-12 sm:mt-24 sm:pt-16">
+          <h3 id="recommended-activities-heading" className="mb-6 font-bebas text-3xl tracking-wide text-white sm:text-4xl">
+            Recommended Activities
+          </h3>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {recommendedActivities.map((activity) => {
+              const Icon = activity.icon;
+              return (
+                <article key={activity.title} className="group relative isolate flex min-h-40 overflow-hidden rounded-2xl border border-white/10 bg-[#0A2943]">
+                  {activity.image ? (
+                    <img src={activity.image} alt={activity.alt} loading="lazy" className="absolute inset-0 -z-10 h-full w-full object-cover transition-transform duration-700 motion-safe:group-hover:scale-105" />
+                  ) : (
+                    <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_80%_20%,rgba(89,166,208,0.45),transparent_55%),linear-gradient(135deg,#123c5a,#071d31)]" />
+                  )}
+                  <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-t from-[#071d31]/95 via-[#071d31]/35 to-[#071d31]/10" />
+                  <div className="flex w-full items-end justify-between gap-3 p-5">
+                    <h4 className="font-bebas text-2xl tracking-wide text-white">{activity.title}</h4>
+                    <button
+                      type="button"
+                      onClick={() => onNavigate(activity.page)}
+                      aria-label={`Explore ${activity.title}`}
+                      className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/50 bg-[#071d31]/45 text-white transition-colors hover:bg-white hover:text-[#0E3453] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    >
+                      <Icon className="h-5 w-5" aria-hidden="true" />
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
           </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-            
-            {/* Store Interior Photograph */}
-            <div className="lg:col-span-7 rounded-2xl overflow-hidden border border-white/10 relative group shadow-2xl aspect-[16/10]">
-              <img
-                src={storeImg}
-                alt="Freedive Dahab Pro Store with carbon fins, wetsuits and masks"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0E3453] via-transparent to-transparent" />
-              
-              <div className="absolute top-4 left-4">
-                <span className="px-3 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-xs font-mono text-cyan-300 uppercase tracking-wider">
-                  OFFICIAL MARES & MOLCHANOVS PARTNER
-                </span>
-              </div>
-
-              <div className="absolute bottom-4 left-6 right-6 flex items-center justify-between">
-                <div>
-                  <h4 className="font-serif text-2xl font-bold text-white">
-                    Lighthouse Gear Sanctuary
-                  </h4>
-                  <p className="text-xs font-mono text-slate-300">
-                    Open daily 08:00 – 20:00 • Custom fitting & sizing
-                  </p>
-                </div>
-                <button
-                  onClick={onOpenBooking}
-                  className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white font-mono text-xs font-semibold"
-                >
-                  Reserve Gear
-                </button>
-              </div>
-            </div>
-
-            {/* Store Features & Brands */}
-            <div className="lg:col-span-5 flex flex-col justify-between space-y-4">
-              <div className="grid grid-cols-1 gap-3">
-                {[
-                  {
-                    title: 'Carbon & Fiberglass Fins',
-                    brands: 'Cetma Composites, Molchanovs, Mares',
-                    desc: 'Optimized stiffness curves calibrated to your kicking mechanics and dive style.',
-                  },
-                  {
-                    title: 'Low Volume Freedive Masks',
-                    brands: 'Aqualung Sphera, Mares Viper, Omer Zero',
-                    desc: 'Micro-volume silhouettes for effortless equalisation beyond 30 meters.',
-                  },
-                  {
-                    title: 'Custom Yamamoto Neoprene',
-                    brands: '1.5mm, 3mm, 5mm Smoothskin',
-                    desc: 'Hydrodynamic glide, thermal protection, and full flexibility tailored to your measurements.',
-                  },
-                  {
-                    title: 'Equalisation & Depth Accessories',
-                    brands: 'Octo Noseclips, Lanyards, Depth Gauges',
-                    desc: 'Competition grade freediving hardware trusted by world record contenders.',
-                  },
-                ].map((item, i) => (
-                  <div
-                    key={i}
-                    className="p-4 rounded-xl bg-slate-900/40 border border-white/10 hover:border-cyan-400/40 transition-all space-y-1"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-serif font-bold text-sm text-white">
-                        {item.title}
-                      </span>
-                      <span className="text-[10px] font-mono text-cyan-400 font-medium">
-                        {item.brands}
-                      </span>
-                    </div>
-                    <p className="text-xs text-slate-400 font-light leading-relaxed">
-                      {item.desc}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="p-4 rounded-xl bg-cyan-950/20 border border-cyan-400/20 flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <div className="text-xs font-mono text-cyan-300 font-semibold uppercase">
-                    15% Student Discount
-                  </div>
-                  <div className="text-[11px] text-slate-400">
-                    Enrolled students receive preferential rates on all equipment.
-                  </div>
-                </div>
-                <button
-                  onClick={onOpenBooking}
-                  className="px-4 py-2 rounded-lg bg-ocean-light text-white text-xs font-mono font-bold uppercase tracking-wider hover:bg-cyan-300 transition-colors"
-                >
-                  SHOP INQUIRE
-                </button>
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
+        </section>
       </div>
     </section>
   );

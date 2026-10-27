@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { PageType } from '../../types';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +13,7 @@ interface PageHeaderProps {
   ctaText?: string;
   compact?: boolean;
   subtitleFontFamily?: string;
+  backgroundImages?: string[];
 }
 
 export function PageHeader({
@@ -24,7 +26,9 @@ export function PageHeader({
   ctaText = 'Book / Inquire',
   compact = false,
   subtitleFontFamily,
+  backgroundImages,
 }: PageHeaderProps) {
+  const [activeBackgroundIndex, setActiveBackgroundIndex] = useState(0);
   const { isRtl } = useLanguage();
   const { t } = useTranslation();
 
@@ -34,8 +38,32 @@ export function PageHeader({
   const displayCta = (typeof localizedConfig === 'object' && localizedConfig?.ctaText) || ctaText;
   const isCalendarPage = currentPage === 'calendar';
 
+  useEffect(() => {
+    if (!backgroundImages || backgroundImages.length < 2) return;
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (mediaQuery.matches) return;
+
+    const interval = window.setInterval(() => {
+      setActiveBackgroundIndex((index) => (index + 1) % backgroundImages.length);
+    }, 6500);
+
+    return () => window.clearInterval(interval);
+  }, [backgroundImages]);
+
   return (
-    <div className={`relative overflow-hidden border-b border-white/10 bg-gradient-to-b from-[#0E3453]/85 via-[#0E3453]/72 to-[#0E3453]/55 px-6 select-none ${compact ? 'pb-8 pt-20 sm:pb-10 sm:pt-24' : 'pb-16 pt-28 sm:pb-20 sm:pt-36'}`}>
+    <div className={`relative overflow-hidden border-b border-white/10 bg-gradient-to-b from-[#0E3453]/85 via-[#0E3453]/72 to-[#0E3453]/55 px-6 select-none ${compact ? 'pb-8 pt-20 sm:pb-10 sm:pt-24' : 'pb-16 pt-28 sm:pb-20 sm:pt-36'} ${backgroundImages?.length ? 'min-h-[280px] sm:min-h-[300px]' : ''}`}>
+
+      {backgroundImages?.map((image, index) => (
+        <div
+          key={image}
+          aria-hidden="true"
+          className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 motion-reduce:transition-none ${index === activeBackgroundIndex ? 'opacity-100' : 'opacity-0'}`}
+          style={{ backgroundImage: `url("${image}")` }}
+        />
+      ))}
+      {backgroundImages?.length ? (
+        <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-[#071D31]/85 via-[#0E3453]/68 to-[#071D31]/55" />
+      ) : null}
       
       {/* Ambient Lighting */}
       <div className="absolute top-0 right-1/4 w-[600px] h-[350px] bg-cyan-500/[0.08] blur-[150px] pointer-events-none rounded-full" />

@@ -143,6 +143,7 @@ export interface TranslationDictionary {
     }[];
     line1: string;
     line1Highlight: string;
+    line1Second: string;
     line2: string;
     leadTitle: string;
     leadDesc: string;
@@ -556,8 +557,9 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
           alt: 'Freedivers share a calm training session at the water’s surface',
         },
       ],
-      line1: 'THE FIRST FREEDIVING CENTER IN DAHAB SINCE 2003',
-      line1Highlight: 'IN DAHAB SINCE 2003',
+      line1: 'THE FIRST FREEDIVING CENTER',
+      line1Highlight: 'IN DAHAB',
+      line1Second: 'IN DAHAB SINCE 2003',
       line2: 'THE FIRST SSI FREEDIVING CENTER IN THE WORLD SINCE 2010',
       leadTitle: "You don't need to be a deep diver to begin.",
       leadDesc: "Start with one calm breath in Dahab's sheltered waters. Progress with confidence at your own natural pace.",
@@ -690,9 +692,9 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
         ctaText: 'Reserve Depth Buoy',
       },
       accommodation: {
-        title: 'Sanctuary Accommodation & Living',
-        subtitle: 'Step from your room directly into the turquoise training bay. Enjoy oceanfront suites, desert garden eco-villas, gear drying rooms, and high-speed fiber internet.',
-        badge: 'Sea Lodge • Lighthouse Bay Dahab • Nomad Friendly',
+        title: 'Freedive Dahab Accommodation',
+        subtitle: 'We offer packages with accommodation and freediving courses and/or training. Please let us know your needs, and we will prepare a tailor-made quote for you.',
+        badge: '',
         ctaText: 'Check Availability',
       },
       packages: {
@@ -968,8 +970,9 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
           alt: 'غواصون أحرار يتدربون معاً عند سطح الماء',
         },
       ],
-      line1: 'أول مركز للغوص الحر في دهب منذ عام 2003',
-      line1Highlight: 'أول مركز للغوص الحر',
+      line1: 'أول مركز للغوص الحر',
+      line1Highlight: 'في دهب',
+      line1Second: 'في دهب منذ عام 2003',
       line2: 'اكتشف أعماق دهب، نَفَسًا هادئًا في كل مرة.',
       leadTitle: 'لست بحاجة لأن تكون غواصاً محترفاً لتبدأ.',
       leadDesc: 'ابدأ بنَفَسٍ واحد هادئ في مياه دهب المحمية، وتقدم بثقة وأمان وفق وتيرتك الطبيعية.',
@@ -1102,9 +1105,9 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
         ctaText: 'احجز عوامة تدريب للأعماق',
       },
       accommodation: {
-        title: 'إقامة الملاذ والحياة الشاطئية',
-        subtitle: 'انطلق من باب غرفتك مباشرة إلى مياه التدريب الفيروزية. أجنحة بحرية، وفيلات صديقة للبيئة، وإنترنت فايبر فائق السرعة.',
-        badge: 'نزل البحر • خليج اللايتهاوس دهب • بيئة مثالية للعمل عن بعد',
+        title: 'إقامة فريد دايف دهب',
+        subtitle: 'نوفر باقات إقامة مع دورات الغوص الحر و/أو التدريب. أخبرونا باحتياجاتكم وسنعد لكم عرض سعر مخصصاً.',
+        badge: '',
         ctaText: 'تحقق من توافر الغرف',
       },
       packages: {
@@ -1380,8 +1383,9 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
           alt: 'Apneístas comparten una tranquila sesión de entrenamiento en la superficie',
         },
       ],
-      line1: 'EL PRIMER CENTRO DE APNEA EN DAHAB DESDE 2003',
-      line1Highlight: 'PRIMER CENTRO DE APNEA',
+      line1: 'EL PRIMER CENTRO DE APNEA',
+      line1Highlight: 'EN DAHAB',
+      line1Second: 'EN DAHAB DESDE 2003',
       line2: 'Encuentra tu profundidad en Dahab, una respiración tranquila a la vez.',
       leadTitle: 'No necesitas ser un buceador profundo para comenzar.',
       leadDesc: 'Comienza con una respiración calmada en las aguas protegidas de Dahab. Avanza con confianza a tu propio ritmo natural.',
@@ -1514,9 +1518,9 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
         ctaText: 'Reservar Boya de Profundidad',
       },
       accommodation: {
-        title: 'Alojamiento y Vida en el Santuario',
-        subtitle: 'Sal de tu habitación directamente a las aguas turquesas de entrenamiento. Suites con vistas al mar, villas ecológicas e internet de fibra de alta velocidad.',
-        badge: 'Sea Lodge • Bahía Lighthouse Dahab • Ideal para Nómadas Digitales',
+        title: 'Alojamiento en Freedive Dahab',
+        subtitle: 'Ofrecemos paquetes de alojamiento con cursos de apnea y/o entrenamiento. Cuéntanos qué necesitas y prepararemos un presupuesto a medida.',
+        badge: '',
         ctaText: 'Verificar Disponibilidad',
       },
       packages: {
@@ -1792,8 +1796,9 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
           alt: 'Freitauchende teilen eine ruhige Trainingseinheit an der Wasseroberfläche',
         },
       ],
-      line1: 'DAS ERSTE FREEDIVING-CENTER IN DAHAB SEIT 2003',
-      line1Highlight: 'ERSTE FREEDIVING-CENTER',
+      line1: 'DAS ERSTE FREEDIVING-CENTER',
+      line1Highlight: 'IN DAHAB',
+      line1Second: 'IN DAHAB SEIT 2003',
       line2: 'Finde deine Tiefe in Dahab, einen ruhigen Atemzug nach dem anderen.',
       leadTitle: 'Du musst kein Tieftaucher sein, um zu beginnen.',
       leadDesc: 'Starte mit einem ruhigen Atemzug in Dahabs geschützten Buchten. Entwickle dich mit Vertrauen in deinem natürlichen Tempo.',
@@ -1926,9 +1931,9 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
         ctaText: 'Tiefenboje Reservieren',
       },
       accommodation: {
-        title: 'Sanctuary Unterkünfte & Wohnen',
-        subtitle: 'Tritt von deinem Zimmer direkt in die türkisblaue Trainingsbucht. Suiten am Meer, Eco-Villen und Highspeed-Glasfaser-Internet.',
-        badge: 'Sea Lodge • Lighthouse Bay Dahab • Ideal für Digital Nomads',
+        title: 'Unterkunft bei Freedive Dahab',
+        subtitle: 'Wir bieten Unterkunftspakete mit Freitauchkursen und/oder Training an. Teilen Sie uns Ihre Wünsche mit, und wir erstellen ein maßgeschneidertes Angebot.',
+        badge: '',
         ctaText: 'Verfügbarkeit Prüfen',
       },
       packages: {

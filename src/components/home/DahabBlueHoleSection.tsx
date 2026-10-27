@@ -1,10 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
-import { PageType } from '../../types';
-
-interface DahabBlueHoleSectionProps {
-  onNavigate: (page: PageType) => void;
-}
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface StorySlide {
   src: string;
@@ -46,7 +41,7 @@ const STORY_SLIDES: StorySlide[] = [
   },
 ];
 
-export function DahabBlueHoleSection({ onNavigate }: DahabBlueHoleSectionProps) {
+export function DahabBlueHoleSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -91,14 +86,6 @@ export function DahabBlueHoleSection({ onNavigate }: DahabBlueHoleSectionProps) 
           <p className="mt-6 max-w-md text-base leading-relaxed text-slate-300 sm:text-lg">
             {slide.detail}
           </p>
-          <button
-            type="button"
-            onClick={() => onNavigate('experience')}
-            className="fd-button mt-8 inline-flex min-h-11 items-center gap-3 rounded-xl px-5 py-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-          >
-            Explore Dahab experiences
-            <ArrowRight className="h-4 w-4" aria-hidden="true" />
-          </button>
         </div>
 
         <div

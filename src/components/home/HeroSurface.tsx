@@ -26,23 +26,25 @@ const HERO_SLIDES = [
 
 export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
   const { language } = useLanguage();
-  const { line1, line1Highlight, line2 } = TRANSLATIONS[language].hero;
-  const highlightStart = line1.toLocaleLowerCase().indexOf(line1Highlight.toLocaleLowerCase());
+  const { line1, line1Highlight, line1Second, line2 } = TRANSLATIONS[language].hero;
+  const highlightStart = line1Second
+    .toLocaleLowerCase()
+    .indexOf(line1Highlight.toLocaleLowerCase());
   const sloganHighlight = language === 'en' ? 'IN THE WORLD SINCE 2010' : '';
   const sloganHighlightStart = sloganHighlight
     ? line2.toLocaleUpperCase().indexOf(sloganHighlight)
     : -1;
-  const headlineParts =
+  const headlineSecondLineParts =
     highlightStart < 0
-      ? [{ text: line1, highlighted: false }]
+      ? [{ text: line1Second, highlighted: false }]
       : [
-          { text: line1.slice(0, highlightStart), highlighted: false },
+          { text: line1Second.slice(0, highlightStart), highlighted: false },
           {
-            text: line1.slice(highlightStart, highlightStart + line1Highlight.length),
+            text: line1Second.slice(highlightStart, highlightStart + line1Highlight.length),
             highlighted: true,
           },
           {
-            text: line1.slice(highlightStart + line1Highlight.length),
+            text: line1Second.slice(highlightStart + line1Highlight.length),
             highlighted: false,
           },
         ];
@@ -142,14 +144,18 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
 
         <div className="car-05__overlay">
           <h1 className="car-05__title">
-            {headlineParts.map((part, index) => (
-              <span
-                key={`${index}-${part.text}`}
-                className={part.highlighted ? 'car-05__accent' : undefined}
-              >
-                {part.text}
-              </span>
-            ))}
+            <span className="car-05__title-line car-05__title-line--first">{line1}</span>
+            <br />
+            <span className="car-05__title-line">
+              {headlineSecondLineParts.map((part, index) => (
+                <span
+                  key={`${index}-${part.text}`}
+                  className={part.highlighted ? 'car-05__accent' : undefined}
+                >
+                  {part.text}
+                </span>
+              ))}
+            </span>
           </h1>
           <Suspense
             fallback={

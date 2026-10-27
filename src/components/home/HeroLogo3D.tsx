@@ -1,18 +1,19 @@
-import { useEffect, useRef, useState, type PointerEvent } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-interface PointerTilt {
-  x: number;
-  y: number;
-  active: boolean;
+interface SpinAnimation {
+  startedAt: number;
+  from: number;
+  to: number;
+  duration: number;
 }
 
 export function HeroLogo3D({ className = 'car-05__logo-button' }: { className?: string }) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const pointerRef = useRef<PointerTilt>({ x: 0, y: 0, active: false });
-  const spinVelocityRef = useRef(0);
+  const spinAnimationRef = useRef<SpinAnimation | null>(null);
+  const spinOffsetRef = useRef(0);
   const scheduleRenderRef = useRef<() => void>(() => undefined);
   const reducedMotionRef = useRef(false);
   const [has3dError, setHas3dError] = useState(false);
@@ -69,29 +70,25 @@ export function HeroLogo3D({ className = 'car-05__logo-button' }: { className?: 
       animationFrame = 0;
       if (disposed || !modelReady) return;
 
-      const pointer = pointerRef.current;
-      const targetX = pointer.active && !reducedMotionRef.current ? pointer.y * 0.22 : 0;
-      const targetY = pointer.active && !reducedMotionRef.current ? pointer.x * 0.42 : 0;
-      const deltaX = targetX - modelGroup.rotation.x;
-      const deltaY = targetY - modelGroup.rotation.y;
-
-      modelGroup.rotation.x += deltaX * 0.14;
-      modelGroup.rotation.y += deltaY * 0.14;
-
-      if (spinVelocityRef.current > 0.001) {
-        modelGroup.rotation.y += spinVelocityRef.current;
-        spinVelocityRef.current *= reducedMotionRef.current ? 0.76 : 0.93;
-      } else {
-        spinVelocityRef.current = 0;
+      const spin = spinAnimationRef.current;
+      let isSpinning = false;
+      if (spin) {
+        const progress = Math.min(1, (performance.now() - spin.startedAt) / spin.duration);
+        const easedProgress = 1 - (1 - progress) ** 3;
+        spinOffsetRef.current = spin.from + (spin.to - spin.from) * easedProgress;
+        if (progress >= 1) {
+          spinOffsetRef.current = 0;
+          spinAnimationRef.current = null;
+        } else {
+          isSpinning = true;
+        }
       }
+      modelGroup.rotation.set(0, spinOffsetRef.current, 0);
 
       renderer.render(scene, camera);
 
       if (
-        pointer.active ||
-        Math.abs(deltaX) > 0.001 ||
-        Math.abs(deltaY) > 0.001 ||
-        spinVelocityRef.current > 0
+        isSpinning
       ) {
         animationFrame = window.requestAnimationFrame(renderFrame);
       }
@@ -157,23 +154,23 @@ export function HeroLogo3D({ className = 'car-05__logo-button' }: { className?: 
     };
   }, []);
 
-  const handlePointerMove = (event: PointerEvent<HTMLButtonElement>) => {
-    const bounds = event.currentTarget.getBoundingClientRect();
-    pointerRef.current = {
-      x: ((event.clientX - bounds.left) / bounds.width) * 2 - 1,
-      y: ((event.clientY - bounds.top) / bounds.height) * 2 - 1,
-      active: true,
-    };
-    scheduleRenderRef.current();
-  };
-
-  const handlePointerLeave = () => {
-    pointerRef.current.active = false;
-    scheduleRenderRef.current();
-  };
-
   const handleActivate = () => {
-    spinVelocityRef.current = reducedMotionRef.current ? 0.07 : 0.24;
+    const from = spinOffsetRef.current;
+    const fullTurn = Math.PI * 2;
+    const remainingTurn = (fullTurn - (from % fullTurn)) % fullTurn;
+    const to = from + (remainingTurn < 0.001 ? fullTurn : remainingTurn);
+
+    if (reducedMotionRef.current) {
+      spinOffsetRef.current = 0;
+      spinAnimationRef.current = null;
+    } else {
+      spinAnimationRef.current = {
+        startedAt: performance.now(),
+        from,
+        to,
+        duration: 1200,
+      };
+    }
     scheduleRenderRef.current();
   };
 
@@ -182,11 +179,8 @@ export function HeroLogo3D({ className = 'car-05__logo-button' }: { className?: 
       ref={buttonRef}
       type="button"
       className={className}
-      aria-label="Freedive Dahab 3D logo. Activate to spin."
-      title="Move to tilt or tap to spin"
-      onPointerMove={handlePointerMove}
-      onPointerLeave={handlePointerLeave}
-      onPointerCancel={handlePointerLeave}
+      aria-label="Freedive Dahab 3D logo. Activate to spin 360 degrees and return to its centered position."
+      title="Activate to spin 360°"
       onClick={handleActivate}
     >
       <canvas

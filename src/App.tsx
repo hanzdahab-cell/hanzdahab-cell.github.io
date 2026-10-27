@@ -3,7 +3,6 @@ import { Cursor } from './components/ui/Cursor';
 import { SiteHeader } from './nav/SiteHeader';
 import { PageHeader } from './components/ui/PageHeader';
 import { HeroSurface } from './components/home/HeroSurface';
-import { CourseCarousel } from './components/CourseCarousel';
 import { CoralDepthBackground } from './components/home/CoralDepthBackground';
 import { DahabBlueHoleSection } from './components/home/DahabBlueHoleSection';
 import { DescentStats } from './components/home/DescentStats';
@@ -152,15 +151,11 @@ export default function App() {
             {/* 1. HERO: Dahab, Freedive Dahab, and the founding year */}
             <HeroSurface onNavigate={navigateTo} />
 
-            <CourseCarousel />
-
             {/* Immersive Coral Depth Environment (The depth of the corals across all home sections) */}
             <div className="relative">
               <div className="relative z-10">
                 {/* 3. Dahab & the Blue Hole */}
-                <DahabBlueHoleSection
-                  onNavigate={navigateTo}
-                />
+                <DahabBlueHoleSection />
 
                 {/* Diver Voices & Testimonials */}
                 <TestimonialsSection />
@@ -223,13 +218,24 @@ export default function App() {
         {currentPage === 'accommodation' && (
           <div className="page-dive-in">
             <PageHeader
-              title="Sanctuary Accommodation & Living"
-              subtitle="Step from your room directly into the turquoise training bay. Enjoy oceanfront suites, desert garden eco-villas, gear drying rooms, and high-speed fiber internet."
-              badge="Sea Lodge • Lighthouse Bay Dahab • Nomad Friendly"
+              title="Freedive Dahab Accommodation"
+              subtitle="We offer packages with accommodation and freediving courses and/or training. Please let us know your needs, and we will prepare a tailor-made quote for you."
+              badge=""
               currentPage="accommodation"
               onNavigate={navigateTo}
-              onOpenBooking={() => handleOpenBooking()}
-              ctaText="Check Availability"
+              compact
+              backgroundImages={[
+                '/images/home-hero/lighthouse-freediver.jpg',
+                '/images/dahab-story/lighthouse-sunset.jpg',
+                '/images/dahab-story/lighthouse-training.jpg',
+                '/images/story-carousel/lighthouse-bay-team.webp',
+                '/images/philosophy/lighthouse-bay.jpg',
+                ...[
+                  'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1920&q=85',
+                  'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=1920&q=85',
+                  'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=1920&q=85',
+                ],
+              ]}
             />
 
             <AccommodationSection
