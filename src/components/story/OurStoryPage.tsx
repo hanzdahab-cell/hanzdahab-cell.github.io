@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { X, ChevronLeft, ChevronRight, BookOpen, Compass, MessageSquare, Calendar } from 'lucide-react';
 import { PageType } from '../../types';
+import { DahabBlueHoleSection } from '../home/DahabBlueHoleSection';
 import { LuxuryStory } from '../home/LuxuryStory';
 
 // ============================================================================
@@ -264,56 +265,6 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
     <div className="relative min-h-screen bg-transparent text-foam selection:bg-cyan-500/30 selection:text-cyan-200">
       
       {/* ==================================================================== */}
-      {/* 2) INTRO SECTION: Verbatim narrative text from the brief              */}
-      {/* ==================================================================== */}
-      <section id="story-intro" className="ocean-surface relative border-b border-white/5 px-6 py-20 sm:py-28">
-        <div className="absolute inset-0 architectural-grid-fine opacity-10 pointer-events-none" />
-
-        <div className="max-w-4xl mx-auto relative z-10 space-y-8 text-left">
-          
-          <div className="flex items-center gap-3 text-xs font-alata tracking-[0.3em] uppercase text-cyan-400 mb-4">
-            <span className="w-8 h-px bg-cyan-400" />
-            <span>Our Heritage &amp; Community</span>
-          </div>
-
-          <div className="space-y-6 text-slate-300 font-alata font-normal text-base sm:text-lg md:text-xl leading-relaxed">
-            {OUR_STORY_CONFIG.intro.paragraphs.map((p, idx) => (
-              <p
-                key={idx}
-                className={idx === 0 ? 'text-white font-medium text-lg sm:text-xl md:text-2xl leading-relaxed' : ''}
-              >
-                {p}
-              </p>
-            ))}
-          </div>
-
-          {/* Highlight stat tags */}
-          <div className="pt-8 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="p-4 rounded-xl bg-slate-900/50 border border-white/10">
-              <div className="font-bebas text-3xl sm:text-4xl text-cyan-300">2003</div>
-              <div className="text-[11px] font-alata text-slate-400 uppercase tracking-wider mt-1">Established in Dahab</div>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-900/50 border border-white/10">
-              <div className="font-bebas text-3xl sm:text-4xl text-cyan-300">#1</div>
-              <div className="text-[11px] font-alata text-slate-400 uppercase tracking-wider mt-1">1st SSI ITC Globally</div>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-900/50 border border-white/10">
-              <div className="font-bebas text-3xl sm:text-4xl text-cyan-300">2010</div>
-              <div className="text-[11px] font-alata text-slate-400 uppercase tracking-wider mt-1">Diamond ITC Status</div>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-900/50 border border-white/10">
-              <div className="font-bebas text-3xl sm:text-4xl text-cyan-300">1000s</div>
-              <div className="text-[11px] font-alata text-slate-400 uppercase tracking-wider mt-1">Divers Certified</div>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* 2.5) PHILOSOPHY & 24-YEAR STATISTICS (moved from the home page) */}
-      <LuxuryStory onOpenBooking={onOpenBooking} />
-
-      {/* ==================================================================== */}
       {/* 3) MEET OUR FOUNDERS: 3 Cards with Portrait, Name, Title & Bio      */}
       {/* ==================================================================== */}
       <section
@@ -370,11 +321,63 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
         </div>
       </section>
 
+      {/* 2.5) PHILOSOPHY & 24-YEAR STATISTICS (moved from the home page) */}
+      <LuxuryStory onOpenBooking={onOpenBooking} />
+
+      <DahabBlueHoleSection />
+
+      {/* ==================================================================== */}
+      {/* 2) INTRO SECTION: Verbatim narrative text from the brief              */}
+      {/* ==================================================================== */}
+      <section id="story-intro" className="ocean-surface relative border-b border-white/5 px-6 py-20 sm:py-28">
+        <div className="absolute inset-0 architectural-grid-fine opacity-10 pointer-events-none" />
+
+        <div className="max-w-4xl mx-auto relative z-10 space-y-8 text-left">
+
+          <div className="flex items-center gap-3 text-xs font-alata tracking-[0.3em] uppercase text-cyan-400 mb-4">
+            <span className="w-8 h-px bg-cyan-400" />
+            <span>Our Heritage &amp; Community</span>
+          </div>
+
+          <div className="space-y-6 text-slate-300 font-alata font-normal text-base sm:text-lg md:text-xl leading-relaxed">
+            {OUR_STORY_CONFIG.intro.paragraphs.map((p, idx) => (
+              <p
+                key={idx}
+                className={idx === 0 ? 'text-white font-medium text-lg sm:text-xl md:text-2xl leading-relaxed' : ''}
+              >
+                {p}
+              </p>
+            ))}
+          </div>
+
+          {/* Highlight stat tags */}
+          <div className="pt-8 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="p-4 rounded-xl bg-slate-900/50 border border-white/10">
+              <div className="font-bebas text-3xl sm:text-4xl text-cyan-300">2003</div>
+              <div className="text-[11px] font-alata text-slate-400 uppercase tracking-wider mt-1">Established in Dahab</div>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-900/50 border border-white/10">
+              <div className="font-bebas text-3xl sm:text-4xl text-cyan-300">#1</div>
+              <div className="text-[11px] font-alata text-slate-400 uppercase tracking-wider mt-1">1st SSI ITC Globally</div>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-900/50 border border-white/10">
+              <div className="font-bebas text-3xl sm:text-4xl text-cyan-300">2010</div>
+              <div className="text-[11px] font-alata text-slate-400 uppercase tracking-wider mt-1">Diamond ITC Status</div>
+            </div>
+            <div className="p-4 rounded-xl bg-slate-900/50 border border-white/10">
+              <div className="font-bebas text-3xl sm:text-4xl text-cyan-300">1000s</div>
+              <div className="text-[11px] font-alata text-slate-400 uppercase tracking-wider mt-1">Divers Certified</div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
       {/* ==================================================================== */}
       {/* 5) CALL TO ACTION: "Dive Deeper" with 3 buttons                     */}
       {/* ==================================================================== */}
       <section className="ocean-surface relative select-none overflow-hidden px-6 py-28 sm:py-36">
-        
+
         {/* Ambient glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-cyan-500/[0.08] blur-[160px] pointer-events-none rounded-full" />
         <div className="absolute inset-0 architectural-grid opacity-15 pointer-events-none" />

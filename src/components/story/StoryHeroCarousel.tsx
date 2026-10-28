@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from 'framer-motion';
 import { ArrowRight, ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 import { PageType } from '../../types';
 
@@ -62,6 +63,20 @@ export function StoryHeroCarousel({ onNavigate }: StoryHeroCarouselProps) {
   const [reducedMotion, setReducedMotion] = useState(false);
   const [videoUnavailable, setVideoUnavailable] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const heroRef = useRef<HTMLElement | null>(null);
+  const scrollContainerRef = useRef<HTMLElement | null>(null);
+  const reducedMotionPreference = useReducedMotion();
+  const setHeroRef = useCallback((node: HTMLElement | null) => {
+    heroRef.current = node;
+    scrollContainerRef.current = node
+      ? document.getElementById('site-page-scroll')
+      : null;
+  }, []);
+  const { scrollYProgress } = useScroll({
+    container: scrollContainerRef,
+    target: heroRef,
+    offset: ['start end', 'end start'],
+  });
   const slide = SLIDES[activeIndex];
   const motionPaused = manuallyPaused || isHovered || isFocused || reducedMotion || videoUnavailable;
 
@@ -107,6 +122,7 @@ export function StoryHeroCarousel({ onNavigate }: StoryHeroCarouselProps) {
     <section
       aria-label="Freedive Dahab school story"
       aria-roledescription="carousel"
+      ref={setHeroRef}
       className="relative isolate flex min-h-[620px] items-end overflow-hidden border-b border-white/10 bg-[#081F35]/70 px-5 pb-10 pt-32 sm:min-h-[680px] sm:px-8 sm:pb-14 lg:min-h-[740px] lg:items-center lg:px-12"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -154,8 +170,13 @@ export function StoryHeroCarousel({ onNavigate }: StoryHeroCarouselProps) {
           <h1
             key={slide.title}
             className="max-w-[13ch] animate-in fade-in slide-in-from-bottom-3 font-bebas text-5xl leading-[0.98] tracking-[0.025em] text-white duration-500 sm:text-7xl lg:text-8xl"
+            aria-label={slide.title}
           >
-            {slide.title}
+            <ScrollRevealWords
+              text={slide.title}
+              progress={scrollYProgress}
+              reducedMotion={!!reducedMotionPreference}
+            />
           </h1>
           <p
             key={slide.description}
@@ -237,5 +258,68 @@ export function StoryHeroCarousel({ onNavigate }: StoryHeroCarouselProps) {
         Story {activeIndex + 1} of {SLIDES.length}: {slide.eyebrow}
       </span>
     </section>
+  );
+}
+
+const REST_OPACITY = 0.15;
+const REVEAL_SPAN = 0.8;
+const WORD_WINDOW = 0.2;
+
+function WordReveal({
+  children,
+  progress,
+  index,
+  count,
+  reducedMotion,
+}: {
+  children: string;
+  progress: MotionValue<number>;
+  index: number;
+  count: number;
+  reducedMotion: boolean;
+}) {
+  const start = count <= 1 ? 0 : (index / (count - 1)) * REVEAL_SPAN;
+  const end = Math.min(1, start + WORD_WINDOW);
+  const opacity = useTransform(progress, (value) => {
+    if (value <= start) return REST_OPACITY;
+    if (value >= end) return 1;
+    const progressWithinWord = (value - start) / (end - start);
+    return REST_OPACITY + (1 - REST_OPACITY) * progressWithinWord;
+  });
+
+  return (
+    <motion.span aria-hidden="true" style={reducedMotion ? undefined : { opacity }}>
+      {children}
+    </motion.span>
+  );
+}
+
+function ScrollRevealWords({
+  text,
+  progress,
+  reducedMotion,
+}: {
+  text: string;
+  progress: MotionValue<number>;
+  reducedMotion: boolean;
+}) {
+  const words = text.split(/\s+/);
+
+  return (
+    <>
+      {words.map((word, index) => (
+        <Fragment key={`${word}-${index}`}>
+          <WordReveal
+            progress={progress}
+            index={index}
+            count={words.length}
+            reducedMotion={reducedMotion}
+          >
+            {word}
+          </WordReveal>
+          {index < words.length - 1 ? ' ' : null}
+        </Fragment>
+      ))}
+    </>
   );
 }
