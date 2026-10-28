@@ -4,6 +4,7 @@ import { ssiCourses, specialtyCourses } from '../../data/courses';
 import { faqItems } from '../../data/faq';
 import { siteConfig } from '../../data/site';
 import { PageType } from '../../types';
+import { setPageScrollLocked } from '../../utils/useSmoothScroll';
 
 /* ==========================================================================
    CHAT ASSISTANT — free, no backend, no API keys.
@@ -96,12 +97,14 @@ export function ChatWidget({ onOpenBooking, onNavigate }: ChatWidgetProps) {
   useEffect(() => {
     if (!open) return;
     window.__lenis?.stop();
+    setPageScrollLocked('chat-widget', true);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onCloseRef.current();
     };
     window.addEventListener('keydown', onKey);
     return () => {
       window.removeEventListener('keydown', onKey);
+      setPageScrollLocked('chat-widget', false);
       window.__lenis?.start();
     };
   }, [open]);

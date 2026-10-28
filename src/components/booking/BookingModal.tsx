@@ -4,6 +4,7 @@ import { ssiCourses, specialtyCourses, instructorCourses } from '../../data/cour
 import { packagesData } from '../../data/packages';
 import { roomTypes } from '../../data/accommodation';
 import { useLanguage } from '../../context/LanguageContext';
+import { setPageScrollLocked } from '../../utils/useSmoothScroll';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -56,12 +57,14 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
   useEffect(() => {
     if (!isOpen) return;
     window.__lenis?.stop();
+    setPageScrollLocked('booking-modal', true);
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onCloseRef.current();
     };
     window.addEventListener('keydown', handleKey);
     return () => {
       window.removeEventListener('keydown', handleKey);
+      setPageScrollLocked('booking-modal', false);
       window.__lenis?.start();
     };
   }, [isOpen]);

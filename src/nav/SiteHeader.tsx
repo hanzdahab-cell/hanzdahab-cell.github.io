@@ -278,10 +278,13 @@ export function SiteHeader({
       return;
     }
 
-    const updateScrollState = () => setIsHomeHeaderScrolled(window.scrollY > 24);
+    const pageScroller = document.getElementById('site-page-scroll');
+    const scrollTarget: HTMLElement | Window = pageScroller ?? window;
+    const updateScrollState = () =>
+      setIsHomeHeaderScrolled(pageScroller ? pageScroller.scrollTop > 24 : window.scrollY > 24);
     updateScrollState();
-    window.addEventListener('scroll', updateScrollState, { passive: true });
-    return () => window.removeEventListener('scroll', updateScrollState);
+    scrollTarget.addEventListener('scroll', updateScrollState, { passive: true });
+    return () => scrollTarget.removeEventListener('scroll', updateScrollState);
   }, [currentPage]);
 
   const navigationItems: TopLevelNavigationItem[] = [

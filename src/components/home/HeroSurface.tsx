@@ -145,7 +145,6 @@ export function HeroSurface({ onNavigate }: HeroSurfaceProps) {
         <div className="car-05__overlay">
           <h1 className="car-05__title">
             <span className="car-05__title-line car-05__title-line--first">{line1}</span>
-            <br />
             <span className="car-05__title-line">
               {headlineSecondLineParts.map((part, index) => (
                 <span

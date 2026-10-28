@@ -50,18 +50,20 @@ export function BubbleField() {
       alpha: Math.random() * 0.25 + 0.1,
     }));
 
-    let lastScrollY = window.scrollY;
+    const pageScroller = document.getElementById('site-page-scroll');
+    const scrollTarget: HTMLElement | Window = pageScroller ?? window;
+    let lastScrollY = pageScroller ? pageScroller.scrollTop : window.scrollY;
     let scrollSpeedBoost = 0;
 
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      const currentScrollY = pageScroller ? pageScroller.scrollTop : window.scrollY;
       const delta = currentScrollY - lastScrollY;
       lastScrollY = currentScrollY;
       // Gently boost bubble speed when descending
       scrollSpeedBoost = Math.min(3, Math.max(0, delta * 0.05));
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    scrollTarget.addEventListener('scroll', handleScroll, { passive: true });
 
     let isVisible = true;
     const handleVisibilityChange = () => {
@@ -127,7 +129,7 @@ export function BubbleField() {
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('scroll', handleScroll);
+      scrollTarget.removeEventListener('scroll', handleScroll);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);

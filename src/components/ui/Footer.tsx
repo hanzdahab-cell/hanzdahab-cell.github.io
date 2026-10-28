@@ -7,6 +7,7 @@ import {
 import { lazy, Suspense } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { siteConfig } from '../../data/site';
+import { scrollPageTo } from '../../utils/useSmoothScroll';
 import './Footer.css';
 
 const HeroLogo3D = lazy(() =>
@@ -18,7 +19,6 @@ const SOCIAL_LINKS = [
   { name: 'Google Maps', href: siteConfig.social.googleMaps, image: '/images/footer-social/google.png' },
   { name: 'TripAdvisor', href: siteConfig.social.tripadvisor, image: '/images/footer-social/social.png' },
   { name: 'Email', href: `mailto:${siteConfig.contact.email}`, image: '/images/footer-social/message.png' },
-  { name: 'X', href: 'https://twitter.com/FreediveInt', image: '/images/footer-social/twitter.png' },
   { name: 'Facebook', href: siteConfig.social.facebook, image: '/images/footer-social/facebook.png' },
   { name: 'Instagram', href: siteConfig.social.instagram, image: '/images/footer-social/instagram.png' },
 ];
@@ -27,11 +27,7 @@ export function Footer() {
   const { t } = useLanguage();
 
   const scrollToTop = () => {
-    if (window.__lenis) {
-      window.__lenis.scrollTo(0, { duration: 1.4 });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    scrollPageTo(0);
   };
 
   const { lat, lng } = siteConfig.location.coordinates;
@@ -103,7 +99,7 @@ export function Footer() {
               </a>
               <a href={whatsappHref} target="_blank" rel="noreferrer">
                 <MessageCircle aria-hidden="true" />
-                <span>Book a Dive</span>
+                <span>Contact Us</span>
                 <ArrowUpRight aria-hidden="true" />
               </a>
             </div>

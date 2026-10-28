@@ -86,7 +86,7 @@
   font-size: clamp(1.75rem, 3.5cqi, 3.75rem);
   font-weight: 400;
   letter-spacing: 0;
-  line-height: 1.12;
+  line-height: 0.98;
   text-shadow: 0 2px 28px rgb(0 0 0 / 0.52);
   text-wrap: balance;
   text-transform: uppercase;
@@ -254,8 +254,8 @@
 .car-05__cta--secondary:hover,
 .car-05__cta--secondary:focus-visible,
 .car-05__cta--secondary:active {
-  border-color: #fff;
-  background: #fff;
+  border-color: #82f5f6;
+  background: #82f5f6;
   color: #0e3453;
 }
 

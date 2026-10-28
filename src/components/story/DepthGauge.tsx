@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { scrollPageToProgress } from '../../utils/useSmoothScroll';
 
 interface DepthGaugeProps {
   currentDepth: number; // 0 to 100
@@ -83,11 +84,7 @@ export function DepthGauge({ currentDepth, onNavigateToDepth }: DepthGaugeProps)
                   onNavigateToDepth(marker.depth, marker.id);
                 } else {
                   // Scroll to proportional position
-                  const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-                  window.scrollTo({
-                    top: (tickVal / 100) * scrollHeight,
-                    behavior: 'smooth',
-                  });
+                  scrollPageToProgress(tickVal / 100);
                 }
               }}
               title={marker ? `${marker.label} (${tickVal}m)` : `${tickVal}m`}

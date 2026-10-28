@@ -14,6 +14,8 @@ export function HeroLogo3D({ className = 'car-05__logo-button' }: { className?: 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const spinAnimationRef = useRef<SpinAnimation | null>(null);
   const spinOffsetRef = useRef(0);
+  const pointerTargetRef = useRef({ x: 0, y: 0 });
+  const pointerRotationRef = useRef({ x: 0, y: 0, z: 0 });
   const scheduleRenderRef = useRef<() => void>(() => undefined);
   const reducedMotionRef = useRef(false);
   const [has3dError, setHas3dError] = useState(false);
@@ -83,12 +85,25 @@ export function HeroLogo3D({ className = 'car-05__logo-button' }: { className?: 
           isSpinning = true;
         }
       }
-      modelGroup.rotation.set(0, spinOffsetRef.current, 0);
+      const pointerTarget = pointerTargetRef.current;
+      const pointerRotation = pointerRotationRef.current;
+      pointerRotation.x += (-pointerTarget.y * 0.12 - pointerRotation.x) * 0.16;
+      pointerRotation.y += (pointerTarget.x * 0.2 - pointerRotation.y) * 0.16;
+      pointerRotation.z += (-pointerTarget.x * 0.025 - pointerRotation.z) * 0.16;
+      const isPointerSettling =
+        Math.abs(pointerRotation.x + pointerTarget.y * 0.12) > 0.001 ||
+        Math.abs(pointerRotation.y - pointerTarget.x * 0.2) > 0.001 ||
+        Math.abs(pointerRotation.z + pointerTarget.x * 0.025) > 0.001;
+      modelGroup.rotation.set(
+        pointerRotation.x,
+        spinOffsetRef.current + pointerRotation.y,
+        pointerRotation.z,
+      );
 
       renderer.render(scene, camera);
 
       if (
-        isSpinning
+        isSpinning || isPointerSettling
       ) {
         animationFrame = window.requestAnimationFrame(renderFrame);
       }
@@ -100,6 +115,22 @@ export function HeroLogo3D({ className = 'car-05__logo-button' }: { className?: 
       }
     };
     scheduleRenderRef.current = scheduleRender;
+
+    const handlePointerMove = (event: PointerEvent) => {
+      if (event.pointerType === 'touch' || reducedMotionRef.current) return;
+      const bounds = button.getBoundingClientRect();
+      pointerTargetRef.current = {
+        x: Math.max(-1, Math.min(1, ((event.clientX - bounds.left) / bounds.width) * 2 - 1)),
+        y: Math.max(-1, Math.min(1, ((event.clientY - bounds.top) / bounds.height) * 2 - 1)),
+      };
+      scheduleRender();
+    };
+    const handlePointerLeave = () => {
+      pointerTargetRef.current = { x: 0, y: 0 };
+      scheduleRender();
+    };
+    button.addEventListener('pointermove', handlePointerMove);
+    button.addEventListener('pointerleave', handlePointerLeave);
 
     const resize = () => {
       const { width, height } = button.getBoundingClientRect();
@@ -148,6 +179,8 @@ export function HeroLogo3D({ className = 'car-05__logo-button' }: { className?: 
     return () => {
       disposed = true;
       window.cancelAnimationFrame(animationFrame);
+      button.removeEventListener('pointermove', handlePointerMove);
+      button.removeEventListener('pointerleave', handlePointerLeave);
       resizeObserver.disconnect();
       scheduleRenderRef.current = () => undefined;
       renderer.dispose();
@@ -155,6 +188,7 @@ export function HeroLogo3D({ className = 'car-05__logo-button' }: { className?: 
   }, []);
 
   const handleActivate = () => {
+    pointerTargetRef.current = { x: 0, y: 0 };
     const from = spinOffsetRef.current;
     const fullTurn = Math.PI * 2;
     const remainingTurn = (fullTurn - (from % fullTurn)) % fullTurn;

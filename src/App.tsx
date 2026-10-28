@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Cursor } from './components/ui/Cursor';
 import { SiteHeader } from './nav/SiteHeader';
 import { PageHeader } from './components/ui/PageHeader';
+import { Scroller } from './components/ui/Scroller';
 import { HeroSurface } from './components/home/HeroSurface';
 import { CoralDepthBackground } from './components/home/CoralDepthBackground';
 import { DahabBlueHoleSection } from './components/home/DahabBlueHoleSection';
@@ -26,7 +27,7 @@ import { CourseDetailPage } from './components/courses/CourseDetailPage';
 import { OurStoryPage } from './components/story/OurStoryPage';
 import { StoryHeroCarousel } from './components/story/StoryHeroCarousel';
 import { OfferingDetailPage } from './components/catalog/OfferingDetailPage';
-import { useSmoothScroll } from './utils/useSmoothScroll';
+import { scrollPageElementIntoView, scrollPageTo, useSmoothScroll } from './utils/useSmoothScroll';
 import { PageType, EventTypeId } from './types';
 import { LanguageProvider } from './context/LanguageContext';
 import { I18nextProvider } from 'react-i18next';
@@ -62,13 +63,8 @@ export default function App() {
   // Initialize smooth inertia scrolling
   useSmoothScroll();
 
-  // Lenis owns scrollTop — page changes must reset through it or it overwrites the jump
   const scrollToSurface = () => {
-    if (window.__lenis) {
-      window.__lenis.scrollTo(0, { immediate: true });
-    } else {
-      window.scrollTo({ top: 0 });
-    }
+    scrollPageTo(0, 'auto');
   };
 
   // Listen to browser forward/backward buttons and external hash changes
@@ -102,12 +98,7 @@ export default function App() {
     const scroll = () => {
       const target = document.getElementById(sectionId);
       if (!target) return;
-      const top = target.getBoundingClientRect().top + window.scrollY - 96;
-      if (window.__lenis) {
-        window.__lenis.scrollTo(top, { duration: 1.2 });
-      } else {
-        window.scrollTo({ top, behavior: 'smooth' });
-      }
+      scrollPageElementIntoView(target, 96);
     };
 
     if (currentPage !== page) {
@@ -141,6 +132,14 @@ export default function App() {
           onNavigateToSection={scrollToSection}
         />
 
+        <Scroller
+          id="site-page-scroll"
+          overflow="y"
+          height="100svh"
+          ariaLabel="Website pages"
+          className="site-page-scroller"
+        >
+          <>
         <main className="relative z-10">
         
         {/* ========================================================= */}
@@ -431,6 +430,8 @@ export default function App() {
 
       {/* TECHNICAL ARCHITECTURAL FOOTER (On Every Page with Page Switching) */}
       <Footer />
+          </>
+        </Scroller>
 
       {/* RESERVATION DRAWER & WHATSAPP DIRECT CONNECT */}
       <BookingModal

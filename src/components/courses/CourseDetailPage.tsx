@@ -18,6 +18,7 @@ import { TiltSurface } from '../ui/TiltSurface';
 import { courseCardArtworkById, ssiCourseArtworkBySlug } from '../../data/courseMedia';
 import { CoursePhotoGallery } from '../ui/CoursePhotoGallery';
 import { getCourseDetailGalleryItems } from '../../data/detailGalleries';
+import { scrollPageElementIntoView } from '../../utils/useSmoothScroll';
 
 interface CourseDetailPageProps {
   courseSlug: string;
@@ -140,12 +141,7 @@ export function CourseDetailPage({
     const section = document.getElementById(sectionId);
     if (!section) return;
 
-    if (window.__lenis) {
-      const top = section.getBoundingClientRect().top + window.scrollY - 128;
-      window.__lenis.scrollTo(top, { duration: 1.2 });
-    } else {
-      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    scrollPageElementIntoView(section, 128);
   };
 
   return (
