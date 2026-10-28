@@ -314,6 +314,13 @@
   }
 }
 
+@media (min-width: 641px) and (max-width: 900px) {
+  .car-05__slogan,
+  .car-05__actions {
+    top: clamp(3rem, 8vh, 3.5rem);
+  }
+}
+
 @media (max-height: 44rem) and (min-width: 641px) {
   .car-05__overlay {
     padding-block: 5rem 0.75rem;
