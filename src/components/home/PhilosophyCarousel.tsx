@@ -3,6 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Pause, Play } from 'lucide-react';
 import type { Language } from '../../types';
 import { useLanguage } from '../../context/LanguageContext';
+import { StoryScrollWordReveal } from '../story/StoryScrollWordReveal';
 
 interface PhilosophySlide {
   category: string;
@@ -172,7 +173,7 @@ const PHILOSOPHY_COPY: Record<Language, PhilosophyCopy> = {
   },
 };
 
-export function PhilosophyCarousel() {
+export function PhilosophyCarousel({ revealText = false }: { revealText?: boolean }) {
   const { language } = useLanguage();
   const copy = PHILOSOPHY_COPY[language];
   const prefersReducedMotion = useReducedMotion() === true;
@@ -231,13 +232,13 @@ export function PhilosophyCarousel() {
 
         <div className="absolute inset-x-0 bottom-0 p-5 pb-24 text-left sm:p-7 sm:pb-28">
           <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-cyan-200 sm:text-xs">
-            {activeSlide.category}
+            {revealText ? <StoryScrollWordReveal text={activeSlide.category} /> : activeSlide.category}
           </p>
           <h3 className="max-w-xl font-bebas text-3xl leading-tight tracking-wide text-white sm:text-4xl">
-            {activeSlide.title}
+            {revealText ? <StoryScrollWordReveal text={activeSlide.title} /> : activeSlide.title}
           </h3>
           <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-100 sm:text-base">
-            {activeSlide.subtitle}
+            {revealText ? <StoryScrollWordReveal text={activeSlide.subtitle} /> : activeSlide.subtitle}
           </p>
         </div>
 
@@ -309,7 +310,7 @@ export function PhilosophyCarousel() {
   );
 }
 
-export function InstructorSitePerspectives() {
+export function InstructorSitePerspectives({ revealText = false }: { revealText?: boolean }) {
   const { language } = useLanguage();
   const copy = PHILOSOPHY_COPY[language];
 
@@ -317,26 +318,30 @@ export function InstructorSitePerspectives() {
     <section aria-labelledby="instructor-perspectives-title" className="mt-24 border-t border-white/10 pt-12 sm:mt-32 sm:pt-16">
       <div className="mx-auto max-w-3xl text-center">
         <p className="font-alata text-[10px] uppercase tracking-[0.26em] text-cyan-300 sm:text-xs">
-          {copy.instructorsEyebrow}
+          {revealText ? <StoryScrollWordReveal text={copy.instructorsEyebrow} /> : copy.instructorsEyebrow}
         </p>
         <h3 id="instructor-perspectives-title" className="mt-3 font-bebas text-4xl tracking-wide text-white sm:text-5xl">
-          {copy.instructorsTitle}
+          {revealText ? <StoryScrollWordReveal text={copy.instructorsTitle} /> : copy.instructorsTitle}
         </h3>
         <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base">
-          {copy.instructorsIntro}
+          {revealText ? <StoryScrollWordReveal text={copy.instructorsIntro} /> : copy.instructorsIntro}
         </p>
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
         <article className="rounded-2xl border border-white/10 bg-[#0A2943]/75 p-6 sm:p-8">
-          <p className="font-alata text-[10px] uppercase tracking-[0.2em] text-cyan-200">01 / DAHAB</p>
-          <h4 className="mt-3 font-bebas text-3xl text-white">{copy.lighthouseTitle}</h4>
-          <p className="mt-2 text-sm leading-relaxed text-slate-300">{copy.lighthouseBody}</p>
+          <p className="font-alata text-[10px] uppercase tracking-[0.2em] text-cyan-200">
+            {revealText ? <StoryScrollWordReveal text="01 / DAHAB" /> : '01 / DAHAB'}
+          </p>
+          <h4 className="mt-3 font-bebas text-3xl text-white">{revealText ? <StoryScrollWordReveal text={copy.lighthouseTitle} /> : copy.lighthouseTitle}</h4>
+          <p className="mt-2 text-sm leading-relaxed text-slate-300">{revealText ? <StoryScrollWordReveal text={copy.lighthouseBody} /> : copy.lighthouseBody}</p>
         </article>
         <article className="rounded-2xl border border-white/10 bg-[#0A2943]/75 p-6 sm:p-8">
-          <p className="font-alata text-[10px] uppercase tracking-[0.2em] text-cyan-200">02 / DAHAB</p>
-          <h4 className="mt-3 font-bebas text-3xl text-white">{copy.blueHoleTitle}</h4>
-          <p className="mt-2 text-sm leading-relaxed text-slate-300">{copy.blueHoleBody}</p>
+          <p className="font-alata text-[10px] uppercase tracking-[0.2em] text-cyan-200">
+            {revealText ? <StoryScrollWordReveal text="02 / DAHAB" /> : '02 / DAHAB'}
+          </p>
+          <h4 className="mt-3 font-bebas text-3xl text-white">{revealText ? <StoryScrollWordReveal text={copy.blueHoleTitle} /> : copy.blueHoleTitle}</h4>
+          <p className="mt-2 text-sm leading-relaxed text-slate-300">{revealText ? <StoryScrollWordReveal text={copy.blueHoleBody} /> : copy.blueHoleBody}</p>
         </article>
       </div>
     </section>

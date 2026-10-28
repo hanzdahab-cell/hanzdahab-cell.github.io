@@ -1,12 +1,14 @@
 import { Award, Users } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { InstructorSitePerspectives, PhilosophyCarousel } from './PhilosophyCarousel';
+import { StoryScrollWordReveal } from '../story/StoryScrollWordReveal';
 
 interface LuxuryStoryProps {
   onOpenBooking: () => void;
+  revealText?: boolean;
 }
 
-export function LuxuryStory({ onOpenBooking }: LuxuryStoryProps) {
+export function LuxuryStory({ onOpenBooking, revealText = false }: LuxuryStoryProps) {
   const { t } = useLanguage();
 
   return (
@@ -22,24 +24,26 @@ export function LuxuryStory({ onOpenBooking }: LuxuryStoryProps) {
           
           {/* Left Column: Five-image school and training carousel */}
           <div className="lg:col-span-6 relative">
-            <PhilosophyCarousel />
+            <PhilosophyCarousel revealText={revealText} />
           </div>
 
           {/* Right Column: High-End Editorial Copy */}
           <div className="lg:col-span-6 space-y-8">
             <div className="space-y-4">
               <h2 className="font-bebas text-5xl sm:text-6xl md:text-7xl leading-[1.05] text-white tracking-[0.05em]">
-                {t.story.titleLine1} <br />
-                <span className="text-cyan-300 drop-shadow-[0_0_24px_rgba(34,211,238,0.4)]">{t.story.titleLine2}</span>
+                {revealText ? <StoryScrollWordReveal text={t.story.titleLine1} /> : t.story.titleLine1} <br />
+                <span className="text-cyan-300 drop-shadow-[0_0_24px_rgba(34,211,238,0.4)]">
+                  {revealText ? <StoryScrollWordReveal text={t.story.titleLine2} /> : t.story.titleLine2}
+                </span>
               </h2>
             </div>
 
             <p className="text-lg md:text-xl text-slate-300 font-alata font-normal leading-relaxed">
-              {t.story.desc1}
+              {revealText ? <StoryScrollWordReveal text={t.story.desc1} /> : t.story.desc1}
             </p>
 
             <p className="text-base text-slate-400 font-alata font-normal leading-relaxed">
-              {t.story.desc2}
+              {revealText ? <StoryScrollWordReveal text={t.story.desc2} /> : t.story.desc2}
             </p>
 
             {/* Value Pillars */}
@@ -47,20 +51,20 @@ export function LuxuryStory({ onOpenBooking }: LuxuryStoryProps) {
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-cyan-300 font-alata text-xs uppercase tracking-wider">
                   <Users className="w-4 h-4 text-cyan-400" />
-                  <span>{t.story.ratioTitle}</span>
+                  <span>{revealText ? <StoryScrollWordReveal text={t.story.ratioTitle} /> : t.story.ratioTitle}</span>
                 </div>
                 <p className="text-xs font-alata text-slate-400 leading-relaxed">
-                  {t.story.ratioDesc}
+                    {revealText ? <StoryScrollWordReveal text={t.story.ratioDesc} /> : t.story.ratioDesc}
                 </p>
               </div>
 
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-cyan-300 font-alata text-xs uppercase tracking-wider">
                   <Award className="w-4 h-4 text-cyan-400" />
-                  <span>{t.story.itcTitle}</span>
+                  <span>{revealText ? <StoryScrollWordReveal text={t.story.itcTitle} /> : t.story.itcTitle}</span>
                 </div>
                 <p className="text-xs font-alata text-slate-400 leading-relaxed">
-                  {t.story.itcDesc}
+                    {revealText ? <StoryScrollWordReveal text={t.story.itcDesc} /> : t.story.itcDesc}
                 </p>
               </div>
             </div>
@@ -71,20 +75,20 @@ export function LuxuryStory({ onOpenBooking }: LuxuryStoryProps) {
                 href="#courses"
                 className="btn-luxury text-white text-center font-alata uppercase tracking-widest text-xs"
               >
-                {t.story.ctaCourses}
+                {revealText ? <StoryScrollWordReveal text={t.story.ctaCourses} /> : t.story.ctaCourses}
               </a>
               <button
                 onClick={onOpenBooking}
                 className="px-6 py-4 rounded-full border border-white/10 hover:border-cyan-400 text-xs font-alata uppercase tracking-[0.2em] text-slate-300 hover:text-white transition-all text-center"
               >
-                {t.story.ctaRetreat}
+                {revealText ? <StoryScrollWordReveal text={t.story.ctaRetreat} /> : t.story.ctaRetreat}
               </button>
             </div>
 
           </div>
         </div>
 
-        <InstructorSitePerspectives />
+        <InstructorSitePerspectives revealText={revealText} />
       </div>
     </section>
   );

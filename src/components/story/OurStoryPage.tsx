@@ -3,6 +3,7 @@ import { X, ChevronLeft, ChevronRight, BookOpen, Compass, MessageSquare, Calenda
 import { PageType } from '../../types';
 import { DahabBlueHoleSection } from '../home/DahabBlueHoleSection';
 import { LuxuryStory } from '../home/LuxuryStory';
+import { StoryScrollWordReveal } from './StoryScrollWordReveal';
 
 // ============================================================================
 // CONFIGURATION & MEDIA MANIFEST (EDIT CONTENT, PATHS, QUOTES & CAPTIONS HERE)
@@ -322,9 +323,9 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
       </section>
 
       {/* 2.5) PHILOSOPHY & 24-YEAR STATISTICS (moved from the home page) */}
-      <LuxuryStory onOpenBooking={onOpenBooking} />
+      <LuxuryStory onOpenBooking={onOpenBooking} revealText />
 
-      <DahabBlueHoleSection />
+      <DahabBlueHoleSection revealText />
 
       {/* ==================================================================== */}
       {/* 2) INTRO SECTION: Verbatim narrative text from the brief              */}
@@ -336,7 +337,7 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
 
           <div className="flex items-center gap-3 text-xs font-alata tracking-[0.3em] uppercase text-cyan-400 mb-4">
             <span className="w-8 h-px bg-cyan-400" />
-            <span>Our Heritage &amp; Community</span>
+            <span><StoryScrollWordReveal text="Our Heritage & Community" /></span>
           </div>
 
           <div className="space-y-6 text-slate-300 font-alata font-normal text-base sm:text-lg md:text-xl leading-relaxed">
@@ -345,7 +346,7 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
                 key={idx}
                 className={idx === 0 ? 'text-white font-medium text-lg sm:text-xl md:text-2xl leading-relaxed' : ''}
               >
-                {p}
+                <StoryScrollWordReveal text={p} />
               </p>
             ))}
           </div>
@@ -353,20 +354,20 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
           {/* Highlight stat tags */}
           <div className="pt-8 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div className="p-4 rounded-xl bg-slate-900/50 border border-white/10">
-              <div className="font-bebas text-3xl sm:text-4xl text-cyan-300">2003</div>
-              <div className="text-[11px] font-alata text-slate-400 uppercase tracking-wider mt-1">Established in Dahab</div>
+              <div className="font-bebas text-3xl sm:text-4xl text-cyan-300"><StoryScrollWordReveal text="2003" /></div>
+              <div className="text-[11px] font-alata text-slate-400 uppercase tracking-wider mt-1"><StoryScrollWordReveal text="Established in Dahab" /></div>
             </div>
             <div className="p-4 rounded-xl bg-slate-900/50 border border-white/10">
-              <div className="font-bebas text-3xl sm:text-4xl text-cyan-300">#1</div>
-              <div className="text-[11px] font-alata text-slate-400 uppercase tracking-wider mt-1">1st SSI ITC Globally</div>
+              <div className="font-bebas text-3xl sm:text-4xl text-cyan-300"><StoryScrollWordReveal text="#1" /></div>
+              <div className="text-[11px] font-alata text-slate-400 uppercase tracking-wider mt-1"><StoryScrollWordReveal text="1st SSI ITC Globally" /></div>
             </div>
             <div className="p-4 rounded-xl bg-slate-900/50 border border-white/10">
-              <div className="font-bebas text-3xl sm:text-4xl text-cyan-300">2010</div>
-              <div className="text-[11px] font-alata text-slate-400 uppercase tracking-wider mt-1">Diamond ITC Status</div>
+              <div className="font-bebas text-3xl sm:text-4xl text-cyan-300"><StoryScrollWordReveal text="2010" /></div>
+              <div className="text-[11px] font-alata text-slate-400 uppercase tracking-wider mt-1"><StoryScrollWordReveal text="Diamond ITC Status" /></div>
             </div>
             <div className="p-4 rounded-xl bg-slate-900/50 border border-white/10">
-              <div className="font-bebas text-3xl sm:text-4xl text-cyan-300">1000s</div>
-              <div className="text-[11px] font-alata text-slate-400 uppercase tracking-wider mt-1">Divers Certified</div>
+              <div className="font-bebas text-3xl sm:text-4xl text-cyan-300"><StoryScrollWordReveal text="1000s" /></div>
+              <div className="text-[11px] font-alata text-slate-400 uppercase tracking-wider mt-1"><StoryScrollWordReveal text="Divers Certified" /></div>
             </div>
           </div>
 
@@ -385,11 +386,11 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
         <div className="max-w-4xl mx-auto text-center relative z-10 space-y-8">
           
           <h2 className="font-bebas text-5xl sm:text-6xl md:text-7xl text-white tracking-[0.05em] leading-tight">
-            {OUR_STORY_CONFIG.cta.title}
+            <StoryScrollWordReveal text={OUR_STORY_CONFIG.cta.title} />
           </h2>
 
           <p className="text-slate-300 font-alata text-base sm:text-lg md:text-xl max-w-2xl mx-auto leading-relaxed font-light">
-            {OUR_STORY_CONFIG.cta.line}
+            <StoryScrollWordReveal text={OUR_STORY_CONFIG.cta.line} />
           </p>
 
           {/* Three buttons styled exactly like existing site's buttons */}
@@ -401,7 +402,7 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
               className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-cyan-400 hover:bg-cyan-300 text-[#0E3453] font-semibold text-xs sm:text-sm font-alata tracking-wider uppercase transition-all shadow-[0_0_20px_rgba(56,189,248,0.3)] hover:shadow-[0_0_30px_rgba(56,189,248,0.5)] cursor-pointer flex items-center justify-center gap-2 hover:scale-105 duration-200"
             >
               <Compass className="w-4 h-4" />
-              <span>Courses &amp; Packages</span>
+              <span><StoryScrollWordReveal text="Courses & Packages" /></span>
             </button>
 
             {/* Button 2: Events */}
@@ -410,7 +411,7 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
               className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-white/5 hover:bg-white/10 text-white border border-white/20 hover:border-cyan-400 font-alata text-xs sm:text-sm uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-2 hover:scale-105 duration-200"
             >
               <Calendar className="w-4 h-4 text-cyan-400" />
-              <span>Events</span>
+              <span><StoryScrollWordReveal text="Events" /></span>
             </button>
 
             {/* Button 3: Contact Us */}
@@ -419,7 +420,7 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
               className="fd-button flex w-full items-center justify-center gap-2 rounded-full px-7 py-3.5 font-alata text-xs font-semibold uppercase tracking-[0.08em] transition-all duration-200 sm:w-auto sm:text-sm"
             >
               <MessageSquare className="w-4 h-4 text-slate-800" />
-              <span>Contact Us</span>
+              <span><StoryScrollWordReveal text="Contact Us" /></span>
             </button>
 
           </div>

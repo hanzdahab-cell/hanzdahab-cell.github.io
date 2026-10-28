@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { StoryScrollWordReveal } from '../story/StoryScrollWordReveal';
 
 interface StorySlide {
   src: string;
@@ -41,7 +42,7 @@ const STORY_SLIDES: StorySlide[] = [
   },
 ];
 
-export function DahabBlueHoleSection() {
+export function DahabBlueHoleSection({ revealText = false }: { revealText?: boolean }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -81,10 +82,10 @@ export function DahabBlueHoleSection() {
       <div className="relative mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:gap-16">
         <div className="max-w-lg">
           <h2 className="font-bebas text-5xl leading-[0.98] tracking-wide text-white sm:text-6xl lg:text-7xl">
-            {slide.title}
+            {revealText ? <StoryScrollWordReveal text={slide.title} /> : slide.title}
           </h2>
           <p className="mt-6 max-w-md text-base leading-relaxed text-slate-300 sm:text-lg">
-            {slide.detail}
+            {revealText ? <StoryScrollWordReveal text={slide.detail} /> : slide.detail}
           </p>
         </div>
 
@@ -141,7 +142,9 @@ export function DahabBlueHoleSection() {
                 className="absolute right-5 top-5 z-10 h-10 w-12 object-contain opacity-75 drop-shadow-lg sm:right-7 sm:top-7"
               />
               <figcaption className="absolute inset-x-0 bottom-0 p-5 sm:p-8">
-                <p className="text-sm font-semibold text-[#A9D2EC]">{slide.title}</p>
+                <p className="text-sm font-semibold text-[#A9D2EC]">
+                  {revealText ? <StoryScrollWordReveal text={slide.title} /> : slide.title}
+                </p>
               </figcaption>
             </div>
           </figure>
