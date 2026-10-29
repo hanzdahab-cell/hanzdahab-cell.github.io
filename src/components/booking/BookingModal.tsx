@@ -5,6 +5,7 @@ import { packagesData } from '../../data/packages';
 import { roomTypes } from '../../data/accommodation';
 import { useLanguage } from '../../context/LanguageContext';
 import { setPageScrollLocked } from '../../utils/useSmoothScroll';
+import { CalendarPicker } from '../ui/CalendarPicker';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -30,6 +31,7 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
   const [selectedId, setSelectedId] = useState<string>('ssi-level-1');
   const [diverCount, setDiverCount] = useState<number>(1);
   const [startDate, setStartDate] = useState<string>('');
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [lodgingId, setLodgingId] = useState<string>('none');
   const [lodgingNights, setLodgingNights] = useState<number>(5);
   const [currentStep, setCurrentStep] = useState(0);
@@ -297,7 +299,25 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <label htmlFor="booking-date" className="flex items-center gap-1.5 text-xs uppercase text-slate-300"><Calendar className="h-3.5 w-3.5 text-cyan-300" aria-hidden="true" />{t.booking.dates}</label>
-                    <input id="booking-date" type="date" value={startDate} min={minBookingDate} onChange={(e) => setStartDate(e.target.value)} className="w-full rounded-xl border border-white/15 bg-slate-900 px-3.5 py-3 text-sm text-white focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/30" required />
+                    <div className="relative">
+                      <button
+                        id="booking-date"
+                        type="button"
+                        aria-haspopup="dialog"
+                        aria-expanded={isCalendarOpen}
+                        onClick={() => setIsCalendarOpen((open) => !open)}
+                        className="flex min-h-12 w-full items-center justify-between rounded-xl border border-white/15 bg-slate-900 px-3.5 py-3 text-left text-sm text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300"
+                      >
+                        <span>{startDate || 'Choose a date'}</span>
+                        <Calendar className="h-4 w-4 text-cyan-300" aria-hidden="true" />
+                      </button>
+                      {isCalendarOpen && (
+                        <div role="dialog" aria-label="Choose booking date" className="absolute left-0 top-full z-30 mt-2 w-full sm:w-auto">
+                          <CalendarPicker value={startDate || undefined} min={minBookingDate} onChange={setStartDate} onClose={() => setIsCalendarOpen(false)} />
+                        </div>
+                      )}
+                      <input type="hidden" name="booking-date" value={startDate} required />
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <label htmlFor="booking-divers" className="block text-xs uppercase text-slate-300">Number of Divers</label>
