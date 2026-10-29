@@ -250,23 +250,7 @@ export default function App() {
         {/* ========================================================= */}
         {currentPage === 'packages' && (
           <div className="page-dive-in">
-            <PageHeader
-              title="Expeditions & Activity Packages"
-              subtitle="All-inclusive freediving residencies combining certified SSI courses, coached Blue Hole line training, oceanfront accommodation, and Red Sea desert safaris."
-              badge="All-Inclusive Immersions • 7 to 28 Days"
-              currentPage="packages"
-              onNavigate={navigateTo}
-              onOpenBooking={() => handleOpenBooking()}
-              ctaText="Book Package"
-            />
-
             <PackagesSection
-              onOpenBooking={handleOpenBooking}
-              currency={currency}
-              onNavigate={navigateTo}
-            />
-
-            <ActivitiesSection
               onOpenBooking={handleOpenBooking}
               currency={currency}
               onNavigate={navigateTo}

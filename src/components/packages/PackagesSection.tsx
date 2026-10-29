@@ -1,4 +1,4 @@
-import { ArrowRight, Waves } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { packagesData } from '../../data/packages';
 import { PageType } from '../../types';
 import { SectionHero } from '../ui/SectionHero';
@@ -87,17 +87,16 @@ export function PackagesSection({ onNavigate }: PackagesSectionProps) {
         imageAlt="Two freedivers training beneath the clear water in Dahab."
         className="-mx-6 mb-12 min-h-[50svh] sm:mb-16"
       >
-        <div className="mx-auto max-w-3xl space-y-4 text-center">
-          <div className="inline-flex items-center gap-2 text-xs font-alata tracking-[0.3em] uppercase text-cyan-100">
-            <Waves className="h-4 w-4" aria-hidden="true" />
-            <span>Freediving programs &amp; training weeks</span>
+        <div className="max-w-4xl space-y-4 text-left">
+          <div className="text-xs font-alata tracking-[0.3em] uppercase text-cyan-100">
+            Freediving programs &amp; training weeks
           </div>
           <h1 className="font-bebas text-5xl leading-tight tracking-[0.05em] text-white sm:text-6xl md:text-7xl">
-            Residencies &amp; <span className="text-cyan-200">expedition packages</span>
+            Freediving packages in <span className="text-cyan-200">Dahab</span>
           </h1>
-          <p className="text-base leading-relaxed text-slate-100 sm:text-lg">
-            Choose a guided course-and-training week or a longer instructor pathway. Accommodation
-            and additional activities depend on the program you select.
+          <p className="max-w-3xl text-left text-base leading-relaxed text-slate-100 sm:text-lg">
+            Choose a coached training week, an SSI course and training combo, or a longer instructor
+            pathway.
           </p>
         </div>
       </SectionHero>
