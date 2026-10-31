@@ -51,7 +51,7 @@ export function PageHeader({
   }, [backgroundImages]);
 
   return (
-    <div className={`relative overflow-hidden border-b border-white/10 bg-gradient-to-b from-[#0E3453]/85 via-[#0E3453]/72 to-[#0E3453]/55 px-6 select-none ${compact ? 'pb-8 pt-20 sm:pb-10 sm:pt-24' : 'pb-16 pt-28 sm:pb-20 sm:pt-36'} ${backgroundImages?.length ? 'min-h-[280px] sm:min-h-[300px]' : ''}`}>
+    <div className={`relative flex min-h-[50svh] items-center overflow-hidden border-b border-white/10 bg-gradient-to-b from-[#0E3453]/85 via-[#0E3453]/72 to-[#0E3453]/55 px-6 ${compact ? 'py-20 sm:py-24' : 'py-24 sm:py-28'} select-none`}>
 
       {backgroundImages?.map((image, index) => (
         <div

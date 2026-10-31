@@ -10,11 +10,8 @@ import {
   FOCUS,
   HOVER_BG,
   L,
-  MaskIcon,
-  MenuItemIcon,
   NavDropdown,
   NavProvider,
-  OCEAN_TEXT,
   type MenuDefinition,
   type MenuLink,
 } from './NavDropdown';
@@ -102,8 +99,34 @@ function MobileDrawer({
   isAudioPlaying: boolean;
   activeLanguage: Language;
 }) {
-  const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
+  const drawerRef = useRef<HTMLDivElement>(null);
   const currentLanguage = LANGUAGES.find((language) => language.code === activeLanguage) ?? LANGUAGES[0];
+
+  useEffect(() => {
+    const drawer = drawerRef.current;
+    if (!drawer) return;
+    const firstLink = drawer.querySelector<HTMLElement>('nav a[href]');
+    firstLink?.focus();
+
+    const keepFocusInDrawer = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return;
+      const focusable = Array.from(
+        drawer.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'),
+      ).filter((element) => element.getClientRects().length > 0);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && (document.activeElement === first || !drawer.contains(document.activeElement))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !drawer.contains(document.activeElement))) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', keepFocusInDrawer);
+    return () => document.removeEventListener('keydown', keepFocusInDrawer);
+  }, []);
 
   return (
     <motion.div
@@ -112,10 +135,14 @@ function MobileDrawer({
       exit={{ opacity: 0, y: -6 }}
       transition={{ duration: 0.12 }}
       data-lenis-prevent
-      className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto overscroll-contain border-t border-slate-200 bg-white px-4 pb-8 pt-2 min-[1200px]:hidden"
+      ref={drawerRef}
+      role="dialog"
+      aria-label="Mobile navigation"
+      aria-modal="true"
+      className="fixed inset-x-0 bottom-0 top-16 z-[100] overflow-y-auto overscroll-contain border-t border-white/10 bg-[#081F35] px-4 pb-8 pt-2 text-white shadow-2xl min-[1200px]:hidden"
     >
-      <div className="border-b border-slate-200 py-3">
-        <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+      <div className="border-b border-white/10 py-3">
+        <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-300">
           Language
         </p>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -127,8 +154,8 @@ function MobileDrawer({
               aria-pressed={activeLanguage === language.code}
               className={`flex min-h-11 items-center gap-2 rounded-lg border px-3 py-2 text-left text-xs font-medium ${FOCUS} ${
                 activeLanguage === language.code
-                  ? 'border-[#0a5c8c] bg-[#eaf3f9] text-[#0a5c8c]'
-                  : 'border-slate-200 text-slate-700'
+                  ? 'border-cyan-200/70 bg-[#22628C]/35 text-cyan-100'
+                  : 'border-white/15 text-slate-200'
               }`}
             >
               <img src={language.flagUrl} alt="" className="h-5 w-5 rounded-full object-cover" />
@@ -141,91 +168,26 @@ function MobileDrawer({
         </span>
       </div>
 
-      <nav aria-label="Primary mobile">{navigationItems.map((item) => {
-        const menu = item.menu;
-        const isActive = isCurrentNavigationPage(item.page, currentPage);
-        const isExpanded = Boolean(menu && expandedMenu === menu.id);
-        let iconIndex = 0;
-
-        const renderMenuLink = (menuLink: MenuLink) => (
-          <a
-            key={menuLink.label}
-            href={menuLink.page ? `#${menuLink.sectionId ?? menuLink.page}` : '#'}
-            onClick={(event) => {
-              if (menuLink.page) {
+      <nav aria-label="Primary mobile" className="grid gap-1 py-3">
+        {navigationItems.map((item) => {
+          const isActive = isCurrentNavigationPage(item.page, currentPage);
+          return (
+            <a
+              key={item.id}
+              href={`#${item.page}`}
+              onClick={(event) => {
                 event.preventDefault();
-                onSelect(menuLink);
-              } else {
-                onClose();
-              }
-            }}
-            className={`flex min-h-11 items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-[#0a5c8c] ${HOVER_BG} ${FOCUS}`}
-          >
-            {menu && (
-              <MenuItemIcon menuId={menu.id} index={iconIndex++} icon={menuLink.icon} />
-            )}
-            {menuLink.label}
-          </a>
-        );
-
-        return (
-          <section key={item.id} className="border-b border-slate-200">
-            <div className="flex min-h-12 items-center gap-2">
-              {menu && <MaskIcon src={menu.icon} className="ml-2 size-[18px] text-[#0a5c8c]" />}
-              <a
-                href={`#${item.page}`}
-                onClick={(event) => {
-                  event.preventDefault();
-                  onSelect({ label: item.label, page: item.page });
-                }}
-                aria-current={isActive ? 'page' : undefined}
-                className={`flex min-h-11 flex-1 items-center rounded-lg px-2 text-left text-[12px] font-alata font-semibold uppercase tracking-[0.11em] ${isActive ? 'bg-[#0a5c8c] text-white' : 'text-[#0a5c8c]'} ${FOCUS}`}
-              >
-                {item.label}
-              </a>
-              {menu && (
-                <button
-                  type="button"
-                  aria-expanded={isExpanded}
-                  aria-controls={`mobile-menu-${menu.id}`}
-                  aria-label={`${isExpanded ? 'Hide' : 'Show'} ${item.label} submenu`}
-                  onClick={() => setExpandedMenu(isExpanded ? null : menu.id)}
-                  className={`mr-1 grid size-10 place-items-center rounded-md text-[#0a5c8c] ${HOVER_BG} ${FOCUS}`}
-                >
-                  <span aria-hidden="true" className="text-lg font-normal">
-                    {isExpanded ? '−' : '+'}
-                  </span>
-                </button>
-              )}
-            </div>
-            <AnimatePresence initial={false}>
-              {menu && isExpanded && (
-                <motion.div
-                  id={`mobile-menu-${menu.id}`}
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.12 }}
-                  className="overflow-hidden pb-2"
-                >
-                  {menu.columns.flat().map((block) =>
-                    isGroup(block) ? (
-                      <div key={block.group}>
-                        <p className="px-3 pt-2.5 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                          {block.group}
-                        </p>
-                        {block.items.map(renderMenuLink)}
-                      </div>
-                    ) : (
-                      renderMenuLink(block)
-                    ),
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </section>
-        );
-      })}</nav>
+                onSelect({ label: item.label, page: item.page });
+              }}
+              aria-current={isActive ? 'page' : undefined}
+              className={`flex min-h-12 items-center justify-between rounded-xl px-4 font-alata text-sm font-semibold uppercase tracking-[0.1em] transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200 ${isActive ? 'bg-[#22628C]/45 text-cyan-100' : 'text-white'}`}
+            >
+              <span>{item.label}</span>
+              <span aria-hidden="true" className="text-cyan-200">→</span>
+            </a>
+          );
+        })}
+      </nav>
 
       <button
         type="button"
@@ -233,7 +195,7 @@ function MobileDrawer({
           onClose();
           onToggleAudio();
         }}
-        className={`mt-4 flex min-h-11 w-full items-center gap-2 rounded-lg px-3 text-sm font-medium ${OCEAN_TEXT} ${FOCUS}`}
+        className="mt-4 flex min-h-11 w-full items-center gap-2 rounded-lg px-3 text-sm font-medium text-cyan-100 transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200"
       >
         {isAudioPlaying ? (
           <Volume2 className="h-4 w-4" aria-hidden="true" />

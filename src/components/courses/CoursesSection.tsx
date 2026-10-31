@@ -97,15 +97,15 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
   return (
     <section id="courses" className="ocean-surface relative pb-20 sm:pb-28 film-grain">
       <SectionHero imageSrc={courseCardArtworkById['ssi-level-1'].src} imageAlt="" className="min-h-[50svh]" alignStart>
-          <div className="max-w-3xl space-y-2">
-            <p className="flex items-center gap-3 text-[10px] uppercase tracking-[0.12em] text-ocean-pale sm:text-sm sm:tracking-[0.16em]">
+          <div className="max-w-4xl space-y-3 sm:space-y-4">
+            <p className="flex items-center gap-3 text-xs uppercase tracking-[0.12em] text-ocean-pale sm:text-base sm:tracking-[0.16em]">
               <span className="h-px w-8 bg-ocean-light" aria-hidden="true" />
               Freedive Dahab · SSI
             </p>
-            <h1 className="font-bebas text-3xl leading-none tracking-[0.025em] text-white sm:text-4xl">
+            <h1 className="font-bebas text-5xl leading-[0.95] tracking-[0.025em] text-white sm:text-6xl lg:text-7xl">
               Why SSI Certification?
             </h1>
-            <p className="max-w-2xl text-sm leading-relaxed text-slate-100">
+            <p className="max-w-3xl text-base leading-relaxed text-slate-100 sm:text-lg">
               SSI offers progressive, safety-focused training and internationally recognized
               freediving certifications.
             </p>
@@ -121,12 +121,12 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
           <GroupHeading title="Our Core Courses" />
 
           {/* Core SSI Freediver certifications */}
-          <div className="grid grid-cols-1 items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mx-auto grid max-w-6xl grid-cols-1 items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {coreCards.map((course, idx) => (
             <TiltSurface
               key={course.id}
               delay={idx * 0.06}
-              className="group flex h-full flex-col rounded-2xl border border-ocean-pale/10 bg-[#0A2943] transition-colors duration-300 hover:border-ocean-light/50"
+              className={`group flex h-full flex-col rounded-2xl border border-ocean-pale/10 bg-[#0A2943] transition-colors duration-300 hover:border-ocean-light/50 ${idx === coreCards.length - 1 ? 'sm:col-span-2 sm:mx-auto sm:w-1/2 xl:col-span-1 xl:mx-0 xl:w-auto' : ''}`}
             >
               <>
                 {/* Card Image */}
