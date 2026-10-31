@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { Menu, Search, Volume2, VolumeX, X } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { ChevronDown, Menu, Search, Volume2, VolumeX, X } from 'lucide-react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../context/LanguageContext';
 import { LANGUAGES } from '../utils/i18n';
@@ -99,7 +100,10 @@ function MobileDrawer({
   isAudioPlaying: boolean;
   activeLanguage: Language;
 }) {
-  const drawerRef = useRef<HTMLDivElement>(null);
+  const drawerRef = useRef<HTMLElement>(null);
+  const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
+  const prefersReducedMotion = useReducedMotion();
+  const motionDuration = prefersReducedMotion ? 0 : 0.32;
   const currentLanguage = LANGUAGES.find((language) => language.code === activeLanguage) ?? LANGUAGES[0];
 
   useEffect(() => {
@@ -128,82 +132,168 @@ function MobileDrawer({
     return () => document.removeEventListener('keydown', keepFocusInDrawer);
   }, []);
 
+  const renderMenuItem = (link: MenuLink) => (
+    <li key={`${link.label}-${link.sectionId ?? link.page ?? 'label'}`}>
+      {link.page ? (
+        <a
+          href={`#${link.sectionId ?? link.page}`}
+          onClick={(event) => {
+            event.preventDefault();
+            onSelect(link);
+          }}
+          className="flex min-h-10 items-center rounded-lg px-3 py-2 font-alata text-[13px] leading-snug text-[#0E3453] transition-colors hover:bg-white/70 hover:text-[#075C85] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#075C85]"
+        >
+          {link.label}
+        </a>
+      ) : (
+        <span className="flex min-h-10 items-center rounded-lg px-3 py-2 font-alata text-[13px] leading-snug text-[#0E3453]">
+          {link.label}
+        </span>
+      )}
+    </li>
+  );
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: -6 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -6 }}
-      transition={{ duration: 0.12 }}
+      id="mobile-navigation"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: motionDuration }}
       data-lenis-prevent
-      ref={drawerRef}
-      role="dialog"
-      aria-label="Mobile navigation"
-      aria-modal="true"
-      className="fixed inset-x-0 bottom-0 top-16 z-[100] overflow-y-auto overscroll-contain border-t border-white/10 bg-[#081F35] px-4 pb-8 pt-2 text-white shadow-2xl min-[1200px]:hidden"
+      className="fixed inset-x-0 bottom-0 top-16 z-[60] min-[1200px]:hidden"
     >
-      <div className="border-b border-white/10 py-3">
-        <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-300">
-          Language
-        </p>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {LANGUAGES.map((language) => (
-            <button
-              key={language.code}
-              type="button"
-              onClick={() => onLanguageSelect(language.code)}
-              aria-pressed={activeLanguage === language.code}
-              className={`flex min-h-11 items-center gap-2 rounded-lg border px-3 py-2 text-left text-xs font-medium ${FOCUS} ${
-                activeLanguage === language.code
-                  ? 'border-cyan-200/70 bg-[#22628C]/35 text-cyan-100'
-                  : 'border-white/15 text-slate-200'
-              }`}
-            >
-              <img src={language.flagUrl} alt="" className="h-5 w-5 rounded-full object-cover" />
-              <span>{language.nativeName}</span>
-            </button>
-          ))}
-        </div>
-        <span className="sr-only" aria-live="polite">
-          {currentLanguage.label} selected
-        </span>
-      </div>
-
-      <nav aria-label="Primary mobile" className="grid gap-1 py-3">
-        {navigationItems.map((item) => {
-          const isActive = isCurrentNavigationPage(item.page, currentPage);
-          return (
-            <a
-              key={item.id}
-              href={`#${item.page}`}
-              onClick={(event) => {
-                event.preventDefault();
-                onSelect({ label: item.label, page: item.page });
-              }}
-              aria-current={isActive ? 'page' : undefined}
-              className={`flex min-h-12 items-center justify-between rounded-xl px-4 font-alata text-sm font-semibold uppercase tracking-[0.1em] transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200 ${isActive ? 'bg-[#22628C]/45 text-cyan-100' : 'text-white'}`}
-            >
-              <span>{item.label}</span>
-              <span aria-hidden="true" className="text-cyan-200">→</span>
-            </a>
-          );
-        })}
-      </nav>
-
-      <button
+      <motion.button
         type="button"
-        onClick={() => {
-          onClose();
-          onToggleAudio();
-        }}
-        className="mt-4 flex min-h-11 w-full items-center gap-2 rounded-lg px-3 text-sm font-medium text-cyan-100 transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200"
+        aria-label="Close navigation menu"
+        tabIndex={-1}
+        onClick={onClose}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: motionDuration }}
+        className="absolute inset-0 h-full w-full cursor-default bg-[#061A2B]/85 backdrop-blur-[2px] focus-visible:outline-none"
+      />
+
+      <motion.aside
+        ref={drawerRef}
+        role="dialog"
+        aria-label="Site navigation"
+        aria-modal="true"
+        initial={{ x: '100%' }}
+        animate={{ x: 0 }}
+        exit={{ x: '100%' }}
+        transition={{ duration: motionDuration, ease: [0.22, 1, 0.36, 1] }}
+        data-lenis-prevent
+        className="absolute inset-y-0 right-0 z-10 flex w-full flex-col overflow-hidden bg-[#EAF3F9] text-[#081F35] shadow-2xl sm:w-[360px]"
       >
-        {isAudioPlaying ? (
-          <Volume2 className="h-4 w-4" aria-hidden="true" />
-        ) : (
-          <VolumeX className="h-4 w-4" aria-hidden="true" />
-        )}
-        {isAudioPlaying ? 'Mute underwater sound' : 'Play underwater sound'}
-      </button>
+        <nav aria-label="Primary mobile" className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-4 pt-5">
+          <ul className="space-y-1">
+            {navigationItems.map((item) => {
+              const isActive = isCurrentNavigationPage(item.page, currentPage);
+              const isExpanded = expandedMenu === item.id;
+              const submenuId = `mobile-submenu-${item.id}`;
+              return (
+                <li key={item.id} className="border-b border-[#0E3453]/10 pb-1">
+                  <div className="flex min-h-[52px] items-center gap-2">
+                    <a
+                      href={`#${item.page}`}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        onSelect({ label: item.label, page: item.page });
+                      }}
+                      aria-current={isActive ? 'page' : undefined}
+                      className={`flex min-h-11 min-w-0 flex-1 items-center rounded-lg px-3 font-alata text-base font-semibold transition-colors hover:bg-white/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075C85] ${isActive ? 'text-[#075C85]' : 'text-[#081F35]'}`}
+                    >
+                      {item.label}
+                    </a>
+                    {item.menu && (
+                      <button
+                        type="button"
+                        aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${item.label} submenu`}
+                        aria-expanded={isExpanded}
+                        aria-controls={submenuId}
+                        onClick={() => setExpandedMenu(isExpanded ? null : item.id)}
+                        className="grid size-11 shrink-0 place-items-center rounded-lg text-[#075C85] transition-colors hover:bg-white/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075C85]"
+                      >
+                        <ChevronDown
+                          aria-hidden="true"
+                          className={`size-4 transition-transform duration-300 motion-reduce:transition-none ${isExpanded ? 'rotate-180' : ''}`}
+                        />
+                      </button>
+                    )}
+                  </div>
+                  <AnimatePresence initial={false}>
+                    {item.menu && isExpanded && (
+                      <motion.div
+                        id={submenuId}
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: motionDuration, ease: 'easeInOut' }}
+                        className="overflow-hidden"
+                      >
+                        <div className="mb-2 ml-3 border-l border-[#075C85]/25 pl-2">
+                          {item.menu.columns.map((column, columnIndex) => (
+                            <ul key={`${item.id}-column-${columnIndex}`}>
+                              {column.map((block) =>
+                                isGroup(block) ? (
+                                  <li key={block.group} className="pt-2">
+                                    <h3 className="px-3 pb-1 font-alata text-[11px] font-bold uppercase tracking-[0.12em] text-[#075C85]/80">
+                                      {block.group}
+                                    </h3>
+                                    <ul>{block.items.map(renderMenuItem)}</ul>
+                                  </li>
+                                ) : renderMenuItem(block),
+                              )}
+                            </ul>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className="mt-5 border-t border-[#0E3453]/15 pt-4">
+            <p className="mb-2 px-1 font-alata text-[11px] font-bold uppercase tracking-[0.14em] text-[#075C85]">
+              Language
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {LANGUAGES.map((language) => (
+                <button
+                  key={language.code}
+                  type="button"
+                  onClick={() => onLanguageSelect(language.code)}
+                  aria-pressed={activeLanguage === language.code}
+                  className={`flex min-h-11 items-center gap-2 rounded-lg border px-3 py-2 text-left font-alata text-xs font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075C85] ${
+                    activeLanguage === language.code
+                      ? 'border-[#075C85]/50 bg-white text-[#075C85]'
+                      : 'border-[#0E3453]/15 text-[#0E3453] hover:bg-white/70'
+                  }`}
+                >
+                  <img src={language.flagUrl} alt="" className="size-5 rounded-full object-cover" />
+                  <span>{language.nativeName}</span>
+                </button>
+              ))}
+            </div>
+            <span className="sr-only" aria-live="polite">
+              {currentLanguage.label} selected
+            </span>
+            <button
+              type="button"
+              onClick={onToggleAudio}
+              aria-pressed={isAudioPlaying}
+              className="mt-2 flex min-h-11 w-full items-center gap-2 rounded-lg px-3 font-alata text-sm font-medium text-[#0E3453] transition-colors hover:bg-white/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075C85]"
+            >
+              {isAudioPlaying ? <Volume2 className="size-4" aria-hidden="true" /> : <VolumeX className="size-4" aria-hidden="true" />}
+              {isAudioPlaying ? 'Mute underwater sound' : 'Play underwater sound'}
+            </button>
+          </div>
+        </nav>
+      </motion.aside>
     </motion.div>
   );
 }
@@ -283,6 +373,20 @@ export function SiteHeader({
   useEffect(() => {
     if (wasDrawerOpen.current && !isDrawerOpen) menuButtonRef.current?.focus();
     wasDrawerOpen.current = isDrawerOpen;
+  }, [isDrawerOpen]);
+
+  useEffect(() => {
+    if (!isDrawerOpen) return;
+    const pageViewport = document.querySelector<HTMLElement>('#site-page-scroll');
+    const previousViewportOverflow = pageViewport?.style.overflowY ?? '';
+    const previousBodyOverflow = document.body.style.overflow;
+    if (pageViewport) pageViewport.style.overflowY = 'hidden';
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      if (pageViewport) pageViewport.style.overflowY = previousViewportOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+    };
   }, [isDrawerOpen]);
 
   useEffect(() => {
@@ -482,10 +586,11 @@ export function SiteHeader({
           </div>
         </div>
 
-        <AnimatePresence>
-          {isDrawerOpen && (
-            <div id="mobile-navigation">
+        {createPortal(
+          <AnimatePresence>
+            {isDrawerOpen && (
               <MobileDrawer
+                key="mobile-navigation"
                 navigationItems={navigationItems}
                 currentPage={currentPage}
                 onSelect={selectMenuItem}
@@ -495,9 +600,10 @@ export function SiteHeader({
                 isAudioPlaying={isAudioPlaying}
                 activeLanguage={language}
               />
-            </div>
-          )}
-        </AnimatePresence>
+            )}
+          </AnimatePresence>,
+          document.body,
+        )}
 
         <AnimatePresence>
           {isSearchOpen && (
