@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { X, ChevronLeft, ChevronRight, BookOpen, Compass, MessageSquare, Calendar } from 'lucide-react';
 import { PageType } from '../../types';
-import { DahabBlueHoleSection } from '../home/DahabBlueHoleSection';
-import { LuxuryStory } from '../home/LuxuryStory';
 import { StoryScrollWordReveal } from './StoryScrollWordReveal';
 
 // ============================================================================
@@ -39,13 +37,31 @@ export const OUR_STORY_CONFIG = {
   // Page meta
   pageTitle: 'Our Story – Freedive Dahab',
 
-  // 1) INTRO SECTION (verbatim from brief)
+  // Website copy for the school, Dahab, and the Blue Hole.
   intro: {
+    title: 'Our Freediving School',
     paragraphs: [
-      'Discover why Freedive Dahab is a world-renowned destination for freediving enthusiasts of all levels. Founded in 2003, Freedive Dahab holds the title of being one of the very first freediving centres globally and the first SSI Freediving Instructor Training Center in the world since 2010.',
-      'Located near the beautiful Lighthouse Bay at the heart of Dahab, our centre offers more than just training. With a spacious air-conditioned classroom, a large equipment room, a sunny terrace, and beachside showers, Freedive Dahab is built for comfort and community. Whether you\'re joining us in summer or winter, you\'ll feel right at home, with free Wi-Fi to keep you connected.',
-      'We offer a variety of immersive events and packages, from beginner levels to professional instructor training, specialized private coaching, and even competitions. Our welcoming environment inspires thousands of freedivers every year to deepen their connection with the ocean, improve their skills, and take on new challenges.',
+      'Freedive Dahab started in 2003, and we have been teaching freediving in Dahab ever since. Our school is on El Fanar Street (N 28° 30.012′, E 034° 31.104′), in the heart of Dahab and a short walk from Lighthouse Bay.',
+      'Most of our freediving courses take place at the Lighthouse. Our center has hot showers and air-conditioned classrooms. The large front porch has comfortable seating for coffee breaks, rinsing facilities, outdoor showers, and a place to hang equipment.',
+      'Our Freediving Shop is connected to the teaching facilities. You can buy everything you need, including high-quality freediving wetsuits from Polosub and other brands, freediving fins, monofins, foot pockets, nose clips, lanyards, and low-volume masks in many styles.',
     ],
+  },
+  locations: {
+    dahab: {
+      title: 'Dahab',
+      paragraphs: [
+        'Dahab is a small town on the east coast of Egypt’s Sinai Peninsula, about 80 km north of Sharm el-Sheikh. Formerly a Bedouin fishing village, Dahab is now one of Sinai’s most treasured diving destinations. Many people fall in love with it and return again and again.',
+        'Dahab is known for windsurfing, scuba diving, freediving, and snorkeling. Land-based activities include camel, horse, jeep, and quad-bike trips. Mount Sinai is a two-hour drive away, and Saint Catherine’s Monastery is a popular place to visit.',
+        'Dahab is served by Sharm el-Sheikh International Airport.',
+      ],
+    },
+    blueHole: {
+      title: 'The Blue Hole',
+      paragraphs: [
+        'The nearby Blue Hole is a submarine sinkhole around 130 meters deep. A shallow opening about 6 meters deep, known as the Saddle, connects it to the open sea. The Arch is a 26-meter tunnel whose top is 56 meters below the surface. The hole and surrounding area are full of coral and reef fish.',
+        'The Blue Hole is ideal for deep freediving because the surrounding reef protects it from waves and currents, so the surface is almost always flat. We do not have to swim more than 30 meters from the nearby restaurant to find depths of up to 90 meters.',
+      ],
+    },
   },
 
   // 3) MEET OUR PIONEERS (verbatim from brief)
@@ -322,11 +338,6 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
         </div>
       </section>
 
-      {/* 2.5) PHILOSOPHY & 24-YEAR STATISTICS (moved from the home page) */}
-      <LuxuryStory onOpenBooking={onOpenBooking} revealText />
-
-      <DahabBlueHoleSection revealText />
-
       {/* ==================================================================== */}
       {/* 2) INTRO SECTION: Verbatim narrative text from the brief              */}
       {/* ==================================================================== */}
@@ -337,7 +348,7 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
 
           <div className="flex items-center gap-3 text-xs font-alata tracking-[0.3em] uppercase text-cyan-400 mb-4">
             <span className="w-8 h-px bg-cyan-400" />
-            <span><StoryScrollWordReveal text="Our Heritage & Community" /></span>
+            <span><StoryScrollWordReveal text={OUR_STORY_CONFIG.intro.title} /></span>
           </div>
 
           <div className="space-y-6 text-slate-300 font-alata font-normal text-base sm:text-lg md:text-xl leading-relaxed">
@@ -351,26 +362,19 @@ export function OurStoryPage({ onNavigate, onOpenBooking }: OurStoryPageProps) {
             ))}
           </div>
 
-          {/* Highlight stat tags */}
-          <div className="pt-8 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="p-4 rounded-xl bg-slate-900/50 border border-white/10">
-              <div className="font-bebas text-3xl sm:text-4xl text-cyan-300"><StoryScrollWordReveal text="2003" /></div>
-              <div className="text-[11px] font-alata text-slate-400 uppercase tracking-wider mt-1"><StoryScrollWordReveal text="Established in Dahab" /></div>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-900/50 border border-white/10">
-              <div className="font-bebas text-3xl sm:text-4xl text-cyan-300"><StoryScrollWordReveal text="#1" /></div>
-              <div className="text-[11px] font-alata text-slate-400 uppercase tracking-wider mt-1"><StoryScrollWordReveal text="1st SSI ITC Globally" /></div>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-900/50 border border-white/10">
-              <div className="font-bebas text-3xl sm:text-4xl text-cyan-300"><StoryScrollWordReveal text="2010" /></div>
-              <div className="text-[11px] font-alata text-slate-400 uppercase tracking-wider mt-1"><StoryScrollWordReveal text="Diamond ITC Status" /></div>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-900/50 border border-white/10">
-              <div className="font-bebas text-3xl sm:text-4xl text-cyan-300"><StoryScrollWordReveal text="1000s" /></div>
-              <div className="text-[11px] font-alata text-slate-400 uppercase tracking-wider mt-1"><StoryScrollWordReveal text="Divers Certified" /></div>
-            </div>
-          </div>
+        </div>
+      </section>
 
+      <section id="story-locations" className="ocean-surface relative border-b border-white/5 px-6 py-20 sm:py-28">
+        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-2">
+          {[OUR_STORY_CONFIG.locations.dahab, OUR_STORY_CONFIG.locations.blueHole].map((location) => (
+            <article key={location.title} className="rounded-2xl border border-white/10 bg-[#0A2943]/80 p-6 sm:p-8">
+              <h2 className="font-bebas text-4xl text-white sm:text-5xl">{location.title}</h2>
+              <div className="mt-5 space-y-4 text-sm leading-relaxed text-slate-300 sm:text-base">
+                {location.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              </div>
+            </article>
+          ))}
         </div>
       </section>
 

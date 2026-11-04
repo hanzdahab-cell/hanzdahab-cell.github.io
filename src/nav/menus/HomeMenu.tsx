@@ -4,7 +4,6 @@ export const homeMenu: MenuDefinition = {
   id: 'home',
   label: 'Home',
   page: 'home',
-  icon: '/icons/diver.png',
   columns: [[
     L('Diving Spots', 'home', 'dahab-blue-hole'),
     L('Reviews & Testimonials', 'home', 'testimonials'),

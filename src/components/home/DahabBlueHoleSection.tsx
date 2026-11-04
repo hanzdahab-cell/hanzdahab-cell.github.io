@@ -131,22 +131,16 @@ export function DahabBlueHoleSection({ revealText = false }: { revealText?: bool
                   />
                 </div>
               ))}
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 bg-gradient-to-t from-[#061A2B]/95 via-[#061A2B]/10 to-transparent"
-              />
               <img
                 src="/logo-freedive-dahab.png"
                 alt=""
                 aria-hidden="true"
                 className="absolute right-5 top-5 z-10 h-10 w-12 object-contain opacity-75 drop-shadow-lg sm:right-7 sm:top-7"
               />
-              <figcaption className="absolute inset-x-0 bottom-0 p-5 sm:p-8">
-                <p className="text-sm font-semibold text-[#A9D2EC]">
-                  {revealText ? <StoryScrollWordReveal text={slide.title} /> : slide.title}
-                </p>
-              </figcaption>
             </div>
+            <figcaption className="mt-3 text-sm font-semibold text-[#A9D2EC]">
+              {revealText ? <StoryScrollWordReveal text={slide.title} /> : slide.title}
+            </figcaption>
           </figure>
 
           <div className="mt-5 flex flex-wrap items-center justify-between gap-4">

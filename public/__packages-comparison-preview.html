@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Freedive Dahab — Packages / Courses Comparison</title>
+    <style>
+      * { box-sizing: border-box; }
+      html, body { width: 100%; height: 100%; margin: 0; background: #081f35; color: #f2f8fc; font-family: Arial, sans-serif; }
+      .preview { height: 100%; display: grid; grid-template-rows: 38px 1fr; }
+      .labels { display: grid; grid-template-columns: 1fr 1fr; align-items: center; border-bottom: 1px solid rgba(255,255,255,.16); background: #0e3453; font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+      .labels span { padding: 0 14px; }
+      .labels span + span { border-left: 1px solid rgba(255,255,255,.16); }
+      .frames { display: grid; grid-template-columns: 1fr 1fr; min-height: 0; }
+      iframe { width: 100%; height: 100%; border: 0; background: #081f35; }
+      iframe + iframe { border-left: 1px solid rgba(255,255,255,.18); }
+      @media (max-width: 700px) {
+        .preview { grid-template-rows: 34px 1fr; }
+        .labels { font-size: 9px; }
+        .labels span { padding: 0 8px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="preview" aria-label="Side-by-side website comparison">
+      <div class="labels"><span>New Packages Cards</span><span>Existing Courses Page</span></div>
+      <div class="frames">
+        <iframe id="packages-frame" title="Freedive Dahab packages page" src="/#packages"></iframe>
+        <iframe id="courses-frame" title="Freedive Dahab courses page" src="/#courses"></iframe>
+      </div>
+    </main>
+    <script>
+      function revealSection(frame, selector) {
+        const doc = frame.contentDocument;
+        if (!doc) return;
+        const scrollRoot = doc.querySelector('#site-page-scroll');
+        const target = doc.querySelector(selector);
+        if (!scrollRoot || !target) return;
+        scrollRoot.scrollTo({ top: target.getBoundingClientRect().top - scrollRoot.getBoundingClientRect().top + scrollRoot.scrollTop - 52, behavior: 'instant' });
+      }
+      document.querySelector('#packages-frame').addEventListener('load', event => {
+        setTimeout(() => revealSection(event.currentTarget, '#packages .grid'), 900);
+      });
+      document.querySelector('#courses-frame').addEventListener('load', event => {
+        setTimeout(() => revealSection(event.currentTarget, '#chapter-core'), 900);
+      });
+    </script>
+  </body>
+</html>

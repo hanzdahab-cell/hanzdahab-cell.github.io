@@ -4,9 +4,8 @@ export const packagesMenu: MenuDefinition = {
   id: 'packages',
   label: 'Packages',
   page: 'packages',
-  icon: '/icons/wet-suit.png',
   columns: [[
-    L('Why Packages?', 'packages'),
+    L('Why Packages?', 'packages', 'package-overview'),
     L('Training Week', 'event-training-week'),
     L('Beginner Week', 'event-beginner-week'),
     L('Advanced Week', 'event-advanced-week'),

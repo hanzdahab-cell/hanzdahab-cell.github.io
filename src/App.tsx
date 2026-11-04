@@ -103,7 +103,8 @@ export default function App() {
 
     if (currentPage !== page) {
       navigateTo(page);
-      window.setTimeout(scroll, 180);
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.setTimeout(scroll, prefersReducedMotion ? 0 : 950);
       return;
     }
     scroll();
@@ -189,16 +190,6 @@ export default function App() {
         {/* ========================================================= */}
         {currentPage === 'training' && (
           <div className="page-dive-in">
-            <PageHeader
-              title="Freediving Training & Coaching"
-              subtitle="Dedicated counter-ballast depth buoys at the Blue Hole, precision equalization coaching, pool tables, and 1-on-1 master underwater 4K video analysis."
-              badge="Dahab Blue Hole & Lighthouse Sanctuary Base"
-              currentPage="training"
-              onNavigate={navigateTo}
-              onOpenBooking={() => handleOpenBooking('depth-training')}
-              ctaText="Reserve Depth Buoy"
-            />
-
             <TrainingSection
               onOpenBooking={handleOpenBooking}
               currency={currency}
@@ -250,23 +241,7 @@ export default function App() {
         {/* ========================================================= */}
         {currentPage === 'packages' && (
           <div className="page-dive-in">
-            <PageHeader
-              title="Expeditions & Activity Packages"
-              subtitle="All-inclusive freediving residencies combining certified SSI courses, coached Blue Hole line training, oceanfront accommodation, and Red Sea desert safaris."
-              badge="All-Inclusive Immersions • 7 to 28 Days"
-              currentPage="packages"
-              onNavigate={navigateTo}
-              onOpenBooking={() => handleOpenBooking()}
-              ctaText="Book Package"
-            />
-
             <PackagesSection
-              onOpenBooking={handleOpenBooking}
-              currency={currency}
-              onNavigate={navigateTo}
-            />
-
-            <ActivitiesSection
               onOpenBooking={handleOpenBooking}
               currency={currency}
               onNavigate={navigateTo}
@@ -281,20 +256,20 @@ export default function App() {
           <div className="page-dive-in">
             <PageHeader
               title="FREEDIVE DAHAB LIVE CALENDER"
-              subtitle="PLANING YOUR DAHAB FREEDIVING EXPERIENCE ? HERE'S THE CALENDAR FOR OUR SCHEDULED EVENTS. WE RUN ALL OTHER COURSES ALL YEAR ROUND ON REQUEST, JUST LET US KNOW YOUR DATES!"
-              badge="Live 2026 Season Schedule • Instant Seat Reservation"
+              subtitle="Planning your Dahab freediving experience? Here's the calendar for our scheduled events. We run all other courses all year round on request, just let us know your dates!"
+              badge="November 2026 – April 2027"
               currentPage="calendar"
               onNavigate={navigateTo}
               onOpenBooking={() => handleOpenBooking()}
               ctaText="Custom Date Request"
               compact
               subtitleFontFamily="system-ui, sans-serif"
+              backgroundImages={['/images/calendar-hero-dahab.webp']}
             />
 
             <CalendarSection
               onOpenBooking={handleOpenBooking}
               onNavigate={navigateTo}
-              currency={currency}
             />
 
           </div>
@@ -306,12 +281,6 @@ export default function App() {
         {currentPage === 'experience' && (
           <div className="page-dive-in">
             <ActivitiesSection
-              onOpenBooking={handleOpenBooking}
-              currency={currency}
-              onNavigate={navigateTo}
-            />
-
-            <PackagesSection
               onOpenBooking={handleOpenBooking}
               currency={currency}
               onNavigate={navigateTo}
@@ -419,7 +388,7 @@ export default function App() {
       </main>
 
       {/* TECHNICAL ARCHITECTURAL FOOTER (On Every Page with Page Switching) */}
-      <Footer />
+      <Footer currentPage={currentPage} />
           </>
         </Scroller>
 

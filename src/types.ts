@@ -36,6 +36,7 @@ export interface Course {
   maxDepthMeters: number;
   prerequisites: string;
   overview: string;
+  safetyNote?: string;
   highlights: string[];
   included: string[];
   scheduleSummary: string;
@@ -45,19 +46,6 @@ export interface Course {
   schedule?: CourseScheduleDay[];
 }
 
-export interface TrainingPricingRow {
-  location: string;
-  description: string;
-  depthRange: string;
-  singleSessionEur: number;
-  fivePackEur: number;
-  tenPackEur: number;
-  coachingPrivateAddonEur: number;
-  includesTransport: boolean;
-  includesBuoyAndWeights: boolean;
-  notes: string;
-}
-
 export interface SpecialtyCourse {
   id: string;
   slug: string;
@@ -65,6 +53,7 @@ export interface SpecialtyCourse {
   shortDesc: string;
   durationDays: number;
   priceEur: number;
+  priceNote?: string;
   prerequisites: string;
   keySkills: string[];
   fullDesc: string;
@@ -78,6 +67,7 @@ export interface InstructorCourse {
   title: string;
   durationWeeksOrDays: string;
   priceEur: number;
+  priceNote?: string;
   prerequisites: string;
   description: string;
   modules: string[];
@@ -145,6 +135,8 @@ export interface Activity {
   duration: string;
   priceEur: number;
   priceEgp?: number;
+  priceLabel?: string;
+  longDescription?: string[];
   image: ImageAsset;
   includes: string[];
   highlights: string[];

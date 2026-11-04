@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { Menu, Search, Volume2, VolumeX, X } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { ChevronDown, Menu, Search, Volume2, VolumeX, X } from 'lucide-react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../context/LanguageContext';
 import { LANGUAGES } from '../utils/i18n';
@@ -10,11 +11,8 @@ import {
   FOCUS,
   HOVER_BG,
   L,
-  MaskIcon,
-  MenuItemIcon,
   NavDropdown,
   NavProvider,
-  OCEAN_TEXT,
   type MenuDefinition,
   type MenuLink,
 } from './NavDropdown';
@@ -102,146 +100,200 @@ function MobileDrawer({
   isAudioPlaying: boolean;
   activeLanguage: Language;
 }) {
+  const drawerRef = useRef<HTMLElement>(null);
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
+  const prefersReducedMotion = useReducedMotion();
+  const motionDuration = prefersReducedMotion ? 0 : 0.32;
   const currentLanguage = LANGUAGES.find((language) => language.code === activeLanguage) ?? LANGUAGES[0];
+
+  useEffect(() => {
+    const drawer = drawerRef.current;
+    if (!drawer) return;
+    const firstLink = drawer.querySelector<HTMLElement>('nav a[href]');
+    firstLink?.focus();
+
+    const keepFocusInDrawer = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return;
+      const focusable = Array.from(
+        drawer.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'),
+      ).filter((element) => element.getClientRects().length > 0);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && (document.activeElement === first || !drawer.contains(document.activeElement))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !drawer.contains(document.activeElement))) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', keepFocusInDrawer);
+    return () => document.removeEventListener('keydown', keepFocusInDrawer);
+  }, []);
+
+  const renderMenuItem = (link: MenuLink) => (
+    <li key={`${link.label}-${link.sectionId ?? link.page ?? 'label'}`}>
+      {link.page ? (
+        <a
+          href={`#${link.sectionId ?? link.page}`}
+          onClick={(event) => {
+            event.preventDefault();
+            onSelect(link);
+          }}
+          className="flex min-h-10 items-center rounded-lg px-3 py-2 font-alata text-[13px] leading-snug text-[#0E3453] transition-colors hover:bg-white/70 hover:text-[#075C85] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#075C85]"
+        >
+          {link.label}
+        </a>
+      ) : (
+        <span className="flex min-h-10 items-center rounded-lg px-3 py-2 font-alata text-[13px] leading-snug text-[#0E3453]">
+          {link.label}
+        </span>
+      )}
+    </li>
+  );
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: -6 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -6 }}
-      transition={{ duration: 0.12 }}
+      id="mobile-navigation"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: motionDuration }}
       data-lenis-prevent
-      className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto overscroll-contain border-t border-slate-200 bg-white px-4 pb-8 pt-2 min-[1200px]:hidden"
+      className="fixed inset-x-0 bottom-0 top-16 z-[60] min-[1200px]:hidden"
     >
-      <div className="border-b border-slate-200 py-3">
-        <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-          Language
-        </p>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {LANGUAGES.map((language) => (
-            <button
-              key={language.code}
-              type="button"
-              onClick={() => onLanguageSelect(language.code)}
-              aria-pressed={activeLanguage === language.code}
-              className={`flex min-h-11 items-center gap-2 rounded-lg border px-3 py-2 text-left text-xs font-medium ${FOCUS} ${
-                activeLanguage === language.code
-                  ? 'border-[#0a5c8c] bg-[#eaf3f9] text-[#0a5c8c]'
-                  : 'border-slate-200 text-slate-700'
-              }`}
-            >
-              <img src={language.flagUrl} alt="" className="h-5 w-5 rounded-full object-cover" />
-              <span>{language.nativeName}</span>
-            </button>
-          ))}
-        </div>
-        <span className="sr-only" aria-live="polite">
-          {currentLanguage.label} selected
-        </span>
-      </div>
-
-      <nav aria-label="Primary mobile">{navigationItems.map((item) => {
-        const menu = item.menu;
-        const isActive = isCurrentNavigationPage(item.page, currentPage);
-        const isExpanded = Boolean(menu && expandedMenu === menu.id);
-        let iconIndex = 0;
-
-        const renderMenuLink = (menuLink: MenuLink) => (
-          <a
-            key={menuLink.label}
-            href={menuLink.page ? `#${menuLink.sectionId ?? menuLink.page}` : '#'}
-            onClick={(event) => {
-              if (menuLink.page) {
-                event.preventDefault();
-                onSelect(menuLink);
-              } else {
-                onClose();
-              }
-            }}
-            className={`flex min-h-11 items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-[#0a5c8c] ${HOVER_BG} ${FOCUS}`}
-          >
-            {menu && (
-              <MenuItemIcon menuId={menu.id} index={iconIndex++} icon={menuLink.icon} />
-            )}
-            {menuLink.label}
-          </a>
-        );
-
-        return (
-          <section key={item.id} className="border-b border-slate-200">
-            <div className="flex min-h-12 items-center gap-2">
-              {menu && <MaskIcon src={menu.icon} className="ml-2 size-[18px] text-[#0a5c8c]" />}
-              <a
-                href={`#${item.page}`}
-                onClick={(event) => {
-                  event.preventDefault();
-                  onSelect({ label: item.label, page: item.page });
-                }}
-                aria-current={isActive ? 'page' : undefined}
-                className={`flex min-h-11 flex-1 items-center rounded-lg px-2 text-left text-[12px] font-alata font-semibold uppercase tracking-[0.11em] ${isActive ? 'bg-[#0a5c8c] text-white' : 'text-[#0a5c8c]'} ${FOCUS}`}
-              >
-                {item.label}
-              </a>
-              {menu && (
-                <button
-                  type="button"
-                  aria-expanded={isExpanded}
-                  aria-controls={`mobile-menu-${menu.id}`}
-                  aria-label={`${isExpanded ? 'Hide' : 'Show'} ${item.label} submenu`}
-                  onClick={() => setExpandedMenu(isExpanded ? null : menu.id)}
-                  className={`mr-1 grid size-10 place-items-center rounded-md text-[#0a5c8c] ${HOVER_BG} ${FOCUS}`}
-                >
-                  <span aria-hidden="true" className="text-lg font-normal">
-                    {isExpanded ? '−' : '+'}
-                  </span>
-                </button>
-              )}
-            </div>
-            <AnimatePresence initial={false}>
-              {menu && isExpanded && (
-                <motion.div
-                  id={`mobile-menu-${menu.id}`}
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.12 }}
-                  className="overflow-hidden pb-2"
-                >
-                  {menu.columns.flat().map((block) =>
-                    isGroup(block) ? (
-                      <div key={block.group}>
-                        <p className="px-3 pt-2.5 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                          {block.group}
-                        </p>
-                        {block.items.map(renderMenuLink)}
-                      </div>
-                    ) : (
-                      renderMenuLink(block)
-                    ),
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </section>
-        );
-      })}</nav>
-
-      <button
+      <motion.button
         type="button"
-        onClick={() => {
-          onClose();
-          onToggleAudio();
-        }}
-        className={`mt-4 flex min-h-11 w-full items-center gap-2 rounded-lg px-3 text-sm font-medium ${OCEAN_TEXT} ${FOCUS}`}
+        aria-label="Close navigation menu"
+        tabIndex={-1}
+        onClick={onClose}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: motionDuration }}
+        className="absolute inset-0 h-full w-full cursor-default bg-[#061A2B]/85 backdrop-blur-[2px] focus-visible:outline-none"
+      />
+
+      <motion.aside
+        ref={drawerRef}
+        role="dialog"
+        aria-label="Site navigation"
+        aria-modal="true"
+        initial={{ x: '100%' }}
+        animate={{ x: 0 }}
+        exit={{ x: '100%' }}
+        transition={{ duration: motionDuration, ease: [0.22, 1, 0.36, 1] }}
+        data-lenis-prevent
+        className="absolute inset-y-0 right-0 z-10 flex w-full flex-col overflow-hidden bg-[#EAF3F9] text-[#081F35] shadow-2xl sm:w-[360px]"
       >
-        {isAudioPlaying ? (
-          <Volume2 className="h-4 w-4" aria-hidden="true" />
-        ) : (
-          <VolumeX className="h-4 w-4" aria-hidden="true" />
-        )}
-        {isAudioPlaying ? 'Mute underwater sound' : 'Play underwater sound'}
-      </button>
+        <nav aria-label="Primary mobile" className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-4 pt-5">
+          <ul className="space-y-1">
+            {navigationItems.map((item) => {
+              const isActive = isCurrentNavigationPage(item.page, currentPage);
+              const isExpanded = expandedMenu === item.id;
+              const submenuId = `mobile-submenu-${item.id}`;
+              return (
+                <li key={item.id} className="border-b border-[#0E3453]/10 pb-1">
+                  <div className="flex min-h-[52px] items-center gap-2">
+                    <a
+                      href={`#${item.page}`}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        onSelect({ label: item.label, page: item.page });
+                      }}
+                      aria-current={isActive ? 'page' : undefined}
+                      className={`flex min-h-11 min-w-0 flex-1 items-center rounded-lg px-3 font-alata text-base font-semibold transition-colors hover:bg-white/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075C85] ${isActive ? 'text-[#075C85]' : 'text-[#081F35]'}`}
+                    >
+                      {item.label}
+                    </a>
+                    {item.menu && (
+                      <button
+                        type="button"
+                        aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${item.label} submenu`}
+                        aria-expanded={isExpanded}
+                        aria-controls={submenuId}
+                        onClick={() => setExpandedMenu(isExpanded ? null : item.id)}
+                        className="grid size-11 shrink-0 place-items-center rounded-lg text-[#075C85] transition-colors hover:bg-white/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075C85]"
+                      >
+                        <ChevronDown
+                          aria-hidden="true"
+                          className={`size-4 transition-transform duration-300 motion-reduce:transition-none ${isExpanded ? 'rotate-180' : ''}`}
+                        />
+                      </button>
+                    )}
+                  </div>
+                  <AnimatePresence initial={false}>
+                    {item.menu && isExpanded && (
+                      <motion.div
+                        id={submenuId}
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: motionDuration, ease: 'easeInOut' }}
+                        className="overflow-hidden"
+                      >
+                        <div className="mb-2 ml-3 border-l border-[#075C85]/25 pl-2">
+                          {item.menu.columns.map((column, columnIndex) => (
+                            <ul key={`${item.id}-column-${columnIndex}`}>
+                              {column.map((block) =>
+                                isGroup(block) ? (
+                                  <li key={block.group} className="pt-2">
+                                    <h3 className="px-3 pb-1 font-alata text-[11px] font-bold uppercase tracking-[0.12em] text-[#075C85]/80">
+                                      {block.group}
+                                    </h3>
+                                    <ul>{block.items.map(renderMenuItem)}</ul>
+                                  </li>
+                                ) : renderMenuItem(block),
+                              )}
+                            </ul>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className="mt-5 border-t border-[#0E3453]/15 pt-4">
+            <p className="mb-2 px-1 font-alata text-[11px] font-bold uppercase tracking-[0.14em] text-[#075C85]">
+              Language
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {LANGUAGES.map((language) => (
+                <button
+                  key={language.code}
+                  type="button"
+                  onClick={() => onLanguageSelect(language.code)}
+                  aria-pressed={activeLanguage === language.code}
+                  className={`flex min-h-11 items-center gap-2 rounded-lg border px-3 py-2 text-left font-alata text-xs font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075C85] ${
+                    activeLanguage === language.code
+                      ? 'border-[#075C85]/50 bg-white text-[#075C85]'
+                      : 'border-[#0E3453]/15 text-[#0E3453] hover:bg-white/70'
+                  }`}
+                >
+                  <img src={language.flagUrl} alt="" className="size-5 rounded-full object-cover" />
+                  <span>{language.nativeName}</span>
+                </button>
+              ))}
+            </div>
+            <span className="sr-only" aria-live="polite">
+              {currentLanguage.label} selected
+            </span>
+            <button
+              type="button"
+              onClick={onToggleAudio}
+              aria-pressed={isAudioPlaying}
+              className="mt-2 flex min-h-11 w-full items-center gap-2 rounded-lg px-3 font-alata text-sm font-medium text-[#0E3453] transition-colors hover:bg-white/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#075C85]"
+            >
+              {isAudioPlaying ? <Volume2 className="size-4" aria-hidden="true" /> : <VolumeX className="size-4" aria-hidden="true" />}
+              {isAudioPlaying ? 'Mute underwater sound' : 'Play underwater sound'}
+            </button>
+          </div>
+        </nav>
+      </motion.aside>
     </motion.div>
   );
 }
@@ -266,26 +318,21 @@ export function SiteHeader({
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isHomeHeaderScrolled, setIsHomeHeaderScrolled] = useState(false);
+  const [isHeaderScrolled, setIsHeaderScrolled] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const languageMenuRef = useRef<HTMLDivElement>(null);
   const { language, setLanguage, currentOption } = useLanguage();
   const { i18n, t } = useTranslation();
 
   useEffect(() => {
-    if (currentPage !== 'home') {
-      setIsHomeHeaderScrolled(false);
-      return;
-    }
-
     const pageScroller = document.getElementById('site-page-scroll');
     const scrollTarget: HTMLElement | Window = pageScroller ?? window;
     const updateScrollState = () =>
-      setIsHomeHeaderScrolled(pageScroller ? pageScroller.scrollTop > 24 : window.scrollY > 24);
+      setIsHeaderScrolled(pageScroller ? pageScroller.scrollTop > 24 : window.scrollY > 24);
     updateScrollState();
     scrollTarget.addEventListener('scroll', updateScrollState, { passive: true });
     return () => scrollTarget.removeEventListener('scroll', updateScrollState);
-  }, [currentPage]);
+  }, []);
 
   const navigationItems: TopLevelNavigationItem[] = [
     { id: 'home', label: t('labels.home'), page: 'home', menu: { ...homeMenu, label: t('labels.home') } },
@@ -321,6 +368,20 @@ export function SiteHeader({
   useEffect(() => {
     if (wasDrawerOpen.current && !isDrawerOpen) menuButtonRef.current?.focus();
     wasDrawerOpen.current = isDrawerOpen;
+  }, [isDrawerOpen]);
+
+  useEffect(() => {
+    if (!isDrawerOpen) return;
+    const pageViewport = document.querySelector<HTMLElement>('#site-page-scroll');
+    const previousViewportOverflow = pageViewport?.style.overflowY ?? '';
+    const previousBodyOverflow = document.body.style.overflow;
+    if (pageViewport) pageViewport.style.overflowY = 'hidden';
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      if (pageViewport) pageViewport.style.overflowY = previousViewportOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+    };
   }, [isDrawerOpen]);
 
   useEffect(() => {
@@ -374,12 +435,8 @@ export function SiteHeader({
     <NavProvider>
       <header
         data-current-page={currentPage}
-        data-scrolled={isHomeHeaderScrolled}
-        className={`site-header sticky top-0 z-50 h-16 text-slate-100 ${
-          currentPage === 'home'
-            ? 'site-header--home -mb-16 border-b border-transparent bg-transparent shadow-none backdrop-blur-none'
-            : 'border-b border-white/10 bg-[#081F35]/95 shadow-lg shadow-black/10 backdrop-blur-md'
-        }`}
+        data-scrolled={isHeaderScrolled}
+        className="site-header site-header--overlay sticky top-0 z-50 -mb-16 h-16 border-b border-transparent bg-transparent text-slate-100 shadow-none backdrop-blur-none"
       >
         <div className="relative mx-auto flex h-16 max-w-[1480px] items-center gap-1 px-3 sm:gap-3 sm:px-4">
           <button
@@ -520,10 +577,11 @@ export function SiteHeader({
           </div>
         </div>
 
-        <AnimatePresence>
-          {isDrawerOpen && (
-            <div id="mobile-navigation">
+        {createPortal(
+          <AnimatePresence>
+            {isDrawerOpen && (
               <MobileDrawer
+                key="mobile-navigation"
                 navigationItems={navigationItems}
                 currentPage={currentPage}
                 onSelect={selectMenuItem}
@@ -533,9 +591,10 @@ export function SiteHeader({
                 isAudioPlaying={isAudioPlaying}
                 activeLanguage={language}
               />
-            </div>
-          )}
-        </AnimatePresence>
+            )}
+          </AnimatePresence>,
+          document.body,
+        )}
 
         <AnimatePresence>
           {isSearchOpen && (

@@ -11,7 +11,19 @@ interface ActivitiesSectionProps {
   onNavigate: (page: PageType) => void;
 }
 
+const WEBSITE_COPY_ACTIVITY_IDS = [
+  'ras-mohamed',
+  'night-freediving',
+  'desert-sunset',
+  'ice-bath',
+  'yoga-for-freedivers',
+];
+
 export function ActivitiesSection({ onOpenBooking, currency, onNavigate }: ActivitiesSectionProps) {
+  const pageActivities = WEBSITE_COPY_ACTIVITY_IDS
+    .map((id) => activitiesData.find((activity) => activity.id === id))
+    .filter((activity) => activity !== undefined);
+
   const formatPrice = (eur: number) => {
     if (currency === 'USD') return `$${Math.round(eur * 1.08)}`;
     if (currency === 'EGP') return `E£${Math.round(eur * 52)}`;
@@ -20,92 +32,96 @@ export function ActivitiesSection({ onOpenBooking, currency, onNavigate }: Activ
   const formatActivityPrice = (activity: (typeof activitiesData)[number]) =>
     activity.priceEgp !== undefined
       ? `E£${activity.priceEgp}`
-      : formatPrice(activity.priceEur);
+      : activity.priceLabel ?? formatPrice(activity.priceEur);
 
   return (
-    <section id="safaris" className="ocean-surface relative border-t border-white/5 px-6 pb-24 pt-0 sm:pb-32">
-      <SectionHero imageSrc={freedivingGalleryPhotos[0]?.src ?? '/images/story-carousel/red-sea-reef.jpg'} imageAlt={freedivingGalleryPhotos[0]?.alt ?? ''} className="-mx-6 mb-20 min-h-[50svh]">
+    <section id="safaris" className="ocean-surface relative border-t border-white/5 px-6 pb-32 pt-0">
+      <SectionHero imageSrc={pageActivities[0]?.image.url ?? '/images/story-carousel/red-sea-reef.jpg'} imageAlt={pageActivities[0]?.image.alt ?? ''} className="-mx-6 mb-20 min-h-[50svh]">
         <div className="max-w-3xl space-y-4">
           <div className="flex items-center gap-2 text-xs font-mono tracking-[0.3em] uppercase text-cyan-100">
             <Compass className="w-4 h-4" aria-hidden="true" />
-            <span>Red Sea expeditions &amp; safaris</span>
+            <span>Red Sea &amp; South Sinai</span>
           </div>
           <h1 className="font-bebas text-5xl tracking-[0.04em] text-white sm:text-6xl md:text-7xl">
-            Beyond the <span className="text-cyan-200">buoy</span>
+            <span className="text-cyan-200">Activities</span> &amp; Safaris
           </h1>
           <p className="max-w-2xl text-base leading-relaxed text-slate-100">
-            Complement your training with guided trips to Ras Mohamed National Park, coastal drift
-            dives along Dahab Canyon, Bedouin desert evenings, and Wednesday rooftop ice baths.
+            Freediving is only part of the adventure. Join group trips and activities to explore
+            the Red Sea and South Sinai desert with people who know the area, and relax after a
+            day of diving.
           </p>
         </div>
       </SectionHero>
-
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-8 flex items-baseline gap-3 sm:mb-10">
-          <h2 className="font-bebas text-3xl leading-none tracking-[0.05em] text-white uppercase sm:text-4xl">
-            Choose your next experience
-          </h2>
-          <span className="h-px flex-1 bg-ocean-pale/15" aria-hidden="true" />
+      <div className="max-w-7xl mx-auto">
+        <div id="activities-overview" className="mb-16 scroll-mt-28">
+          <div className="mb-5 max-w-3xl space-y-3">
+            <h2 className="font-bebas text-3xl tracking-[0.04em] text-white sm:text-4xl">
+              Choose your next experience
+            </h2>
+            <p className="text-sm leading-relaxed text-slate-300">
+              Compare the duration, price, and highlights on each card. Open an experience for full details and booking.
+            </p>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3">
-          {activitiesData.filter((activity) => activity.id !== 'gabriella-reef').map((act) => (
-            <article
+        {/* Safari Cards Grid */}
+        <div className="grid auto-rows-fr grid-cols-1 items-stretch gap-8 md:grid-cols-2">
+          {pageActivities.map((act) => {
+            return (
+            <div
               key={act.id}
-              className="group flex h-full flex-col overflow-hidden rounded-2xl border border-ocean-pale/10 bg-[#0A2943] text-white transition-colors duration-300 hover:border-ocean-light/50"
+              id={`activity-${act.id}`}
+              className="glass-panel group flex h-full scroll-mt-28 flex-col overflow-hidden rounded-2xl border border-white/10 transition-all duration-500 hover:border-cyan-400/40"
             >
-              <div className="relative aspect-[16/10] overflow-hidden rounded-t-2xl bg-[#081F35]">
-                <img
-                  src={act.image.url}
-                  alt={act.image.alt}
-                  className="h-full w-full object-contain"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div className="absolute left-4 top-4">
-                  <span className="flex items-center gap-1.5 rounded-full border border-white/35 bg-[#081F35]/75 px-3 py-1 text-[10px] font-mono uppercase tracking-widest text-white backdrop-blur">
-                    <Clock className="h-3.5 w-3.5 text-cyan-300" aria-hidden="true" />
-                    {act.duration}
-                  </span>
+              <div className="flex flex-1 flex-col">
+                <div className="relative aspect-[16/10] overflow-hidden">
+                  <img
+                    src={act.image.url}
+                    alt={act.image.alt}
+                    className="absolute inset-0 h-full w-full object-contain"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  
+                  <div className="absolute top-4 left-4">
+                    <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-mono text-cyan-300 flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5 text-cyan-400" />
+                      {act.duration}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex flex-1 flex-col space-y-4 p-6 sm:p-8">
+                  <h3 className="font-serif text-2xl font-bold text-white group-hover:text-cyan-300 transition-colors">
+                    {act.title}
+                  </h3>
+
+                  <p className="text-xs sm:text-sm text-slate-400 leading-relaxed font-light">
+                    {act.description}
+                  </p>
+
+                  <div className="space-y-2 pt-4 border-t border-white/10">
+                    <div className="text-[10px] font-mono uppercase tracking-widest text-slate-500">
+                      Highlights:
+                    </div>
+                    {act.highlights.slice(0, 2).map((hl, i) => (
+                      <div key={i} className="flex items-start gap-2 text-xs text-slate-300">
+                        <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+                        <span>{hl}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-auto border-t border-white/10 pt-4">
+                    <p className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Price</p>
+                    <p className="mt-1 text-lg font-semibold leading-relaxed text-white">
+                      {formatActivityPrice(act)}
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex flex-1 flex-col p-5 sm:p-6">
-                <div className="flex items-start justify-between gap-3">
-                  <h3 className="font-serif text-xl font-bold leading-snug text-white transition-colors group-hover:text-ocean-pale sm:text-2xl">
-                    {act.title}
-                  </h3>
-                  <p className="shrink-0 text-lg font-semibold text-ocean-pale" aria-label={`Price ${formatActivityPrice(act)}`}>
-                    {formatActivityPrice(act)}
-                  </p>
-                </div>
-
-                <p className="mt-3 line-clamp-4 text-sm leading-relaxed text-slate-300">
-                  {act.description}
-                </p>
-
-                <div className="mt-4 space-y-2 border-t border-ocean-pale/10 pt-4">
-                  <p className="text-[10px] font-mono uppercase tracking-widest text-slate-400">
-                    Highlights
-                  </p>
-                  {act.highlights.slice(0, 3).map((highlight) => (
-                    <div key={highlight} className="flex items-start gap-2 text-xs leading-relaxed text-slate-200">
-                      <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-cyan-300" aria-hidden="true" />
-                      <span>{highlight}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {act.id === 'ice-bath' && act.bookingNotes?.[0] && (
-                  <p className="mt-4 rounded-lg border border-amber-200/20 bg-amber-950/25 p-3 text-xs leading-relaxed text-amber-100">
-                    {act.bookingNotes[0]}
-                  </p>
-                )}
-                {act.id !== 'ice-bath' && act.rateNote && (
-                  <p className="mt-4 text-xs leading-relaxed text-slate-300">{act.rateNote}</p>
-                )}
-
-                <div className="mt-auto grid grid-cols-1 gap-2 pt-5 sm:grid-cols-2">
+              <div className="p-6 sm:p-8 pt-0">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   <button
                     type="button"
                     onClick={() => onNavigate(`activity-${act.id}`)}
@@ -118,13 +134,13 @@ export function ActivitiesSection({ onOpenBooking, currency, onNavigate }: Activ
                     onClick={() => onOpenBooking(act.id)}
                     className="fd-button inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-semibold uppercase tracking-wide focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                   >
-                    <span>{act.id === 'ice-bath' ? 'Book Session' : 'Book Expedition'}</span>
-                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    <span>Book Expedition</span>
+                    <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
               </div>
-            </article>
-          ))}
+            </div>
+          )})}
         </div>
 
         <div className="mt-16 sm:mt-24">

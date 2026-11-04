@@ -31,6 +31,7 @@ interface ProfessionalCourseCard {
   description: string;
   image: { src: string; alt: string };
   priceEur?: number;
+  priceNote?: string;
   courseId?: string;
   courseSlug?: string;
 }
@@ -68,7 +69,11 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
     .filter((course) => course !== undefined);
   const professionalCards: ProfessionalCourseCard[] = [
     ...instructorCourses
-      .filter((course) => course.id === 'ssi-itc' || course.id === 'ssi-advanced-instructor')
+      .filter((course) =>
+        course.id === 'ssi-itc' ||
+        course.id === 'ssi-advanced-instructor' ||
+        course.id === 'ssi-level-3-instructor-update',
+      )
       .map((course) => ({
         id: course.id,
         title: course.title,
@@ -79,6 +84,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
           alt: course.image.alt,
         },
         priceEur: course.priceEur,
+        priceNote: course.priceNote,
         courseId: course.id,
         courseSlug: course.slug,
       })),
@@ -86,7 +92,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
       id: 'ssi-performance-freediving-instructor',
       title: 'SSI Performance Freediving Instructor Course',
       duration: 'Schedule on request',
-      description: 'Ask our team about the course format, prerequisites, and upcoming dates.',
+      description: 'Ask our team about course format, prerequisites, and upcoming dates.',
       image: {
         src: '/courses/uploaded/ssi-performance-freediving-instructor-course.jpg',
         alt: 'Artwork for the SSI Performance Freediving Instructor Course',
@@ -97,17 +103,19 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
   return (
     <section id="courses" className="ocean-surface relative pb-20 sm:pb-28 film-grain">
       <SectionHero imageSrc={courseCardArtworkById['ssi-level-1'].src} imageAlt="" className="min-h-[50svh]" alignStart>
-          <div className="max-w-3xl space-y-2">
-            <p className="flex items-center gap-3 text-[10px] uppercase tracking-[0.12em] text-ocean-pale sm:text-sm sm:tracking-[0.16em]">
+          <div className="max-w-4xl space-y-3 sm:space-y-4">
+            <p className="flex items-center gap-3 text-xs uppercase tracking-[0.12em] text-ocean-pale sm:text-base sm:tracking-[0.16em]">
               <span className="h-px w-8 bg-ocean-light" aria-hidden="true" />
               Freedive Dahab · SSI
             </p>
-            <h1 className="font-bebas text-3xl leading-none tracking-[0.025em] text-white sm:text-4xl">
-              Why SSI Certification?
+            <h1 className="font-bebas text-5xl leading-[0.95] tracking-[0.025em] text-white sm:text-6xl lg:text-7xl">
+              SSI Freediving Courses in Dahab
             </h1>
-            <p className="max-w-2xl text-sm leading-relaxed text-slate-100">
-              SSI offers progressive, safety-focused training and internationally recognized
-              freediving certifications.
+            <p className="max-w-3xl text-base leading-relaxed text-slate-100 sm:text-lg">
+              Whether you have never held your breath underwater or you are chasing your next
+              depth, there is a course here for you. Learn with experienced SSI instructors in
+              Dahab’s warm, calm, clear water, with deep water a short swim from shore. No boats,
+              no long waits—just you, your instructor, and the blue.
             </p>
           </div>
       </SectionHero>
@@ -121,7 +129,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
           <GroupHeading title="Our Core Courses" />
 
           {/* Core SSI Freediver certifications */}
-          <div className="grid grid-cols-1 items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mx-auto grid max-w-6xl grid-cols-1 items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {coreCards.map((course, idx) => (
             <TiltSurface
               key={course.id}
@@ -199,77 +207,6 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
         </div>
 
         {/* ========================================================== */}
-        {/* SPECIALTY COURSES                                           */}
-        {/* ========================================================== */}
-        <div id="chapter-try" className="relative z-10 scroll-mt-28 mb-24 sm:mb-32">
-          <GroupHeading title="Specialties" />
-
-          <div className="grid grid-cols-1 items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {specialtyCards.map((course, idx) => (
-              <TiltSurface
-                key={course.id}
-                delay={(idx % 4) * 0.08}
-                className="group flex h-full flex-col rounded-2xl border border-ocean-pale/10 bg-[#0A2943] transition-colors duration-300 hover:border-ocean-light/50"
-              >
-                <div className="fd-tilt-photo-layer relative aspect-[16/10] overflow-hidden rounded-t-2xl">
-                  <img
-                    src={(courseCardArtworkById[course.id] ?? coursePhotoById[course.id] ?? course.image).src}
-                    alt={(courseCardArtworkById[course.id] ?? coursePhotoById[course.id] ?? course.image).alt}
-                    className="h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#081F35] via-transparent to-transparent" />
-                  <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-[#081F35]/70 backdrop-blur-md border border-ocean-pale/25 text-ocean-pale text-[9px] font-mono tracking-widest uppercase">
-                    {course.durationDays} day{course.durationDays > 1 ? 's' : ''}
-                  </span>
-                  {(course.id === 'fdd-equalization-clinic' || course.id === 'spec-mouthfill') && (
-                    <img
-                      src="/logo-freedive-dahab.png"
-                      alt=""
-                      aria-hidden="true"
-                      className="absolute right-3 top-3 z-10 h-16 w-20 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.75)]"
-                    />
-                  )}
-                </div>
-
-                <div className="fd-tilt-copy-layer flex flex-1 flex-col p-5">
-                  <h3 className="min-h-[3.5rem] font-serif text-lg font-bold leading-snug text-white transition-colors group-hover:text-ocean-pale">
-                    <button
-                      type="button"
-                      onClick={() => navigateToCourse(course.slug)}
-                      className="text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                    >
-                      {course.title}
-                    </button>
-                  </h3>
-                  <p className="mt-2 min-h-[2.75rem] line-clamp-2 text-sm font-light leading-relaxed text-slate-300">
-                    {course.shortDesc}
-                  </p>
-                  <div className="mt-auto grid grid-cols-2 gap-2 border-t border-ocean-pale/10 pt-4">
-                    <button
-                      type="button"
-                      onClick={() => onOpenBooking(course.id)}
-                      className="fd-button inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-lg px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wide focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                    >
-                      Enroll in course
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => onNavigate('calendar')}
-                      className="inline-flex min-h-11 items-center justify-center gap-1 whitespace-nowrap rounded-lg border border-white/45 px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wide text-white transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                    >
-                      Our calendar
-                      <ChevronRight className="h-4 w-4 shrink-0" aria-hidden="true" />
-                    </button>
-                  </div>
-                  <p className="mt-3 text-right text-sm font-semibold text-ocean-pale">{formatPrice(course.priceEur)}</p>
-                </div>
-              </TiltSurface>
-            ))}
-          </div>
-        </div>
-
-        {/* ========================================================== */}
         {/* PROFESSIONAL TRAINING                                       */}
         {/* ========================================================== */}
         <div id="chapter-pro" className="relative z-10 scroll-mt-28">
@@ -290,7 +227,6 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
                     className="h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#081F35] via-transparent to-transparent" />
                   <span className="absolute left-3 top-3 rounded-full border border-ocean-pale/25 bg-[#081F35]/70 px-2.5 py-1 text-[9px] font-mono uppercase tracking-widest text-ocean-pale backdrop-blur-md">
                     {course.duration}
                   </span>
@@ -335,6 +271,9 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
                   <p className="mt-3 text-right text-sm font-semibold text-ocean-pale">
                     {course.priceEur === undefined ? 'Ask for pricing' : formatPrice(course.priceEur)}
                   </p>
+                  {course.priceNote && (
+                    <p className="mt-1 text-right text-xs leading-relaxed text-slate-400">{course.priceNote}</p>
+                  )}
                 </div>
               </TiltSurface>
             ))}
@@ -344,22 +283,95 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
           <FadeUp className="glass-panel rounded-2xl border border-ocean-pale/10 p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="space-y-2">
               <h4 className="font-serif text-2xl font-bold text-white">
-                Tailored programs & Specialty Instructor
+                Freediving Instructor Training
               </h4>
               <p className="text-slate-300/90 font-alata text-sm max-w-xl leading-relaxed">
-                Mouthfill masterclasses, competition preparation, mermaid programs, and our
-                professional SSI Specialty Instructor ratings — tailored around your goals and
-                scheduled on request.
+                Freedive Dahab has trained instructors since 2006. The SSI Instructor Training
+                Course covers teaching skills, student feedback, course standards, and the business
+                of teaching freediving. Training dates depend on participant numbers and readiness.
               </p>
             </div>
             <button
               onClick={() => onOpenBooking()}
               className="fd-button shrink-0 flex items-center gap-2 rounded-full px-7 py-3.5 font-alata text-xs font-semibold uppercase tracking-[0.08em]"
             >
-              <span>Ask Us Anything</span>
+              <span>Ask About Instructor Training</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </FadeUp>
+        </div>
+
+        {/* ========================================================== */}
+        {/* SPECIALTY COURSES                                           */}
+        {/* ========================================================== */}
+        <div id="chapter-try" className="relative z-10 mt-24 scroll-mt-28 sm:mt-32">
+          <GroupHeading title="Specialties" />
+
+          <div className="grid grid-cols-1 items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {specialtyCards.map((course, idx) => (
+              <TiltSurface
+                key={course.id}
+                delay={(idx % 4) * 0.08}
+                className="group flex h-full flex-col rounded-2xl border border-ocean-pale/10 bg-[#0A2943] transition-colors duration-300 hover:border-ocean-light/50"
+              >
+                <div className="fd-tilt-photo-layer relative aspect-[16/10] overflow-hidden rounded-t-2xl">
+                  <img
+                    src={(courseCardArtworkById[course.id] ?? coursePhotoById[course.id] ?? course.image).src}
+                    alt={(courseCardArtworkById[course.id] ?? coursePhotoById[course.id] ?? course.image).alt}
+                    className="h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-[#081F35]/70 backdrop-blur-md border border-ocean-pale/25 text-ocean-pale text-[9px] font-mono tracking-widest uppercase">
+                    {course.durationDays} day{course.durationDays > 1 ? 's' : ''}
+                  </span>
+                  {(course.id === 'fdd-equalization-clinic' || course.id === 'spec-mouthfill') && (
+                    <img
+                      src="/logo-freedive-dahab.png"
+                      alt=""
+                      aria-hidden="true"
+                      className="absolute right-3 top-3 z-10 h-16 w-20 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.75)]"
+                    />
+                  )}
+                </div>
+
+                <div className="fd-tilt-copy-layer flex flex-1 flex-col p-5">
+                  <h3 className="min-h-[3.5rem] font-serif text-lg font-bold leading-snug text-white transition-colors group-hover:text-ocean-pale">
+                    <button
+                      type="button"
+                      onClick={() => navigateToCourse(course.slug)}
+                      className="text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    >
+                      {course.title}
+                    </button>
+                  </h3>
+                  <p className="mt-2 min-h-[2.75rem] line-clamp-2 text-sm font-light leading-relaxed text-slate-300">
+                    {course.shortDesc}
+                  </p>
+                  <div className="mt-auto grid grid-cols-2 gap-2 border-t border-ocean-pale/10 pt-4">
+                    <button
+                      type="button"
+                      onClick={() => onOpenBooking(course.id)}
+                      className="fd-button inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-lg px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wide focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    >
+                      Enroll in course
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onNavigate('calendar')}
+                      className="inline-flex min-h-11 items-center justify-center gap-1 whitespace-nowrap rounded-lg border border-white/45 px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wide text-white transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    >
+                      Our calendar
+                      <ChevronRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+                    </button>
+                  </div>
+                  <p className="mt-3 text-right text-sm font-semibold text-ocean-pale">{formatPrice(course.priceEur)}</p>
+                  {course.priceNote && (
+                    <p className="mt-1 text-right text-xs leading-relaxed text-slate-400">{course.priceNote}</p>
+                  )}
+                </div>
+              </TiltSurface>
+            ))}
+          </div>
         </div>
 
       </div>

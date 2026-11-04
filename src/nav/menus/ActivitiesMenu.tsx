@@ -4,16 +4,15 @@ export const activitiesMenu: MenuDefinition = {
   id: 'activities',
   label: 'Activities',
   page: 'experience',
-  icon: '/icons/swimmer.png',
   right: true,
   columns: [[
-    L('Enjoy Sinai', 'experience'),
-    L('Ras Mohammed Trip', 'activity-ras-mohamed'),
-    L('Night Dive', 'activity-night-freediving'),
-    L('Dessert Dinner', 'experience'),
-    L('Explore Sinai Trip', 'activity-desert-sunset'),
-    L('Ice-Bath', 'experience'),
-    L('Yoga', 'experience'),
+    L('Enjoy Sinai', 'experience', 'activities-overview'),
+    L('Ras Mohammed Trip', 'experience', 'activity-ras-mohamed'),
+    L('Night Dive', 'experience', 'activity-night-freediving'),
+    L('Dessert Dinner', 'experience', 'activity-desert-sunset'),
+    L('Explore Sinai Trip', 'experience', 'activity-desert-sunset'),
+    L('Ice-Bath', 'experience', 'activity-ice-bath'),
+    L('Yoga', 'experience', 'activity-yoga-for-freedivers'),
   ]],
 };
 

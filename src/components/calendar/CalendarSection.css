@@ -1,0 +1,360 @@
+.calendar-list {
+  width: min(100% - 3rem, 80rem);
+  margin: 0 auto;
+  padding: 2rem 0 4rem;
+  color: #eaf7ff;
+}
+
+.calendar-list__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.calendar-list__header h2 {
+  margin: 0;
+  color: #f2faff;
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+
+.calendar-list__year-nav {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1rem;
+}
+
+.calendar-list__year {
+  min-width: 4.5rem;
+  color: #f2faff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.calendar-list__year-button {
+  display: inline-flex;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding-inline: 0.75rem;
+  border: 1px solid rgb(226 247 255 / 0.26);
+  border-radius: 0.7rem;
+  color: #eaf7ff;
+  background: rgb(5 31 52 / 0.62);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.calendar-list__year-button svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.calendar-list__year-button:hover:not(:disabled) {
+  border-color: #9ce8f3;
+  background: #123d58;
+}
+
+.calendar-list__year-button:focus-visible,
+.calendar-event__details:focus-visible,
+.calendar-event__book:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+.calendar-list__year-button:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
+.calendar-list__month + .calendar-list__month {
+  margin-top: 2.5rem;
+}
+
+.calendar-list__month-heading {
+  margin: 0 0 1rem;
+  color: #f2faff;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.calendar-list__empty {
+  margin: 0;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid rgb(226 247 255 / 0.14);
+  border-radius: 1rem;
+  color: #c7dce8;
+  background: rgb(5 31 52 / 0.45);
+  line-height: 1.6;
+}
+
+.calendar-list__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.calendar-event {
+  position: relative;
+  display: flex;
+  min-height: 17rem;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 1.65rem;
+  color: #fff;
+  transition: transform 180ms ease;
+}
+
+.calendar-event::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(6 26 43 / 0.22), rgb(6 26 43 / 0.82));
+  content: '';
+  pointer-events: none;
+}
+
+.calendar-event:hover {
+  transform: translateY(-3px);
+}
+
+.calendar-event--beginner {
+  background: #2980b9;
+}
+
+.calendar-event--combo {
+  background: #3498db;
+}
+
+.calendar-event--advanced {
+  background: #5dade2;
+}
+
+.calendar-event--training {
+  background: #89cff0;
+}
+
+.calendar-event--ras-mohamed {
+  background: #a2d5f2;
+}
+
+.calendar-event--zero-to-hero {
+  background: #068b88;
+}
+
+.calendar-event--courses {
+  background: #6955a1;
+}
+
+.calendar-event__details {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 6.5rem 1.5rem 5.25rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.calendar-event__date {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  display: flex;
+  min-width: 5.7rem;
+  min-height: 5.85rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.65rem 0.9rem;
+  border-bottom-right-radius: 1.6rem;
+  color: #f8fafc;
+  background: #202124;
+  text-transform: uppercase;
+}
+
+.calendar-event__date-start,
+.calendar-event__date-end {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+
+.calendar-event__date-month {
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.calendar-event__date-day {
+  color: #fff;
+  font-size: 2.4rem;
+  font-weight: 750;
+  letter-spacing: -0.06em;
+}
+
+.calendar-event__date-separator {
+  color: #fff;
+  font-size: 0.8rem;
+}
+
+.calendar-event__date-end {
+  gap: 0.2rem;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.calendar-event__content {
+  display: block;
+  min-width: 0;
+  padding-right: 7rem;
+}
+
+.calendar-event__category {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: currentColor;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.calendar-event__title {
+  display: block;
+  color: currentColor;
+  font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+  font-weight: 750;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.calendar-event__book {
+  position: absolute;
+  z-index: 3;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 1rem;
+  border: 0;
+  border-radius: 999px;
+  color: #000;
+  background: #fff;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 160ms ease;
+}
+
+.calendar-event__book:hover {
+  background: #e8f4f8;
+}
+
+@media (max-width: 1050px) {
+  .calendar-list__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .calendar-list {
+    width: min(100% - 2rem, 40rem);
+    padding-block: 1.5rem 3rem;
+  }
+
+  .calendar-list__header {
+    grid-template-columns: 1fr;
+    justify-items: start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .calendar-list__year-nav {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .calendar-list__year-button {
+    min-width: 2.75rem;
+    padding-inline: 0.6rem;
+  }
+
+  .calendar-list__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.85rem;
+  }
+
+  .calendar-event {
+    min-height: 14rem;
+    border-radius: 1.35rem;
+  }
+
+  .calendar-event__details {
+    padding: 6rem 1.25rem 5rem;
+  }
+
+  .calendar-event__date {
+    min-width: 5.2rem;
+    min-height: 5.3rem;
+    padding: 0.55rem 0.75rem;
+    border-bottom-right-radius: 1.3rem;
+  }
+
+  .calendar-event__date-day {
+    font-size: 2.1rem;
+  }
+
+  .calendar-event__category {
+    font-size: 0.75rem;
+  }
+
+  .calendar-event__title {
+    font-size: 1.125rem;
+  }
+
+  .calendar-event__book {
+    right: 1rem;
+    bottom: 1rem;
+    min-height: 2.5rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .calendar-event__content {
+    padding-right: 6rem;
+  }
+
+  .calendar-event__book {
+    right: 0.75rem;
+    bottom: 0.75rem;
+    padding-inline: 0.75rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calendar-list__year-button,
+  .calendar-event,
+  .calendar-event__book {
+    transition: none;
+  }
+}
