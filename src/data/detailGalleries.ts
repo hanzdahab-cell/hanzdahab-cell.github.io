@@ -1,4 +1,4 @@
-import type { CardStackItem } from '../components/ui/CardStack';
+import type { GallerySlide } from '../components/ui/GalleryCarousel';
 
 const courseGalleryFiles: Record<string, string[]> = {
   'ssi-level-1': ['ssi-level-1-level1-main.jpg', 'ssi-level-1-freediving-courses.jpg', 'ssi-level-1-blue-hole.webp'],
@@ -17,7 +17,7 @@ const courseGalleryFiles: Record<string, string[]> = {
   'ssi-performance-instructor': ['ssi-performance-instructor-training.jpg'],
 };
 
-export function getCourseDetailGalleryItems(courseId: string, title: string): CardStackItem[] {
+export function getCourseDetailGalleryItems(courseId: string, title: string): GallerySlide[] {
   return (courseGalleryFiles[courseId] ?? []).map((file, index) => ({
     id: `${courseId}-gallery-${index + 1}`,
     title,
@@ -35,7 +35,7 @@ const packageGalleryFiles: Record<string, string[]> = {
   'instructor-pathway': ['zero-to-hero.webp', 'zero-to-hero-course.jpg', 'zero-to-hero-training.jpg', 'training-instructor-internship.jpg', 'training-ssi-instructor.jpg'],
 };
 
-export function getPackageDetailGalleryItems(slug: string, title: string): CardStackItem[] {
+export function getPackageDetailGalleryItems(slug: string, title: string): GallerySlide[] {
   return (packageGalleryFiles[slug] ?? []).map((file, index) => ({
     id: `${slug}-gallery-${index + 1}`,
     title,

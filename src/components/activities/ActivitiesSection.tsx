@@ -3,7 +3,6 @@ import { Compass, Clock, Check, ArrowRight } from 'lucide-react';
 import { PageType } from '../../types';
 import { CourseGalleryImage, desertExperiencePhotos, freedivingGalleryPhotos } from '../../data/courseMedia';
 import { PhotoCarousel } from '../ui/PhotoCarousel';
-import { OfferingCardStack } from '../ui/OfferingCardStack';
 import { SectionHero } from '../ui/SectionHero';
 
 interface ActivitiesSectionProps {
@@ -12,17 +11,18 @@ interface ActivitiesSectionProps {
   onNavigate: (page: PageType) => void;
 }
 
+const WEBSITE_COPY_ACTIVITY_IDS = [
+  'ras-mohamed',
+  'night-freediving',
+  'desert-sunset',
+  'ice-bath',
+  'yoga-for-freedivers',
+];
+
 export function ActivitiesSection({ onOpenBooking, currency, onNavigate }: ActivitiesSectionProps) {
-  const activityStackItems = activitiesData.map((activity) => ({
-    id: activity.id,
-    title: activity.title,
-    description: activity.description,
-    imageSrc: activity.image.url,
-    imageAlt: activity.image.alt,
-    tag: activity.duration,
-    href: `#activity-${activity.id}`,
-    ctaLabel: 'Explore experience',
-  }));
+  const pageActivities = WEBSITE_COPY_ACTIVITY_IDS
+    .map((id) => activitiesData.find((activity) => activity.id === id))
+    .filter((activity) => activity !== undefined);
 
   const formatPrice = (eur: number) => {
     if (currency === 'USD') return `$${Math.round(eur * 1.08)}`;
@@ -32,42 +32,48 @@ export function ActivitiesSection({ onOpenBooking, currency, onNavigate }: Activ
 
   return (
     <section id="safaris" className="ocean-surface relative border-t border-white/5 px-6 pb-32 pt-0">
-      <SectionHero imageSrc={activitiesData[0]?.image.url ?? '/images/story-carousel/red-sea-reef.jpg'} imageAlt={activitiesData[0]?.image.alt ?? ''} className="-mx-6 mb-20 min-h-[50svh]">
+      <SectionHero imageSrc={pageActivities[0]?.image.url ?? '/images/story-carousel/red-sea-reef.jpg'} imageAlt={pageActivities[0]?.image.alt ?? ''} className="-mx-6 mb-20 min-h-[50svh]">
         <div className="max-w-3xl space-y-4">
           <div className="flex items-center gap-2 text-xs font-mono tracking-[0.3em] uppercase text-cyan-100">
             <Compass className="w-4 h-4" aria-hidden="true" />
-            <span>Red Sea expeditions &amp; safaris</span>
+            <span>Red Sea &amp; South Sinai</span>
           </div>
           <h1 className="font-bebas text-5xl tracking-[0.04em] text-white sm:text-6xl md:text-7xl">
-            Beyond the <span className="text-cyan-200">buoy</span>
+            <span className="text-cyan-200">Activities</span> &amp; Safaris
           </h1>
           <p className="max-w-2xl text-base leading-relaxed text-slate-100">
-            Complement your training with guided trips to Ras Mohamed National Park, coastal drift
-            dives along Dahab Canyon, and Bedouin desert evenings beneath the Sinai sky.
+            Freediving is only part of the adventure. Join group trips and activities to explore
+            the Red Sea and South Sinai desert with people who know the area, and relax after a
+            day of diving.
           </p>
         </div>
       </SectionHero>
       <div className="max-w-7xl mx-auto">
-        <OfferingCardStack
-          label="Dahab activities"
-          title="Choose your next experience"
-          description="Browse the activities in our catalog and open their existing details and booking options."
-          items={activityStackItems}
-        />
+        <div id="activities-overview" className="mb-16 scroll-mt-28">
+          <div className="mb-5 max-w-3xl space-y-3">
+            <h2 className="font-bebas text-3xl tracking-[0.04em] text-white sm:text-4xl">
+              Choose your next experience
+            </h2>
+            <p className="text-sm leading-relaxed text-slate-300">
+              Compare the duration, price, and highlights on each card. Open an experience for full details and booking.
+            </p>
+          </div>
+        </div>
 
         {/* Safari Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {activitiesData.map((act) => {
+        <div className="grid auto-rows-fr grid-cols-1 items-stretch gap-8 md:grid-cols-2">
+          {pageActivities.map((act) => {
             const extraPhotos: CourseGalleryImage[] = act.id === 'desert-sunset'
               ? desertExperiencePhotos
               : freedivingGalleryPhotos;
             return (
             <div
               key={act.id}
-              className="glass-panel rounded-2xl overflow-hidden border border-white/10 hover:border-cyan-400/40 flex flex-col justify-between group transition-all duration-500"
+              id={`activity-${act.id}`}
+              className="glass-panel group flex h-full scroll-mt-28 flex-col overflow-hidden rounded-2xl border border-white/10 transition-all duration-500 hover:border-cyan-400/40"
             >
-              <div>
-                <div className="relative aspect-[16/9] overflow-hidden">
+              <div className="flex flex-1 flex-col">
+                <div className="relative aspect-[16/10] overflow-hidden">
                   <PhotoCarousel
                     images={[
                       { src: act.image.url, alt: act.image.alt },
@@ -76,7 +82,6 @@ export function ActivitiesSection({ onOpenBooking, currency, onNavigate }: Activ
                     label={`${act.title} photos`}
                     className="absolute inset-0"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0E3453] via-transparent to-transparent" />
                   
                   <div className="absolute top-4 left-4">
                     <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-mono text-cyan-300 flex items-center gap-1.5">
@@ -84,19 +89,9 @@ export function ActivitiesSection({ onOpenBooking, currency, onNavigate }: Activ
                       {act.duration}
                     </span>
                   </div>
-
-                  <div className="absolute bottom-4 right-4">
-                    <span className="text-2xl font-serif font-bold text-white">
-                      {formatPrice(act.priceEur)}
-                    </span>
-                    <span className="text-[10px] font-mono text-slate-400 block text-right">GUIDED TRIP</span>
-                    {act.rateNote && (
-                      <span className="block text-right text-[10px] text-[#A9D2EC]">2017 brochure rate · confirm current price</span>
-                    )}
-                  </div>
                 </div>
 
-                <div className="p-6 sm:p-8 space-y-4">
+                <div className="flex flex-1 flex-col space-y-4 p-6 sm:p-8">
                   <h3 className="font-serif text-2xl font-bold text-white group-hover:text-cyan-300 transition-colors">
                     {act.title}
                   </h3>
@@ -115,6 +110,12 @@ export function ActivitiesSection({ onOpenBooking, currency, onNavigate }: Activ
                         <span>{hl}</span>
                       </div>
                     ))}
+                  </div>
+                  <div className="mt-auto border-t border-white/10 pt-4">
+                    <p className="text-[10px] font-mono uppercase tracking-widest text-slate-400">Price</p>
+                    <p className="mt-1 text-lg font-semibold leading-relaxed text-white">
+                      {act.priceLabel ?? formatPrice(act.priceEur)}
+                    </p>
                   </div>
                 </div>
               </div>

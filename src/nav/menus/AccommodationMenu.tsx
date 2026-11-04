@@ -4,7 +4,6 @@ export const accommodationMenu: MenuDefinition = {
   id: 'accommodation',
   label: 'Accommodation',
   page: 'accommodation',
-  icon: '/icons/diving-suit.png',
   right: true,
   columns: [[
     L('Our Accommodation', 'accommodation'),

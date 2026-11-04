@@ -705,9 +705,9 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       },
       calendar: {
         title: 'FREEDIVE DAHAB LIVE CALENDER',
-        subtitle: "PLANING YOUR DAHAB FREEDIVING EXPERIENCE ? HERE'S THE CALENDAR FOR OUR SCHEDULED EVENTS. WE RUN ALL OTHER COURSES ALL YEAR ROUND ON REQUEST, JUST LET US KNOW YOUR DATES!",
-        badge: 'Live 2026 Season Schedule • Instant Seat Reservation',
-        ctaText: 'Custom Date Request',
+        subtitle: "Planning your Dahab freediving experience? Here's the calendar for our scheduled events. We run all other courses all year round on request, just let us know your dates!",
+        badge: 'November 2026 – April 2027',
+        ctaText: 'Request a Custom Date',
       },
       experience: {
         title: 'Red Sea Expeditions & Safaris',

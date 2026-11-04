@@ -112,6 +112,12 @@
   filter: brightness(0) invert(1);
 }
 
+.site-footer__social-link svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #fff;
+}
+
 .site-footer__location {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(17rem, 0.85fr);
@@ -291,6 +297,7 @@
     gap: 0.25rem;
     padding-block: 0.85rem;
   }
+
 }
 
 @media (max-width: 420px) {

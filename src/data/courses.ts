@@ -1,4 +1,4 @@
-import { Course, TrainingPricingRow, SpecialtyCourse, InstructorCourse, EqualisationClass } from '../types';
+import { Course, SpecialtyCourse, InstructorCourse, EqualisationClass } from '../types';
 
 export const ssiCourses: Course[] = [
   {
@@ -36,74 +36,73 @@ export const ssiCourses: Course[] = [
     id: "ssi-level-1",
     slug: "ssi-freediver-level-1",
     title: "SSI Freediver",
-    subtitle: "A calm, structured first certification in open-water freediving",
+    subtitle: "Your first breath-hold, your first dive, and your first step into the Red Sea.",
     level: "Beginner",
     tier: 1,
     certification: "SSI Freediver International License",
     durationDays: 2.5,
     priceEur: 310,
-    maxDepthMeters: 20,
+    maxDepthMeters: 10,
     prerequisites: "Comfortable swimming 200m non-stop, minimum age 12, standard medical clearance.",
-    overview: "Build a safe foundation in breath-hold, relaxation, duck diving, and buddy skills before progressing from confined water to the sea. Training takes place at Lighthouse Bay in Dahab, where shore access lets you practise on a guided line without a boat. Your instructor adapts each session to your comfort and progress.",
+    overview: "Humans are mammals, and our bodies have a built-in diving reflex. In this course you learn how to trigger it: your heart rate slows, your body relaxes deeply, and your oxygen is used more efficiently. Holding your breath becomes far easier than you expect, and most students are surprised by their very first results.\n\nIn Dahab you do not need a boat. Water 40 to 50 meters deep is only 100 meters from our center, and the bay where we teach is calm and sheltered. By the end of the course you will dive comfortably to 10 meters. All you need for your next freediving holiday is a mask, a snorkel, and a pair of fins.",
     highlights: [
-      "Learn breath-hold, relaxation, and duck-dive fundamentals",
-      "Practise static and dynamic apnea in a controlled setting",
-      "Develop buddy and open-water safety skills with an instructor",
-      "Progress toward the 10–20 m course performance range at your own pace",
-      "SSI digital learning materials, certification, and equipment included"
+      "One breathing and relaxation session",
+      "One static session on comfortable breath-hold technique",
+      "Two dynamic sessions in the pool or calm, shallow water",
+      "Three open-water line sessions, progressing at your own pace",
+      "SSI digital manual in all languages, international digital certification, and all equipment"
     ],
     included: [
-      "SSI Standard Digital Manual (all languages)",
-      "Digital SSI International Certification",
-      "All freediving equipment (wetsuit, mask, snorkel, long fins, weights)",
-      "Underwater photos of your first descents"
+      "SSI digital manual in all languages",
+      "Digital SSI international certification",
+      "All freediving equipment"
     ],
-    scheduleSummary: "2.5 days (9am–4pm): breathing & theory mornings, water sessions, final exam on the last morning.",
+    scheduleSummary: "2.5 days, 9:00 to 16:00. Day 3 ends around noon after the final exam and wrap-up.",
     futurePerformances: {
       staticApnea: "2–3 min",
       depth: "10–20 m"
     },
     disciplines: [
       {
-        name: "Theory & Breathing",
+        name: "Breathing & Relaxation",
         tagline: "Understand your response",
-        description: "Explore relaxation, breath-up and the mammalian dive response with an instructor. Practise calm preparation, recovery breathing and recognising when to pause.",
-        sessions: "1 breathing & relaxation session"
+        description: "Learn the breathing cycle, relaxation, and how to trigger your body's diving reflex.",
+        sessions: "1 session"
       },
       {
-        name: "Static Apnea",
-        tagline: "Build comfort at the surface",
-        description: "Practise relaxed breath-holds in a controlled setting with recovery breathing and attentive buddy supervision. Your comfort sets the pace; no duration is promised.",
-        sessions: "1 static session"
+        name: "Static Training",
+        tagline: "Build a comfortable breath-hold",
+        description: "Learn the techniques behind a relaxed breath-hold with close instructor and buddy supervision.",
+        sessions: "1 session"
       },
       {
-        name: "Dynamic Apnea",
+        name: "Dynamic Training",
         tagline: "Move with less effort",
-        description: "Develop streamlined body position, fin technique and controlled turns in confined water. Coaching prioritises efficient movement, recovery and buddy procedures over distance.",
-        sessions: "2 dynamic sessions"
+        description: "Practice finning, body position, and basic safety skills in a pool or calm, shallow water.",
+        sessions: "2 sessions"
       },
       {
-        name: "Depth Training",
+        name: "Open-Water Training",
         tagline: "Follow a guided line",
-        description: "Practise equalisation, line orientation and buddy checks with an instructor in open water. Depth is adapted to your readiness and conditions; progression is never automatic.",
-        sessions: "3 open water sessions"
+        description: "Practice on a line with a surface buoy, going a little deeper with every dive.",
+        sessions: "3 sessions"
       }
     ],
     schedule: [
       {
         day: "Day 1",
         title: "Breathing & First Water",
-        description: "1-hour breathing and relaxation class, dry breath-hold, first confined water session (60–90 min), lunch break, theory, then your first open water session."
+        description: "Breathing and relaxation class, dry breath-hold, first confined-water session, lunch, theory, and your first open-water session."
       },
       {
         day: "Day 2",
         title: "Duck Dives & Deeper",
-        description: "More theory followed by a second confined water session to learn duck diving. After lunch: the second open water session."
+        description: "Theory, a confined-water session to learn the duck dive, lunch, and the second open-water session."
       },
       {
         day: "Day 3",
         title: "Final Exam & Wrap-up",
-        description: "Half day: morning training session, final exam, and wrap-up around 12:00 — certified and ready for the ocean."
+        description: "Morning training session, followed by the final exam and wrap-up around 12:00."
       }
     ],
     image: {
@@ -115,21 +114,21 @@ export const ssiCourses: Course[] = [
     id: "ssi-level-2",
     slug: "ssi-advanced-freediver-level-2",
     title: "SSI Advanced Freediver",
-    subtitle: "Refine freefall, Frenzel equalisation, and comfort at depth",
+    subtitle: "Learn to freefall, equalize efficiently, and dive to 20 meters.",
     level: "Intermediate",
     tier: 2,
     certification: "SSI Advanced Freediver",
     durationDays: 3,
-    priceEur: 350,
-    maxDepthMeters: 30,
+    priceEur: 360,
+    maxDepthMeters: 20,
     prerequisites: "SSI Level 1 or equivalent certification (AIDA 2 / PADI Freediver), comfortable at 16-20m.",
-    overview: "Build on Level 1 skills with coached freefall, Frenzel equalisation, and flexibility work. You will practise static, confined-water, and open-water sessions, learning to descend with less effort while keeping technique, buddy practice, and personal readiness central.",
+    overview: "After your first course and a few training sessions, 10 meters should feel comfortable. As you go deeper, at around 15 to 20 meters, your body loses its buoyancy and you stop swimming and start falling. This is freefall. Divers often describe it as flying underwater, and it is the main skill of this course. It saves oxygen and makes the descent almost effortless.\n\nYou always practice a new skill in controlled shallow water first, then take it to the ocean. With the right technique, 20 meters is not much harder than 10 meters.",
     highlights: [
-      "Practise a relaxed freefall transition around neutral buoyancy",
-      "Learn Frenzel equalisation through dry and in-water drills",
-      "Add ribcage, lung, and diaphragm flexibility exercises",
-      "Progress toward the 25–30 m course performance range",
-      "SSI digital learning materials, certification, and equipment included"
+      "Practice freefall by using extra weight to enter it at a shallower depth",
+      "Learn Frenzel equalization with dry and in-water drills",
+      "Stretch the rib cage, lungs, and diaphragm for a more comfortable breath-hold",
+      "Train static apnea, dynamic apnea, weighting, streamlining, and safety skills",
+      "SSI digital manual in all languages, international digital certification, and all equipment"
     ],
     included: [
       "SSI Standard Digital Manual (all languages)",
@@ -137,7 +136,7 @@ export const ssiCourses: Course[] = [
       "All depth equipment + long fins trial",
       "Training at Lighthouse Bay and the iconic Blue Hole"
     ],
-    scheduleSummary: "3 days (9am–4pm): theory + static + CO2 tables in confined water, two deep open water sessions, final exam.",
+    scheduleSummary: "3 days, 9:00 to 16:00, with theory, pool sessions, open-water training, an exam, and debrief.",
     futurePerformances: {
       staticApnea: "3–4 min",
       depth: "25–30 m"
@@ -145,44 +144,44 @@ export const ssiCourses: Course[] = [
     disciplines: [
       {
         name: "Freefall",
-        tagline: "Refine buoyancy transitions",
-        description: "Explore weighting, body position and the transition into freefall during coached line sessions. Comfort and equalisation—not a target depth—guide each progression.",
-        sessions: "All open water sessions"
+        tagline: "Feel the transition",
+        description: "Use extra weight to enter freefall at a shallower depth, then apply the skill to deeper dives.",
+        sessions: "Open-water sessions"
       },
       {
         name: "Frenzel Equalisation",
-        tagline: "Practise controlled equalisation",
-        description: "Learn Frenzel mechanics through dry drills and shallow in-water coaching. Tell your instructor if equalisation feels difficult, and stop rather than forcing it.",
-        sessions: "Daily coached sessions"
+        tagline: "Equalize with less effort",
+        description: "Use your tongue as a piston to equalize with less effort and avoid ear pain.",
+        sessions: "Dry and in-water drills"
       },
       {
         name: "Static & CO2 Tables",
-        tagline: "Notice and respond to cues",
-        description: "Use supervised breath-hold practice to explore relaxation, recovery and individual body cues. The instructor adapts each session; there are no unsupervised or forced max attempts.",
-        sessions: "1 static + table session"
+        tagline: "Train your body and mind",
+        description: "Understand CO₂ and contractions, and how to train your body and mind to cope with them.",
+        sessions: "Static session"
       },
       {
         name: "Dynamic & Weighting",
-        tagline: "Streamline your movement",
-        description: "Practise finning, alignment and controlled turns in confined water while learning how equipment and buoyancy affect movement.",
-        sessions: "1 confined water session"
+        tagline: "Move efficiently",
+        description: "Practice weighting, streamlining, speed, warm-up routines, and safety skills.",
+        sessions: "Dynamic sessions"
       }
     ],
     schedule: [
       {
         day: "Day 1",
-        title: "Breathe-up & Buoyancy",
-        description: "Breathing and breathe-up review, training-methods theory, static session with debriefing. After lunch: first open water session on buoyancy and free falling."
+        title: "Breathing & Freefall",
+        description: "Breathing and breathe-up techniques, training theory, static session, and the first open-water session on buoyancy and freefall."
       },
       {
         day: "Day 2",
-        title: "Frenzel & CO2 Tables",
-        description: "Theory followed by CO2 tables dynamic in confined water. Second open water session: keep practicing free falling and learn Frenzel equalisation."
+        title: "Dynamic & Frenzel",
+        description: "Theory, dynamic CO₂ tables in confined water, and the second open-water session for freefall and Frenzel equalization."
       },
       {
         day: "Day 3",
-        title: "Deep Freefall & Exam",
-        description: "Two open water sessions — morning and afternoon — with theory and exam in the break. Debriefing, wrap-up and celebration photos at the end of the day."
+        title: "Open-Water Sessions & Exam",
+        description: "Two open-water sessions, the exam, a debrief, and celebration photos."
       }
     ],
     image: {
@@ -194,21 +193,22 @@ export const ssiCourses: Course[] = [
     id: "ssi-level-3",
     slug: "ssi-performance-freediver-level-3",
     title: "SSI Performance Freediver",
-    subtitle: "Develop mouthfill, FRC practice, and performance-level planning",
+    subtitle: "Go deeper with more comfort and a safe equalization technique.",
     level: "Advanced",
     tier: 2,
     certification: "SSI Performance Freediver (Master Diver prerequisite)",
     durationDays: 4,
-    priceEur: 475,
-    maxDepthMeters: 40,
+    priceEur: 480,
+    maxDepthMeters: 30,
     prerequisites: "SSI Advanced Freediver or equivalent, 30m logged depth, React Right (or valid First Aid/CPR).",
-    overview: "Develop mouthfill equalisation with a step-by-step progression, alongside instructor-supervised FRC practice, static coaching, and session planning. The focus is on adapting safely to depth and improving your technique; progress depends on readiness and is never a guaranteed depth outcome.",
+    overview: "At depths around 30 meters, your lungs approach their residual volume and the air you have left for equalization starts to run out. Sooner or later, almost every freediver needs mouthfill equalization. It has a reputation for being difficult, but when it is broken into clear steps and practiced both on land and in the water, it is very learnable.\n\nThe first two days focus on shallow FRC dives with mouthfill, from the surface to around 10 to 20 meters. After that, you move to full-lung dives and extend your depth in the remaining open-water sessions.",
+    safetyNote: "FRC diving done incorrectly can increase the risk of barotrauma. Learn and practice it only under the supervision of a trained instructor.",
     highlights: [
-      "Practise mouthfill equalisation with dry drills and supervised dives",
-      "Use shallow FRC sessions to prepare for deeper work under instructor guidance",
-      "Build buddy coaching and static-apnea session skills",
-      "Progress toward the 35–40 m course performance range when ready",
-      "SSI digital learning materials, certification, and equipment included"
+      "Learn mouthfill equalization for deep dives",
+      "Practice FRC diving under instructor supervision",
+      "Develop static coaching and session-planning skills",
+      "Explore mental preparation, nutrition, and flexibility",
+      "SSI digital manual in all languages, international digital certification, and all equipment"
     ],
     included: [
       "SSI Standard Digital Manual (all languages)",
@@ -217,7 +217,7 @@ export const ssiCourses: Course[] = [
       "Mouthfill & FRC dry-training tools",
       "HD video analysis of your deep dives"
     ],
-    scheduleSummary: "4 days (9am–4pm): dry mouthfill masterclasses, FRC sessions, full-lung deep dives, max-attempt planning and final exam.",
+    scheduleSummary: "4 days, 9:00 to 16:00, including shallow FRC and mouthfill sessions followed by full-lung open-water training.",
     futurePerformances: {
       staticApnea: "4–5 min",
       depth: "35–40 m"
@@ -226,81 +226,54 @@ export const ssiCourses: Course[] = [
       {
         name: "Mouthfill Equalisation",
         tagline: "Build the skill in stages",
-        description: "Study mouthfill mechanics with dry drills, then apply them only in instructor-led sessions appropriate to your qualification and readiness.",
-        sessions: "Daily masterclasses"
+        description: "Learn mouthfill equalization for deep dives through clear steps, dry practice, and supervised in-water sessions.",
+        sessions: "Theory, dry practice, and open water"
       },
       {
         name: "FRC Diving",
-        tagline: "A specialised coached practice",
-        description: "For qualified students, explore course-specific FRC concepts only in a conservative, closely supervised setting. This practice has distinct risks and is never for solo training.",
+        tagline: "Adapt gradually to pressure",
+        description: "Practice shallow FRC dives with mouthfill from the surface to around 10 to 20 meters under trained instructor supervision.",
         sessions: "First 2 days"
       },
       {
         name: "Static Coaching",
-        tagline: "Support your training buddy",
-        description: "Practise clear briefings, attentive observation and communication during static sessions. Safety support is about following agreed procedures, not encouraging longer holds.",
-        sessions: "1 coaching session"
+        tagline: "Coach your training buddy",
+        description: "Learn static coaching skills and how to support your buddy safely.",
+        sessions: "Static session"
       },
       {
         name: "Session Planning",
-        tagline: "Plan with care",
-        description: "Work through preparation, buddy roles, environmental conditions and stop criteria with your instructor to make a considered training plan.",
-        sessions: "1 full session"
+        tagline: "Plan a dynamic session",
+        description: "Learn to plan and run a dynamic maximum-attempt session with your buddies, including warm-ups, safety dives, and timing.",
+        sessions: "Planning session"
       }
     ],
     schedule: [
       {
         day: "Day 1",
-        title: "Mouthfill Foundations",
-        description: "Theory and dry mouthfill practice, then your first FRC sessions using mouthfill only — shallow dives from the surface to 10–20 meters."
+        title: "Shallow FRC & Mouthfill",
+        description: "Theory and dry mouthfill practice, followed by shallow FRC dives with mouthfill from the surface to around 10–20 meters."
       },
       {
         day: "Day 2",
-        title: "FRC Adaptation",
-        description: "Deeper FRC diving as your body adapts to pressure — bloodshift, bradycardia and spleen effect get stronger with every exhale dive. Static coaching session in between."
+        title: "FRC Practice",
+        description: "Continue supervised FRC training and mouthfill practice in shallow water."
       },
       {
         day: "Day 3",
-        title: "Full-Lung Deep Dives",
-        description: "With the mouthfill mastered on FRC, you progress to full-lung dives — increasing your depth limits with ease during the remaining open water sessions."
+        title: "Full-Lung Dives",
+        description: "Move to full-lung dives and extend your depth through the remaining open-water sessions."
       },
       {
         day: "Day 4",
-        title: "Max Attempts & Exam",
-        description: "Final open water session with planned max attempts, dynamic session planning with your buddies, theory exam and wrap-up."
+        title: "Open-Water Training & Exam",
+        description: "Complete the remaining open-water sessions, practice session planning with your buddies, and finish with the theory exam and wrap-up."
       }
     ],
     image: {
       url: "/courses/performance-freediver-level-3.jpg",
       alt: "SSI Performance Freediver — monofin diver gliding through a shimmering bait ball in the deep blue"
     }
-  }
-];
-
-export const trainingSessionsPricing: TrainingPricingRow[] = [
-  {
-    location: "Lighthouse Bay (Home Reef)",
-    description: "Steps from our dive center terrace. Protected bay with calm waters, 0–45m depth right off the shore, no boat needed.",
-    depthRange: "0m – 45m",
-    singleSessionEur: 35,
-    fivePackEur: 155,
-    tenPackEur: 280,
-    coachingPrivateAddonEur: 25,
-    includesTransport: true,
-    includesBuoyAndWeights: true,
-    notes: "Ideal for daily consistency, equalisation fine-tuning, and relaxed technique work."
-  },
-  {
-    location: "The Blue Hole (Depth Mecca)",
-    description: "The world's freediving sanctuary. 92m vertical drop directly off the reef wall, zero current, 40m+ visibility, equipped with professional counterweights.",
-    depthRange: "0m – 92m+",
-    singleSessionEur: 50,
-    fivePackEur: 220,
-    tenPackEur: 390,
-    coachingPrivateAddonEur: 30,
-    includesTransport: true,
-    includesBuoyAndWeights: true,
-    notes: "Includes air-conditioned 4x4 return transfer from our center and National Park entrance coordination."
   }
 ];
 
@@ -373,10 +346,11 @@ export const specialtyCourses: SpecialtyCourse[] = [
     title: "SSI Monofin Course",
     shortDesc: "Transform into pure aquatic propulsion with the fluid dolphin wave originating from your core.",
     durationDays: 2,
-    priceEur: 210,
+    priceEur: 125,
+    priceNote: "Pool course: €125 for one student or €110 per student for two or more. Full course with two open-water sessions: €205 for one student or €190 per student for two or more.",
     prerequisites: "SSI Level 1 or equivalent.",
-    keySkills: ["Core wave movement", "Ankle flexibility drills", "Glide phases", "Video biomechanics analysis"],
-    fullDesc: "The monofin is the ultimate freediving tool. Under the guidance of our biomechanics specialists, learn how to generate immense power with minimal oxygen consumption by driving the kick from your chest and hips rather than knees.",
+    keySkills: ["Body movement and basic drills", "Efficient monofin technique", "Monofin selection", "Flexibility for monofin swimming"],
+    fullDesc: "A monofin makes you faster, more efficient, and more graceful when you know how to use it. Begin with small fins to learn the body movement, then progress to a monofin. The course includes two pool sessions, one theory session on choosing a monofin, and one stretching session for flexibility.\n\nThe pool course includes training fins and monofins, a digital manual, digital SSI Monofin Pool certification, pool fees, and transport. The full two-day course adds two open-water sessions and full Monofin certification.",
     image: {
       url: "/courses/monofin.jpg",
       alt: "SSI Monofin — freediver dolphin-kicking over a school of fish"
@@ -385,13 +359,13 @@ export const specialtyCourses: SpecialtyCourse[] = [
   {
     id: "spec-mouthfill",
     slug: "mouthfill-mastery",
-    title: "FDD Mouthfill Workshop",
-    shortDesc: "Unlock deep dives beyond your residual volume without thoracic stress.",
-    durationDays: 2,
-    priceEur: 240,
-    prerequisites: "SSI Level 2 or 30m depth experience.",
-    keySkills: ["Soft palate isolation", "Mouthfill charge at 15–20m", "Cheek & tongue piston dynamics", "Dry pressure gauge drills"],
-    fullDesc: "The single biggest roadblock to diving past 30 meters is equalisation. This program breaks down the Mouthfill technique using pressure sensors, Otovent balloons, and specialized in-water drills coached by our deep specialists.",
+    title: "Mouthfill Course",
+    shortDesc: "Develop deep equalization through theory, dry practice, and supervised open-water sessions.",
+    durationDays: 1,
+    priceEur: 120,
+    prerequisites: "You can already dive comfortably to 30–40 meters.",
+    keySkills: ["Mouthfill theory", "Dry practice", "Mouthfill with exhale and inhale diving", "Gradual, instructor-guided progression"],
+    fullDesc: "For divers who are ready for depth but are missing deep equalization. The one-day course includes one theory session, one dry-practice session, and one open-water session that combines mouthfill with exhale and inhale diving. Most teaching happens at shallow depth; deeper dives take place only on the last day, if you have mastered the skills. Bring your own equipment, including bi-fins.",
     image: {
       url: "/courses/mouthfill-workshop.jpg",
       alt: "FDD Mouthfill Workshop in open water"
@@ -401,18 +375,18 @@ export const specialtyCourses: SpecialtyCourse[] = [
   {
     id: "fdd-equalization-clinic",
     slug: "equalization-clinic",
-    title: "FDD Equalization Clinic",
-    shortDesc: "Focused Frenzel and mouthfill coaching with individual feedback in Dahab.",
-    durationDays: 2,
-    priceEur: 220,
-    prerequisites: "Open to freedivers; instructor will tailor sessions to your current level.",
+    title: "Equalization Class (Online)",
+    shortDesc: "One-to-one equalization coaching online, tailored to your experience and next goal.",
+    durationDays: 1,
+    priceEur: 55,
+    prerequisites: "Open to beginners, advanced divers, and deep divers looking to improve mouthfill.",
     keySkills: [
-      "Diagnose Frenzel equalization mechanics",
-      "Practise tongue, soft-palate, and glottis control",
-      "Build a personal dry-drill routine",
-      "Apply equalization skills during coached line sessions"
+      "Beginner Frenzel anatomy and technique",
+      "Advanced Frenzel for dives past 30 meters",
+      "Mouthfill charge and control",
+      "Personal dry exercises and practice plan"
     ],
-    fullDesc: "A focused, two-day equalization clinic with land drills, individual diagnostics, and coached open-water practice. Sessions are adapted to each diver and prioritize comfort and control over depth.",
+    fullDesc: "Equalization problems are usually about technique and awareness, not ability. In this 75-minute one-to-one online session, your instructor identifies what is going wrong and gives you dry exercises to practice until the movement becomes automatic.\n\nBeginner classes cover anatomy and the Frenzel maneuver (about one session). Advanced classes develop Frenzel for dives past 30 meters (about two to four sessions). Deep classes teach mouthfill (about two to three sessions if you know the basics, or three to six if you are starting from zero). Book a few weeks before your trip to leave time to practice.\n\nAll classes are taught by Linda Paganelli, co-owner of Freedive Dahab, a competitive freediver since 2005, vice world champion, and holder of several depth records.",
     image: {
       url: "/courses/equalization-clinic.webp",
       alt: "FDD Equalization Clinic with an instructor in clear Red Sea water"
@@ -424,10 +398,11 @@ export const specialtyCourses: SpecialtyCourse[] = [
     title: "SSI Variable Weight Course",
     shortDesc: "Experience effortless deep descent via weighted sled and fin back to the surface on your own power.",
     durationDays: 2,
-    priceEur: 230,
-    prerequisites: "SSI Level 2 with verified 30m+ depth comfort.",
-    keySkills: ["Sled braking control", "Rapid equalisation timing", "Deep turnaround mechanics", "Safety tether rigging"],
-    fullDesc: "Variable weight allows you to descend with zero muscular exertion, dedicating 100% of your mental focus to equalisation and deep relaxation, before ascending under your own serene fin strokes.",
+    priceEur: 115,
+    priceNote: "€115 for one student or €100 per person for two or more. Includes digital SSI certification and transport to the Blue Hole when deeper than 40 meters.",
+    prerequisites: "Suitable for freedivers with the prerequisite skills for variable-weight training; confirm your experience with the instructor.",
+    keySkills: ["Two open-water sessions", "Theory on planning and safety", "Stretching for pressure", "Building safe setups for yourself and your buddy"],
+    fullDesc: "Variable weight is a fun way to dive and a useful tool for learning deep equalization. The descent takes little effort, and the ascent is easier without a weight belt. The course includes two open-water sessions, one theory session on planning and safety, and one stretching session to prepare your body for pressure. You will also learn to build safe setups for yourself and your buddy.",
     image: {
       url: "/courses/variable-weight.jpg",
       alt: "SSI Variable Weight — freediver descending the deep Blue Hole line"
@@ -439,10 +414,11 @@ export const specialtyCourses: SpecialtyCourse[] = [
     title: "SSI No-Fins Freediving Course",
     shortDesc: "The purest, most challenging discipline: descend and ascend purely with your bare hands and breaststroke kick.",
     durationDays: 2,
-    priceEur: 210,
+    priceEur: 125,
+    priceNote: "€125 for one student or €100 per person for two or more. Includes digital SSI certification, transport, and pool entry.",
     prerequisites: "SSI Level 1 or equivalent.",
-    keySkills: ["Breaststroke coordination", "Glide deceleration physics", "Buoyancy trimming without fins", "Orientation along the line"],
-    fullDesc: "CNF strips away all artificial propulsion. Discover how subtle adjustments in head tilt, arm sweep timing, and hip drive yield hypnotic, whisper-quiet deep descents.",
+    keySkills: ["Buoyancy", "Underwater breaststroke", "Starts, push-offs, turns, and surfacing", "Stretching for legs, knees, and shoulders"],
+    fullDesc: "Diving without fins is the purest form of freediving. With no fins to rely on, you get instant feedback on your streamlining, gliding, and efficiency. The course includes two pool sessions, one theory session, and one stretching session for your legs, knees, and shoulders.",
     image: {
       url: "/courses/no-fins-freediving.jpg",
       alt: "No-Fins Freediving — diver descending gracefully over the reef beneath a manta ray"
@@ -452,12 +428,13 @@ export const specialtyCourses: SpecialtyCourse[] = [
     id: "spec-training-techniques",
     slug: "training-techniques",
     title: "SSI Training Techniques Course",
-    shortDesc: "Build your customized CO2/O2 table progression, gym lung conditioning, and flexibility routines.",
+    shortDesc: "Learn to plan and run static and dynamic training tables for breath-hold and conditioning.",
     durationDays: 2,
-    priceEur: 190,
-    prerequisites: "SSI Level 1.",
-    keySkills: ["CO2 & O2 table architecture", "Dry lung volume stretches", "Heart rate variability optimization", "Diet & hydration protocols"],
-    fullDesc: "How champion freedivers stay conditioned even when away from the ocean. Learn how to program safe dry apnea training, neuro-respiratory adaptations, and recovery routines.",
+    priceEur: 160,
+    priceNote: "€160 for one student or €135 per person for two or more. Digital SSI certification included. Mandatory for the Instructor Course and included in the Zero to Hero package.",
+    prerequisites: "SSI Level 1 or equivalent.",
+    keySkills: ["Static and dynamic tables", "Breath-hold progression", "CO₂ and lactic-acid tolerance", "Designing your own training tables"],
+    fullDesc: "Learn to plan and run a training session with static and dynamic tables that build breath-hold time and tolerance to CO₂ and lactic acid. You get two confined-water sessions and one theory session on how tables work and how to design your own. It is a useful tool for anyone who trains mostly in a pool.",
     image: {
       url: "/courses/training-techniques.jpg",
       alt: "SSI Training Techniques — freediver practicing breathwork on a Dahab terrace"
@@ -467,12 +444,12 @@ export const specialtyCourses: SpecialtyCourse[] = [
     id: "spec-react-right",
     slug: "react-right-first-aid",
     title: "SSI React Right Course",
-    shortDesc: "Comprehensive emergency response, AED operation, and emergency oxygen administration tailored to dive emergencies.",
+    shortDesc: "Learn primary assessment, first aid, CPR, stabilization, and emergency oxygen administration.",
     durationDays: 1,
-    priceEur: 140,
+    priceEur: 130,
     prerequisites: "None (Open to all divers and non-divers).",
-    keySkills: ["Primary assessment & CPR", "Automated External Defibrillator (AED)", "Oxygen administration for barotrauma / blackout", "Dahab decompression chamber coordination"],
-    fullDesc: "Essential medical knowledge for any serious diver or prospective instructor. Covers immediate hypoxic blackout recovery, neuro-evaluations, and coordination with local medical resources.",
+    keySkills: ["Primary assessment", "First aid and CPR", "Stabilization", "Oxygen administration in emergencies"],
+    fullDesc: "SSI’s one-day emergency training program covers primary assessment, first aid and CPR, stabilization, and oxygen administration in emergencies. It is useful for you and your buddy and is mandatory for the Instructor Course. The digital manual and certification are included.",
     image: {
       url: "/courses/react-right.jpg",
       alt: "SSI React Right — emergency first response training"
@@ -566,16 +543,17 @@ export const instructorCourses: InstructorCourse[] = [
     id: "ssi-itc",
     slug: "ssi-freediving-instructor-itc",
     title: "SSI Freediving Instructor Course",
-    durationWeeksOrDays: "10 Days",
-    priceEur: 1250,
-    prerequisites: "SSI Level 3 (or equivalent 40m+ diver), React Right within 24 months, 100+ logged sessions, min age 18.",
-    description: "As an official SSI Instructor Training Center since 2003, Freedive Dahab has trained over 450 instructors teaching worldwide. Our ITC teaches pedagogical psychology, in-water candidate coaching, risk prevention, and business mechanics.",
+    durationWeeksOrDays: "Minimum 12 days, depending on the number of participants",
+    priceEur: 1245,
+    priceNote: "Plus €200 for SSI instructor manuals, fees, and certification.",
+    prerequisites: "SSI Level 2 or equivalent, First Aid/CPR and O₂ Provider certificate, Training Techniques specialty, minimum age 18, and a medical certificate signed by a doctor.",
+    description: "Turn your passion into a profession. Freedive Dahab has trained instructors since 2006. During the Instructor Training Course, you learn the SSI teaching materials, in-water and classroom teaching skills, how to spot and fix common student mistakes, and the legal, marketing, and business side of running courses.",
     modules: [
-      "In-depth academic lecturing & student learning styles",
-      "In-water demonstration quality technique",
-      "Dynamic rescue from 25 meters + 50m surface tow",
-      "Stamina swim tests: 400m in under 8:30 min",
-      "Commercial center operation and digital SSI ecosystem"
+      "SSI teaching materials and classroom teaching skills",
+      "In-water teaching skills and student supervision",
+      "Spotting and correcting common student mistakes",
+      "Legal, marketing, and business aspects of running courses",
+      "Teach SSI Basic and Freediver courses"
     ],
     internshipOption: true,
     image: {
@@ -587,20 +565,42 @@ export const instructorCourses: InstructorCourse[] = [
     id: "ssi-advanced-instructor",
     slug: "ssi-advanced-instructor",
     title: "SSI Advanced Freediving Instructor Course",
-    durationWeeksOrDays: "4 Days",
-    priceEur: 650,
-    prerequisites: "SSI Freediving Instructor with at least 30 certified Level 1 students, or equivalent experience.",
-    description: "Qualify to teach SSI Level 2 (Advanced Freediver) to 30 meters depth, Specialty courses, and lead deep training line setups.",
+    durationWeeksOrDays: "12 to 14 days, depending on the number of participants",
+    priceEur: 1245,
+    priceNote: "Plus a €200 instructor kit; SSI registration fee and certification included.",
+    prerequisites: "Minimum age 18, SSI Level 3 Freediver or equivalent, First Aid/CPR and O₂ Provider certificate, Training Techniques specialty, and a medical certificate.",
+    description: "For certified Performance freedivers or equivalent. Qualify to teach SSI Basic, Level 1, and Level 2 courses, plus the Training Table and Free Immersion specialties.",
     modules: [
-      "Advanced equalization diagnostics coaching",
-      "Safe management of deep freefall training",
-      "FRC coaching methodologies",
-      "Rescue from 30m depth"
+      "Teach SSI Basic, Level 1, and Level 2 courses",
+      "Teach the Training Table specialty",
+      "Teach the Free Immersion specialty",
+      "Meet SSI professional standards and course prerequisites"
     ],
     internshipOption: false,
     image: {
       url: "/courses/advanced-freediving-instructor.jpg",
       alt: "SSI Advanced Freediving Instructor — diver finning over the shallow reef near the surface"
+    }
+  },
+  {
+    id: "ssi-level-3-instructor-update",
+    slug: "ssi-level-3-instructor-update",
+    title: "SSI Level 3 Instructor Update",
+    durationWeeksOrDays: "2 to 3 days",
+    priceEur: 120,
+    priceNote: "€120 per day for a minimum of 2 to 3 days, plus a €60 certification fee.",
+    prerequisites: "SSI Level 2 Instructor, at least 50 Level 1 and 2 certifications, and the SSI Performance Freediver student course completed.",
+    description: "A focused update for SSI Level 2 Freediving Instructors. Demonstrate and teach advanced techniques such as mouthfill and exhale diving in the classroom and open water, and show a solid understanding of freediving physiology and psychology.",
+    modules: [
+      "Demonstrate and teach mouthfill techniques",
+      "Demonstrate and teach exhale diving",
+      "Teach advanced techniques in the classroom and open water",
+      "Demonstrate knowledge of freediving physiology and psychology"
+    ],
+    internshipOption: false,
+    image: {
+      url: "/courses/advanced-freediving-instructor.jpg",
+      alt: "Freediving instructor coaching a student in Dahab"
     }
   }
 ];

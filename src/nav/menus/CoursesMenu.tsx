@@ -4,7 +4,6 @@ export const coursesMenu: MenuDefinition = {
   id: 'courses',
   label: 'Courses',
   page: 'courses',
-  icon: '/icons/diving-goggles.png',
   wide: true,
   columns: [
     [
@@ -17,7 +16,7 @@ export const coursesMenu: MenuDefinition = {
       G('Professional Courses', [
         L('SSI Freediving Instructor', 'course-ssi-freediving-instructor-itc'),
         L('SSI Advanced Freediving Instructor', 'course-ssi-advanced-instructor'),
-        L('SSI Performance Freediving Instructor', 'courses'),
+        L('SSI Performance Freediving Instructor', 'courses', 'chapter-pro'),
       ]),
     ],
     [
@@ -28,7 +27,7 @@ export const coursesMenu: MenuDefinition = {
         L('SSI Variable Weight', 'course-variable-weight-sled'),
         L('SSI Marine Ecology', 'course-marine-ecology'),
         L('SSI React Right', 'course-react-right-first-aid'),
-        L('Equalization Clinic', 'training', 'training-modules'),
+        L('Equalization Clinic', 'course-equalization-clinic'),
         L('Mouthfill Workshop', 'course-mouthfill-mastery'),
       ]),
     ],

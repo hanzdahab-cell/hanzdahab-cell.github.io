@@ -21,11 +21,15 @@ import {
   EventTypeDetail,
   EVENT_TYPES_DATA,
   SCHEDULE_2026_EVENTS,
+  SCHEDULE_2027_EVENTS,
   EventDateSchedule,
   createGoogleCalendarUrl,
   exportToIcs,
+  getEventStatus,
 } from '../../data/calendarSchedule2026';
 import { PageType, EventTypeId } from '../../types';
+import { getPackageDetailGalleryItems } from '../../data/detailGalleries';
+import { GalleryCarousel } from '../ui/GalleryCarousel';
 
 interface EventDetailPageProps {
   eventTypeId: EventTypeId;
@@ -44,10 +48,12 @@ export function EventDetailPage({
     EVENT_TYPES_DATA[eventTypeId as keyof typeof EVENT_TYPES_DATA] ||
     EVENT_TYPES_DATA['beginner-week'];
   
-  // Filter all 2026 schedule dates for this specific event type
-  const eventDates: EventDateSchedule[] = SCHEDULE_2026_EVENTS.filter(
-    (item) => item.eventTypeId === eventTypeId
-  );
+  const eventDates: EventDateSchedule[] = [...SCHEDULE_2026_EVENTS, ...SCHEDULE_2027_EVENTS]
+    .filter((item) => item.eventTypeId === eventTypeId)
+    .map((item) => ({
+      ...item,
+      status: getEventStatus(item.startIso, item.endIso),
+    }));
 
   const [selectedMonthFilter, setSelectedMonthFilter] = useState<string>('all');
   const [inquiryName, setInquiryName] = useState('');
@@ -85,6 +91,23 @@ export function EventDetailPage({
 
   // Unique months available for this event
   const availableMonths = Array.from(new Set(eventDates.map((d) => d.monthName)));
+  const eventGalleryItems = event.category === 'Training'
+    ? [
+        {
+          id: `${event.id}-hero-gallery`,
+          title: event.title,
+          description: event.tagline,
+          imageSrc: event.heroImage,
+          imageAlt: `${event.title} training in Dahab`,
+          tag: 'Training week',
+        },
+        ...getPackageDetailGalleryItems('depth-training-week', event.title).map((slide, index) => ({
+          ...slide,
+          description: `Training photo ${index + 1}`,
+          tag: 'Training gallery',
+        })),
+      ]
+    : [];
 
   return (
     <div className="ocean-surface relative min-h-screen pb-32 text-slate-100">
@@ -102,7 +125,7 @@ export function EventDetailPage({
           className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 hover:bg-cyan-500/20 text-cyan-300 hover:text-white border border-white/10 hover:border-cyan-400/40 text-xs font-mono tracking-wider uppercase transition-all cursor-pointer group"
         >
           <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
-          <span>Back to 2026 Event Calendar</span>
+          <span>Back to Event Calendar</span>
         </button>
 
         <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
@@ -202,7 +225,7 @@ export function EventDetailPage({
                     href="#dates-section"
                     className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-xs uppercase tracking-wider font-semibold border border-white/10 transition-all text-center"
                   >
-                    View 2026 Dates
+                    View Scheduled Dates
                   </a>
                   <button
                     onClick={() => onOpenBooking(event.id)}
@@ -242,8 +265,17 @@ export function EventDetailPage({
         </div>
       </section>
 
+      {eventGalleryItems.length > 0 && (
+        <section
+          aria-label={`${event.title} photo gallery`}
+          className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-8 sm:py-12"
+        >
+          <GalleryCarousel items={eventGalleryItems} label={`${event.title} photo gallery`} />
+        </section>
+      )}
+
       {/* ======================================================== */}
-      {/* 3. SCHEDULED DATES (2026) FULL CALENDAR BREAKDOWN        */}
+      {/* 3. SCHEDULED DATES AND AVAILABILITY                     */}
       {/* ======================================================== */}
       <section id="dates-section" className="relative z-10 px-4 sm:px-8 py-16 max-w-7xl mx-auto">
         <div className="p-6 sm:p-10 rounded-3xl bg-[#0E3453] border border-cyan-500/20 shadow-2xl space-y-8">
@@ -253,7 +285,7 @@ export function EventDetailPage({
             <div className="space-y-2 max-w-2xl">
               <div className="inline-flex items-center gap-2 text-xs font-mono text-cyan-400 uppercase tracking-widest font-semibold">
                 <Calendar className="w-4 h-4" />
-                <span>2026 Confirmed Departures &amp; Weeks</span>
+                <span>Scheduled Departures &amp; Weeks</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-serif font-bold text-white">
                 Scheduled Dates for {event.title}
@@ -287,24 +319,6 @@ export function EventDetailPage({
                 >
                   {m.substring(0, 3)}
                 </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Quick Year-At-A-Glance Schedule Strings */}
-          <div className="p-4 sm:p-6 rounded-2xl bg-black/40 border border-white/5">
-            <h3 className="text-xs font-mono uppercase tracking-widest text-slate-400 font-semibold mb-3">
-              Official 2026 Schedule Roster
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 text-xs font-mono">
-              {event.scheduledDateStrings.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="p-2.5 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col gap-1 hover:border-cyan-400/30 transition-colors"
-                >
-                  <span className="text-cyan-400 font-bold uppercase tracking-wider">{item.month}:</span>
-                  <span className="text-slate-200">{item.dates}</span>
-                </div>
               ))}
             </div>
           </div>
@@ -355,7 +369,9 @@ export function EventDetailPage({
 
                         {!isPast && !isCurrent && (
                           <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono text-[10px] font-bold uppercase tracking-wider">
-                            {item.spotsAvailable} spots open
+                            {item.spotsAvailable === undefined
+                              ? 'Availability on request'
+                              : `${item.spotsAvailable} spots open`}
                           </span>
                         )}
 
@@ -367,9 +383,9 @@ export function EventDetailPage({
                       </div>
 
                       <div className="text-xs text-slate-400 font-mono flex items-center gap-3">
-                        <span>{item.location}</span>
+                        <span>{item.location ?? 'Dahab, South Sinai, Egypt'}</span>
                         <span>•</span>
-                        <span>{formatPrice(item.priceEur)}</span>
+                        <span>{item.priceEur === undefined ? 'Price on request' : formatPrice(item.priceEur)}</span>
                       </div>
                     </div>
                   </div>
@@ -591,7 +607,7 @@ export function EventDetailPage({
                     <label className="text-xs font-mono text-slate-300 uppercase">Preferred Travel Dates</label>
                     <input
                       type="text"
-                      placeholder="e.g. 15-22 November 2026"
+                      placeholder="e.g. 15-22 November"
                       value={inquiryDates}
                       onChange={(e) => setInquiryDates(e.target.value)}
                       className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/15 text-white text-sm focus:outline-none focus:border-cyan-400 placeholder:text-slate-600"

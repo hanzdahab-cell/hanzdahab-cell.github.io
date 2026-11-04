@@ -16,7 +16,7 @@ import { CourseProgressSteps } from './CourseProgressSteps';
 import { FadeUp } from '../ui/MotionKit';
 import { TiltSurface } from '../ui/TiltSurface';
 import { courseCardArtworkById, ssiCourseArtworkBySlug } from '../../data/courseMedia';
-import { CoursePhotoGallery } from '../ui/CoursePhotoGallery';
+import { GalleryCarousel } from '../ui/GalleryCarousel';
 import { getCourseDetailGalleryItems } from '../../data/detailGalleries';
 import { scrollPageElementIntoView } from '../../utils/useSmoothScroll';
 
@@ -297,6 +297,12 @@ export function CourseDetailPage({
                   ))}
                 </div>
               </article>
+              {isCore && (course as Course).safetyNote && (
+                <aside className="rounded-2xl border border-amber-200/30 bg-amber-950/30 p-5 text-sm leading-relaxed text-amber-100 sm:p-6">
+                  <strong className="mr-1">Safety note:</strong>
+                  {(course as Course).safetyNote}
+                </aside>
+              )}
 
               {/* Each scheduled day is its own card; the heading stays with day one. */}
               {isCore && (course as Course).schedule && (
@@ -378,7 +384,7 @@ export function CourseDetailPage({
                 <div className="flex items-end justify-between">
                   <div>
                     <div className="text-[10px] font-mono uppercase tracking-[0.25em] text-slate-400">
-                      All-inclusive price
+                      Course price
                     </div>
                     <div className="text-4xl font-serif font-bold text-cyan-300 pt-1">
                       {formatPrice(course.priceEur)}
@@ -401,14 +407,13 @@ export function CourseDetailPage({
                   <span>{isInstructor ? 'Apply Now' : 'Reserve Your Spot'}</span>
                   <ChevronRight className="w-4 h-4" />
                 </button>
+                {'priceNote' in course && course.priceNote && (
+                  <p className="text-xs leading-relaxed text-slate-300">{course.priceNote}</p>
+                )}
 
                 <p className="border-t border-white/10 pt-4 text-xs leading-relaxed text-slate-300">
                   A 30% deposit secures your booking. The remaining balance is due on arrival in Dahab, and free date changes are available up to 14 days before your course starts.
                 </p>
-              </div>
-
-              <div id="course-gallery" className="scroll-mt-32">
-                <CoursePhotoGallery images={courseStackItems} label={`${course.title} photo gallery`} />
               </div>
 
               {/* Prerequisites */}
@@ -426,6 +431,10 @@ export function CourseDetailPage({
 
           </div>
         </div>
+
+        <section id="course-gallery" aria-label={`${course.title} photo gallery`} className="relative z-10 mt-16 scroll-mt-32">
+          <GalleryCarousel items={courseStackItems} label={`${course.title} photo gallery`} />
+        </section>
 
         {/* ========================================================== */}
         {/* RELATED COURSES                                             */}
@@ -458,13 +467,12 @@ export function CourseDetailPage({
                     className="group flex h-full w-full flex-col rounded-2xl border border-white/10 bg-slate-900/40 text-left transition-all duration-500 hover:-translate-y-1.5 hover:border-cyan-400/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both"
                     style={{ animationDelay: `${i * 100}ms` }}
                   >
-                    <div className="fd-tilt-photo-layer relative aspect-[16/9] w-full overflow-hidden rounded-t-2xl">
+                    <div className="fd-tilt-photo-layer relative aspect-[16/10] w-full overflow-hidden rounded-t-2xl">
                       <img
                         src={rel.image.url}
                         alt={rel.image.alt}
                         className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#0E3453] via-transparent to-transparent" />
                     </div>
                     <div className="fd-tilt-copy-layer w-full p-5 space-y-2">
                       <h3 className="font-serif text-lg font-bold text-white group-hover:text-cyan-200 transition-colors">
@@ -472,7 +480,7 @@ export function CourseDetailPage({
                       </h3>
                       <div className="flex items-center justify-between text-xs font-mono text-slate-400">
                         <span>
-                          `${rel.durationDays} days`
+                          {rel.durationDays} days
                         </span>
                         <span className="text-cyan-300 font-bold">{formatPrice(rel.priceEur)}</span>
                       </div>

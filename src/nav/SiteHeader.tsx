@@ -318,26 +318,21 @@ export function SiteHeader({
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isHomeHeaderScrolled, setIsHomeHeaderScrolled] = useState(false);
+  const [isHeaderScrolled, setIsHeaderScrolled] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const languageMenuRef = useRef<HTMLDivElement>(null);
   const { language, setLanguage, currentOption } = useLanguage();
   const { i18n, t } = useTranslation();
 
   useEffect(() => {
-    if (currentPage !== 'home') {
-      setIsHomeHeaderScrolled(false);
-      return;
-    }
-
     const pageScroller = document.getElementById('site-page-scroll');
     const scrollTarget: HTMLElement | Window = pageScroller ?? window;
     const updateScrollState = () =>
-      setIsHomeHeaderScrolled(pageScroller ? pageScroller.scrollTop > 24 : window.scrollY > 24);
+      setIsHeaderScrolled(pageScroller ? pageScroller.scrollTop > 24 : window.scrollY > 24);
     updateScrollState();
     scrollTarget.addEventListener('scroll', updateScrollState, { passive: true });
     return () => scrollTarget.removeEventListener('scroll', updateScrollState);
-  }, [currentPage]);
+  }, []);
 
   const navigationItems: TopLevelNavigationItem[] = [
     { id: 'home', label: t('labels.home'), page: 'home', menu: { ...homeMenu, label: t('labels.home') } },
@@ -440,12 +435,8 @@ export function SiteHeader({
     <NavProvider>
       <header
         data-current-page={currentPage}
-        data-scrolled={isHomeHeaderScrolled}
-        className={`site-header sticky top-0 z-50 h-16 text-slate-100 ${
-          currentPage === 'home'
-            ? 'site-header--home -mb-16 border-b border-transparent bg-transparent shadow-none backdrop-blur-none'
-            : 'border-b border-white/10 bg-[#081F35]/95 shadow-lg shadow-black/10 backdrop-blur-md'
-        }`}
+        data-scrolled={isHeaderScrolled}
+        className="site-header site-header--overlay sticky top-0 z-50 -mb-16 h-16 border-b border-transparent bg-transparent text-slate-100 shadow-none backdrop-blur-none"
       >
         <div className="relative mx-auto flex h-16 max-w-[1480px] items-center gap-1 px-3 sm:gap-3 sm:px-4">
           <button
