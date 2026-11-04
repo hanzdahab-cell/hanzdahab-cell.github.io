@@ -121,10 +121,17 @@ export interface RoomType {
   id: string;
   title: string;
   subtitle: string;
+  description: string;
+  bedDescription: string;
+  sizeLabel: string;
   pricePerNightEur: { min: number; max: number };
+  seasonalPricesEur: {
+    low: { single: number; double: number };
+    high: { single: number; double: number };
+  };
   capacity: number;
   amenities: string[];
-  images: string[];
+  images: ImageAsset[];
   featured?: boolean;
 }
 

@@ -27,6 +27,8 @@ import { CourseDetailPage } from './components/courses/CourseDetailPage';
 import { OurStoryPage } from './components/story/OurStoryPage';
 import { StoryHeroCarousel } from './components/story/StoryHeroCarousel';
 import { OfferingDetailPage } from './components/catalog/OfferingDetailPage';
+import { AccommodationBookingModal } from './components/booking/AccommodationBookingModal';
+import { PhotoParallaxGallery } from './components/ui/HorizontalParallaxGallery/PhotoParallaxGallery';
 import { scrollPageElementIntoView, scrollPageTo, useSmoothScroll } from './utils/useSmoothScroll';
 import { PageType, EventTypeId } from './types';
 import { LanguageProvider } from './context/LanguageContext';
@@ -37,6 +39,8 @@ export default function App() {
   const [currency, setCurrency] = useState<'EUR' | 'USD' | 'EGP'>('EUR');
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [bookingOfferingId, setBookingOfferingId] = useState<string | undefined>();
+  const [isStayBookingOpen, setIsStayBookingOpen] = useState(false);
+  const [stayRoomId, setStayRoomId] = useState('lighthouse-room');
 
   // Determine initial page from URL hash, default to 'home'
   const validPages = ['home', 'courses', 'training', 'experience', 'accommodation', 'packages', 'blog', 'faq', 'calendar', 'story'];
@@ -115,6 +119,11 @@ export default function App() {
     setIsBookingOpen(true);
   };
 
+  const handleBookStay = (roomId: string) => {
+    setStayRoomId(roomId);
+    setIsStayBookingOpen(true);
+  };
+
   return (
     <I18nextProvider i18n={i18n}>
       <LanguageProvider>
@@ -182,6 +191,31 @@ export default function App() {
             />
 
             <FAQSection />
+            <PhotoParallaxGallery
+              label="Freedive Dahab courses and specialties photos"
+              photos={[
+                {
+                  src: '/images/detail-galleries/courses/ssi-level-1-blue-hole.webp',
+                  alt: 'Freediver training in the Blue Hole at Dahab',
+                },
+                {
+                  src: '/images/detail-galleries/courses/ssi-level-2-level2-main.jpg',
+                  alt: 'Freediving course session in the Red Sea',
+                },
+                {
+                  src: '/images/detail-galleries/courses/monofin-course.jpg',
+                  alt: 'Freediver practising monofin technique',
+                },
+                {
+                  src: '/images/detail-galleries/courses/training-techniques-dahab.webp',
+                  alt: 'Freediving training techniques in Dahab',
+                },
+                {
+                  src: '/images/detail-galleries/courses/ssi-instructor-freediving.jpg',
+                  alt: 'Freediving instructor guiding a student',
+                },
+              ]}
+            />
           </div>
         )}
 
@@ -199,6 +233,31 @@ export default function App() {
             <DepthShowcase
               onOpenBooking={handleOpenBooking}
             />
+            <PhotoParallaxGallery
+              label="Freedive Dahab training photos"
+              photos={[
+                {
+                  src: '/images/story-carousel/training-line.jpg',
+                  alt: 'Freediver training beside a line in the Red Sea',
+                },
+                {
+                  src: '/images/story-carousel/blue-hole-freediver.jpg',
+                  alt: 'Freediver descending on a training line at the Blue Hole',
+                },
+                {
+                  src: '/images/story-carousel/surface-session.jpg',
+                  alt: 'Freedivers practising together in calm water',
+                },
+                {
+                  src: '/images/story-carousel/training-buoy.jpg',
+                  alt: 'Freediving training buoy on the Dahab reef',
+                },
+                {
+                  src: '/images/dahab-story/line-coaching.jpg',
+                  alt: 'Instructor coaching a freediver on the line',
+                },
+              ]}
+            />
           </div>
         )}
 
@@ -214,22 +273,15 @@ export default function App() {
               currentPage="accommodation"
               onNavigate={navigateTo}
               compact
+              alignContentStart
+              backgroundPosition="center 42%"
               backgroundImages={[
-                '/images/home-hero/lighthouse-freediver.jpg',
-                '/images/dahab-story/lighthouse-sunset.jpg',
-                '/images/dahab-story/lighthouse-training.jpg',
-                '/images/story-carousel/lighthouse-bay-team.webp',
-                '/images/philosophy/lighthouse-bay.jpg',
-                ...[
-                  'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1920&q=85',
-                  'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=1920&q=85',
-                  'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=1920&q=85',
-                ],
+                '/images/accommodation/blue-hole/hero-sunset.webp',
               ]}
             />
 
             <AccommodationSection
-              onOpenBooking={() => handleOpenBooking()}
+              onBookStay={handleBookStay}
               currency={currency}
               onNavigate={navigateTo}
             />
@@ -369,6 +421,7 @@ export default function App() {
             currency={currency}
             onNavigate={navigateTo}
             onOpenBooking={handleOpenBooking}
+            onBookStay={handleBookStay}
           />
         )}
 
@@ -397,6 +450,12 @@ export default function App() {
         isOpen={isBookingOpen}
         onClose={() => setIsBookingOpen(false)}
         initialSelectedId={bookingOfferingId}
+        currency={currency}
+      />
+      <AccommodationBookingModal
+        isOpen={isStayBookingOpen}
+        onClose={() => setIsStayBookingOpen(false)}
+        roomId={stayRoomId}
         currency={currency}
       />
 

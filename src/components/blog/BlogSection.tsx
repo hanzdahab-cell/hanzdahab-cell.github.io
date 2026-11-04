@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { blogPosts } from '../../data/blog';
 import { BlogPost } from '../../types';
 import { BookOpen, Clock, User, ArrowRight, X } from 'lucide-react';
+import { BlogCard } from './BlogCard';
 
 export function BlogSection() {
   const [activePost, setActivePost] = useState<BlogPost | null>(null);
@@ -30,59 +31,7 @@ export function BlogSection() {
         {/* Blog Posts Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {blogPosts.map((post) => (
-            <article
-              key={post.id}
-              onClick={() => setActivePost(post)}
-              className="glass-panel rounded-2xl overflow-hidden border border-white/10 hover:border-cyan-400/50 transition-all duration-300 group cursor-pointer flex flex-col justify-between hover:shadow-[0_15px_40px_rgba(56,189,248,0.15)] bg-slate-900/30"
-            >
-              <div>
-                <div className="relative aspect-[16/10] overflow-hidden">
-                  <img
-                    src={post.image.url}
-                    alt={post.image.alt}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0E3453] via-transparent to-transparent opacity-90" />
-                  <div className="absolute bottom-3 left-3 flex flex-wrap gap-1.5">
-                    {post.tags.map((tag) => (
-                      <span key={tag} className="px-2 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider bg-black/60 border border-white/20 text-cyan-300">
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="p-6">
-                  <div className="flex items-center gap-3 text-xs font-mono text-slate-400 mb-2">
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-cyan-400" />
-                      {post.readTimeMin} min read
-                    </span>
-                    <span>•</span>
-                    <span>{post.publishedAt}</span>
-                  </div>
-
-                  <h3 className="font-serif text-xl font-bold text-white group-hover:text-cyan-300 transition-colors leading-snug mb-3">
-                    {post.title}
-                  </h3>
-
-                  <p className="text-slate-300/80 text-xs sm:text-sm font-sans font-light line-clamp-3 leading-relaxed">
-                    {post.excerpt}
-                  </p>
-                </div>
-              </div>
-
-              <div className="px-6 pb-6 pt-2 flex items-center justify-between border-t border-white/5 text-xs">
-                <div className="flex items-center gap-2 text-slate-400 font-sans">
-                  <User className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>{post.author}</span>
-                </div>
-                <span className="text-cyan-400 font-mono text-xs font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                  Read <ArrowRight className="w-3.5 h-3.5" />
-                </span>
-              </div>
-            </article>
+            <BlogCard key={post.id} post={post} onSelect={setActivePost} />
           ))}
         </div>
 

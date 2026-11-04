@@ -14,6 +14,8 @@ interface PageHeaderProps {
   compact?: boolean;
   subtitleFontFamily?: string;
   backgroundImages?: string[];
+  backgroundPosition?: string;
+  alignContentStart?: boolean;
 }
 
 export function PageHeader({
@@ -27,6 +29,8 @@ export function PageHeader({
   compact = false,
   subtitleFontFamily,
   backgroundImages,
+  backgroundPosition = 'center',
+  alignContentStart = false,
 }: PageHeaderProps) {
   const [activeBackgroundIndex, setActiveBackgroundIndex] = useState(0);
   const { isRtl } = useLanguage();
@@ -58,7 +62,7 @@ export function PageHeader({
           key={image}
           aria-hidden="true"
           className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 motion-reduce:transition-none ${index === activeBackgroundIndex ? 'opacity-100' : 'opacity-0'}`}
-          style={{ backgroundImage: `url("${image}")` }}
+          style={{ backgroundImage: `url("${image}")`, backgroundPosition }}
         />
       ))}
       {backgroundImages?.length ? (
@@ -70,7 +74,7 @@ export function PageHeader({
       <div className="absolute bottom-0 left-1/3 w-[500px] h-[250px] bg-sky-600/[0.06] blur-[120px] pointer-events-none rounded-full" />
       <div className="absolute inset-0 architectural-grid opacity-15 pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto relative z-10 space-y-6">
+      <div className={`w-full max-w-7xl relative z-10 space-y-6 ${alignContentStart ? 'mr-auto' : 'mx-auto'}`}>
 
         {/* Header Title & Controls */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">

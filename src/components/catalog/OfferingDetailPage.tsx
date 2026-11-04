@@ -20,6 +20,7 @@ interface OfferingDetailPageProps {
   currency: 'EUR' | 'USD' | 'EGP';
   onNavigate: (page: PageType) => void;
   onOpenBooking: (offeringId?: string) => void;
+  onBookStay: (roomId: string) => void;
 }
 
 interface OfferingContent {
@@ -36,6 +37,7 @@ interface OfferingContent {
   longDescription?: string[];
   extraActivities?: { title: string; priceEur: number }[];
   bookingNotes?: string[];
+  roomDetails?: RoomType;
 }
 
 function formatPrice(eur: number, currency: 'EUR' | 'USD' | 'EGP') {
@@ -72,12 +74,13 @@ function roomContent(room: RoomType, currency: OfferingDetailPageProps['currency
   return {
     title: room.title,
     subtitle: room.subtitle,
-    description: `A comfortable base for your Dahab stay, with space to rest between sessions and easy access to the Red Sea.`,
+    description: room.description,
     duration: `Up to ${room.capacity} ${room.capacity === 1 ? 'guest' : 'guests'}`,
     price: `${formatPrice(room.pricePerNightEur.min, currency)}–${formatPrice(room.pricePerNightEur.max, currency)} / night`,
-    images: room.images.map((image, index) => toGalleryImage(image, `${room.title} accommodation photo ${index + 1}`)),
+    images: room.images.map((image) => toGalleryImage(image.url, image.alt)),
     sections: [{ title: 'Room amenities', items: room.amenities }],
     bookingId: room.id,
+    roomDetails: room,
   };
 }
 
@@ -132,6 +135,7 @@ export function OfferingDetailPage({
   currency,
   onNavigate,
   onOpenBooking,
+  onBookStay,
 }: OfferingDetailPageProps) {
   const content = getOfferingContent(kind, slug, currency);
   const backPage: PageType = kind === 'package' ? 'packages' : kind === 'room' ? 'accommodation' : 'experience';
@@ -156,6 +160,7 @@ export function OfferingDetailPage({
   const packageGalleryItems = kind === 'package'
     ? getPackageDetailGalleryItems(slug, content.title)
     : [];
+  const roomDetails = content.roomDetails;
   if (kind === 'package' && packageGalleryItems.length === 0 && content.images[0]) {
     packageGalleryItems.push({
       id: `${slug}-gallery-cover`,
@@ -170,9 +175,10 @@ export function OfferingDetailPage({
   return (
     <article className="ocean-surface min-h-screen pb-24 pt-28 text-white sm:pt-36">
       <SectionHero
-        imageSrc={content.images[0]?.src ?? '/images/story-carousel/blue-hole-freediver.jpg'}
+        imageSrc={content.images[0]?.src ?? ''}
         imageAlt={content.images[0]?.alt ?? ''}
-        className="min-h-[50svh]"
+        className={`min-h-[50svh] ${kind === 'room' ? 'bg-[#081F35]' : ''}`}
+        imageFit={kind === 'room' ? 'contain' : 'cover'}
         contentClassName="py-10 sm:py-14"
       >
         <div className="max-w-3xl">
@@ -214,7 +220,7 @@ export function OfferingDetailPage({
 
             <button
               type="button"
-              onClick={() => onOpenBooking(content.bookingId)}
+              onClick={() => kind === 'room' ? onBookStay(content.bookingId) : onOpenBooking(content.bookingId)}
               className="fd-button inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
               Enquire about this {kind === 'room' ? 'stay' : kind}
@@ -225,9 +231,9 @@ export function OfferingDetailPage({
       </SectionHero>
 
       <div className="mx-auto max-w-7xl px-5 pt-10 sm:px-6 sm:pt-14">
-        {kind === 'package' ? (
+        {content.images.length > 0 && kind === 'package' ? (
           <GalleryCarousel items={packageGalleryItems} label={`${content.title} photo gallery`} />
-        ) : (
+        ) : content.images.length > 0 ? (
           <section aria-label={`${content.title} photo gallery`} className="mb-12">
             <GalleryCarousel
               items={content.images.map((image, index): GallerySlide => ({
@@ -237,7 +243,63 @@ export function OfferingDetailPage({
                 imageAlt: image.alt,
               }))}
               label={`${content.title} photo gallery`}
+              showBackdrop={kind !== 'room'}
             />
+          </section>
+        ) : kind === 'room' ? (
+          <p className="mb-12 rounded-xl border border-white/10 bg-[#0A2943] px-5 py-4 text-sm text-slate-200">
+            Photos for this room will be added soon.
+          </p>
+        ) : null}
+
+        {roomDetails && (
+          <section aria-labelledby="room-detail-heading" className="mx-auto mb-12 max-w-4xl space-y-6">
+            <div>
+              <h2 id="room-detail-heading" className="font-bebas text-3xl text-white sm:text-4xl">
+                Room details and nightly rates
+              </h2>
+              <dl className="mt-4 grid gap-4 rounded-2xl border border-white/10 bg-[#0A2943] p-5 text-sm sm:grid-cols-3">
+                <div>
+                  <dt className="text-xs font-semibold uppercase tracking-wide text-cyan-200">Beds</dt>
+                  <dd className="mt-1 text-slate-100">{roomDetails.bedDescription}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs font-semibold uppercase tracking-wide text-cyan-200">Room size</dt>
+                  <dd className="mt-1 text-slate-100">{roomDetails.sizeLabel}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs font-semibold uppercase tracking-wide text-cyan-200">Capacity</dt>
+                  <dd className="mt-1 text-slate-100">Up to {roomDetails.capacity} guests</dd>
+                </div>
+              </dl>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {(['low', 'high'] as const).map((season) => (
+                <section key={season} className="rounded-2xl border border-white/10 bg-[#0A2943] p-5">
+                  <h3 className="font-semibold text-white">
+                    {season === 'low' ? 'Low season · Dec–Mar' : 'High season · Apr–Nov'}
+                  </h3>
+                  <dl className="mt-4 space-y-3 text-sm">
+                    <div className="flex justify-between gap-3">
+                      <dt className="text-slate-300">Single occupancy</dt>
+                      <dd className="font-semibold text-white">{formatPrice(roomDetails.seasonalPricesEur[season].single, currency)} / night</dd>
+                    </div>
+                    <div className="flex justify-between gap-3">
+                      <dt className="text-slate-300">Double occupancy</dt>
+                      <dd className="font-semibold text-white">{formatPrice(roomDetails.seasonalPricesEur[season].double, currency)} / night</dd>
+                    </div>
+                  </dl>
+                </section>
+              ))}
+            </div>
+            {slug === 'blue-hole-room' && (
+              <p className="text-sm leading-relaxed text-slate-200">
+                The Blue Hole Room rate is the same when a third guest stays in the room.
+              </p>
+            )}
+            <p className="text-sm leading-relaxed text-slate-200">
+              Long-stay discounts: 15% off stays of 10–20 days and 30% off stays of 21–30 days.
+            </p>
           </section>
         )}
 

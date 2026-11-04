@@ -7,6 +7,7 @@ interface PhotoCarouselProps {
   label: string;
   className?: string;
   imageClassName?: string;
+  imageFit?: 'cover' | 'contain';
   interval?: number;
 }
 
@@ -15,6 +16,7 @@ export function PhotoCarousel({
   label,
   className = '',
   imageClassName = '',
+  imageFit = 'cover',
   interval = 5000,
 }: PhotoCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -51,6 +53,8 @@ export function PhotoCarousel({
   };
 
   const activeImage = images[activeIndex];
+  const imageFitClass = imageFit === 'contain' ? 'object-contain' : 'object-cover';
+  const imageMotionClass = imageFit === 'contain' ? '' : 'motion-safe:group-hover/photo:scale-[1.03]';
 
   return (
     <div
@@ -71,7 +75,7 @@ export function PhotoCarousel({
         key={activeImage.src}
         src={activeImage.src}
         alt={activeImage.alt}
-        className={`h-full w-full object-cover transition-transform duration-700 motion-safe:group-hover/photo:scale-[1.03] ${imageClassName}`}
+        className={`h-full w-full ${imageFitClass} transition-transform duration-700 ${imageMotionClass} ${imageClassName}`}
         loading="lazy"
       />
 

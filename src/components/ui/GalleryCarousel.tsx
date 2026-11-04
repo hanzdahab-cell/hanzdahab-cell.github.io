@@ -16,9 +16,15 @@ interface GalleryCarouselProps {
   items: GallerySlide[];
   label: string;
   headingLevel?: 'h2' | 'h3';
+  showBackdrop?: boolean;
 }
 
-export function GalleryCarousel({ items, label, headingLevel = 'h2' }: GalleryCarouselProps) {
+export function GalleryCarousel({
+  items,
+  label,
+  headingLevel = 'h2',
+  showBackdrop = true,
+}: GalleryCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -99,14 +105,16 @@ export function GalleryCarousel({ items, label, headingLevel = 'h2' }: GalleryCa
             }`}
             aria-hidden={index !== activeIndex % items.length}
           >
-            <img
-              src={item.imageSrc}
-              alt=""
-              aria-hidden="true"
-              className="absolute inset-0 h-full w-full scale-110 object-cover opacity-50 blur-2xl"
-              loading={index === 0 ? 'eager' : 'lazy'}
-              draggable={false}
-            />
+            {showBackdrop && (
+              <img
+                src={item.imageSrc}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 h-full w-full scale-110 object-cover opacity-50 blur-2xl"
+                loading={index === 0 ? 'eager' : 'lazy'}
+                draggable={false}
+              />
+            )}
             <img
               src={item.imageSrc}
               alt={item.imageAlt}

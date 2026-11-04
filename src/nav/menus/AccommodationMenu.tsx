@@ -8,7 +8,10 @@ export const accommodationMenu: MenuDefinition = {
   columns: [[
     L('Our Accommodation', 'accommodation'),
     L('The Rooms', 'accommodation', 'rooms'),
-    L('Students Accommodation Packages', 'room-shared-dorm'),
+    L('Lighthouse Room', 'room-lighthouse-room'),
+    L('Blue Hole Room', 'room-blue-hole-room'),
+    L('Eal Garden Room', 'room-eal-garden-room'),
+    L('Islands Room', 'room-islands-room'),
   ]],
 };
 

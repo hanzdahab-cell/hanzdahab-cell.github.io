@@ -3,7 +3,7 @@ import { X, Calendar, ChevronRight, Send, CheckCircle2 } from 'lucide-react';
 import { ssiCourses, specialtyCourses, instructorCourses } from '../../data/courses';
 import { packagesData } from '../../data/packages';
 import { activitiesData } from '../../data/activities';
-import { roomTypes } from '../../data/accommodation';
+import { getRoomNightlyPrice, roomTypes } from '../../data/accommodation';
 import { useLanguage } from '../../context/LanguageContext';
 import { setPageScrollLocked } from '../../utils/useSmoothScroll';
 import { CalendarPicker } from '../ui/CalendarPicker';
@@ -42,15 +42,27 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
   const [countryCode, setCountryCode] = useState('+20');
   const [phone, setPhone] = useState('');
   const [contactErrors, setContactErrors] = useState<{ firstName?: string; lastName?: string; email?: string; phone?: string }>({});
+  const [dateError, setDateError] = useState(false);
   const [notes, setNotes] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const modalPanelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (initialSelectedId) {
-      setSelectedId(initialSelectedId);
+    if (!initialSelectedId) return;
+    if (roomTypes.some((room) => room.id === initialSelectedId)) {
+      setLodgingId(initialSelectedId);
+      return;
     }
+    setSelectedId(initialSelectedId);
   }, [initialSelectedId]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setCurrentStep(0);
+    setContactErrors({});
+    setDateError(false);
+    setIsSuccess(false);
+  }, [isOpen]);
 
   // Freeze Lenis while the modal is open so the wheel scrolls the form instead
   // of the page behind it; Escape closes the modal like a native dialog.
@@ -59,16 +71,35 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
 
   useEffect(() => {
     if (!isOpen) return;
+    const previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     window.__lenis?.stop();
     setPageScrollLocked('booking-modal', true);
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onCloseRef.current();
+      if (e.key !== 'Tab' || !modalPanelRef.current) return;
+      const focusable = modalPanelRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled])',
+      );
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last?.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first?.focus();
+      }
     };
+    const focusFrame = window.requestAnimationFrame(() => {
+      modalPanelRef.current?.querySelector<HTMLElement>('select, input:not([type="hidden"]), button[aria-label]')?.focus();
+    });
     window.addEventListener('keydown', handleKey);
     return () => {
+      window.cancelAnimationFrame(focusFrame);
       window.removeEventListener('keydown', handleKey);
       setPageScrollLocked('booking-modal', false);
       window.__lenis?.start();
+      previouslyFocused?.focus();
     };
   }, [isOpen]);
 
@@ -116,10 +147,24 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
   const selectedRoom = roomTypes.find(r => r.id === lodgingId);
   const today = new Date();
   const minBookingDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const lodgingNightlyRate = selectedRoom
+    ? getRoomNightlyPrice(selectedRoom, startDate || minBookingDate, diverCount)
+    : 0;
+  const lodgingRoomCount = selectedRoom
+    ? Math.ceil(diverCount / selectedRoom.capacity)
+    : 0;
+  const lodgingDiscountRate = lodgingNights >= 10 && lodgingNights <= 20
+    ? 0.15
+    : lodgingNights >= 21 && lodgingNights <= 30
+      ? 0.3
+      : 0;
 
   // Price math
   const courseBasePrice = currentOffering.priceEur * diverCount;
-  const lodgingCost = selectedRoom ? selectedRoom.pricePerNightEur.min * lodgingNights : 0;
+  const lodgingSubtotal = lodgingNightlyRate * lodgingNights;
+  const lodgingCost = selectedRoom
+    ? Math.round(lodgingSubtotal * (1 - lodgingDiscountRate))
+    : 0;
   const totalEur = courseBasePrice + lodgingCost;
   const depositEur = Math.round(totalEur * 0.3);
   const balanceEur = totalEur - depositEur;
@@ -127,19 +172,15 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
   const formatPrice = (eur: number) => {
     if (currency === 'USD') return `$${Math.round(eur * 1.08)}`;
     if (currency === 'EGP') return `E£${Math.round(eur * 52)}`;
-    return `€${eur}`;
+    return `€${Math.round(eur)}`;
   };
 
   const handleBookingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (currentStep === 0) {
-      continueToReservation();
+      setCurrentStep(1);
       return;
     }
-    setIsSuccess(true);
-  };
-
-  const continueToReservation = () => {
     const nextErrors: typeof contactErrors = {};
     if (!firstName.trim()) nextErrors.firstName = 'First name is required.';
     if (!lastName.trim()) nextErrors.lastName = 'Last name is required.';
@@ -149,12 +190,13 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
     if (!phoneDigits) nextErrors.phone = 'Phone / WhatsApp number is required.';
     else if (phoneDigits.length < 6) nextErrors.phone = 'Enter a valid phone number.';
     setContactErrors(nextErrors);
+    setDateError(!startDate);
     if (Object.keys(nextErrors).length) {
-      const firstInvalidField = Object.keys(nextErrors)[0];
-      document.getElementById(`booking-${firstInvalidField}`)?.focus();
+      document.getElementById(`booking-${Object.keys(nextErrors)[0]}`)?.focus();
       return;
     }
-    setCurrentStep(1);
+    if (!startDate) return;
+    setIsSuccess(true);
   };
 
   return (
@@ -162,6 +204,9 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
       <div
         ref={modalPanelRef}
         data-lenis-prevent
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="booking-modal-title"
         className={`glass-panel max-w-3xl w-full max-h-[96vh] overflow-y-auto rounded-3xl border border-cyan-400/40 p-6 sm:p-10 relative shadow-2xl space-y-6 font-alata ${isRtl ? 'text-right' : 'text-left'}`}
       >
         {/* Close Button */}
@@ -182,7 +227,7 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
               <span className="text-xs tracking-widest text-cyan-400 uppercase">
                 RESERVATION RECEIVED
               </span>
-              <h3 className="text-3xl font-bold text-white sm:text-4xl">
+              <h3 id="booking-modal-title" className="text-3xl font-bold text-white sm:text-4xl">
                 See You in Dahab, {[firstName, lastName].filter(Boolean).join(' ') || 'Adventurer'}
               </h3>
               <p className="text-slate-300 max-w-md mx-auto text-sm font-light leading-relaxed">
@@ -227,18 +272,18 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
         ) : (
           <form onSubmit={handleBookingSubmit} className="space-y-6 font-alata">
             <div className="space-y-2">
-              <h3 className="text-3xl font-black text-white sm:text-4xl">{t.booking.modalTitle}</h3>
-              <p className="text-sm text-slate-300">{t.booking.modalSubtitle}</p>
+              <h3 id="booking-modal-title" className="text-3xl font-black text-white sm:text-4xl">{t.booking.modalTitle}</h3>
+              <p className="text-sm text-cyan-100/80">{t.booking.modalSubtitle}</p>
             </div>
 
             <div aria-label={`Step ${currentStep + 1} of 2`} className="space-y-3">
               <div className="flex items-center justify-between gap-3">
-                {['Your Details', 'Your Reservation'].map((label, index) => (
+                {['Your Reservation', 'Your Details'].map((label, index) => (
                   <div key={label} className="flex flex-1 items-center gap-2">
-                    <span className={`grid h-7 w-7 shrink-0 place-items-center rounded-full border text-xs font-bold ${index <= currentStep ? 'border-cyan-300 bg-cyan-300 text-slate-950' : 'border-white/20 text-slate-400'}`}>
+                    <span className={`grid h-7 w-7 shrink-0 place-items-center rounded-full border text-xs font-bold ${index <= currentStep ? 'border-cyan-300 bg-cyan-300 text-cyan-950' : 'border-white/20 text-cyan-100/80'}`}>
                       {index + 1}
                     </span>
-                    <span className={`text-xs sm:text-sm ${index === currentStep ? 'text-white' : 'text-slate-400'}`}>{label}</span>
+                    <span className={`text-xs sm:text-sm ${index === currentStep ? 'text-white' : 'text-cyan-100/80'}`}>{label}</span>
                     {index === 0 && <span className="mx-1 h-px flex-1 bg-white/15" aria-hidden="true" />}
                   </div>
                 ))}
@@ -254,7 +299,7 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
               </div>
             </div>
 
-            {currentStep === 0 ? (
+            {currentStep === 1 ? (
               <section aria-labelledby="booking-details-title" className="space-y-5">
                 <div>
                   <h4 id="booking-details-title" className="text-xl font-semibold text-white">Your Details</h4>
@@ -315,6 +360,8 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
                         type="button"
                         aria-haspopup="dialog"
                         aria-expanded={isCalendarOpen}
+                        aria-invalid={dateError}
+                        aria-describedby={dateError ? 'booking-date-error' : undefined}
                         onClick={() => setIsCalendarOpen((open) => !open)}
                         className="flex min-h-12 w-full items-center justify-between rounded-xl border border-white/15 bg-slate-900 px-3.5 py-3 text-left text-sm text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300"
                       >
@@ -323,11 +370,11 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
                       </button>
                       {isCalendarOpen && (
                         <div role="dialog" aria-label="Choose booking date" className="absolute left-0 top-full z-30 mt-2 w-full sm:w-auto">
-                          <CalendarPicker value={startDate || undefined} min={minBookingDate} onChange={setStartDate} onClose={() => setIsCalendarOpen(false)} />
+                          <CalendarPicker value={startDate || undefined} min={minBookingDate} onChange={(date) => { setStartDate(date); setDateError(false); }} onClose={() => setIsCalendarOpen(false)} />
                         </div>
                       )}
-                      <input type="hidden" name="booking-date" value={startDate} required />
                     </div>
+                    {dateError && <p id="booking-date-error" role="alert" className="text-xs text-rose-300">Choose an arrival date before sending your request.</p>}
                   </div>
                   <div className="space-y-2">
                     <label htmlFor="booking-divers" className="block text-xs uppercase text-slate-300">Number of Divers</label>
@@ -338,11 +385,32 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
                 </div>
 
                 <div className="space-y-2 border-t border-white/10 pt-4">
-                  <label htmlFor="booking-accommodation" className="flex flex-wrap justify-between gap-2 text-xs uppercase text-slate-300"><span>Add Oceanfront Sea Lodge Stay (Optional)</span><span className="text-cyan-300">Save up to €180 bundled</span></label>
+                  <label htmlFor="booking-accommodation" className="flex flex-wrap justify-between gap-2 text-xs uppercase text-slate-300"><span>Add Sea Lodge Accommodation (Optional)</span><span className="text-cyan-200">Long-stay discounts available</span></label>
                   <select id="booking-accommodation" value={lodgingId} onChange={(e) => setLodgingId(e.target.value)} className="w-full rounded-xl border border-white/15 bg-slate-900 px-3.5 py-3 text-sm text-white focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/30">
                     <option value="none">No Accommodation Needed (Arrange Own)</option>
-                    {roomTypes.map((room) => <option key={room.id} value={room.id}>{room.title} — {formatPrice(room.pricePerNightEur.min)}/night (Breakfast &amp; 100Mbps WiFi)</option>)}
+                    {roomTypes.map((room) => <option key={room.id} value={room.id}>{room.title} — from {formatPrice(room.pricePerNightEur.min)}/night</option>)}
                   </select>
+                  {selectedRoom && (
+                    <>
+                      <p className="text-xs leading-relaxed text-slate-300">
+                        The estimate uses your arrival season, diver count, and room capacity. Blue Hole Room has the same rate for a third guest.
+                      </p>
+                      <div className="space-y-2">
+                        <label htmlFor="booking-nights" className="block text-xs uppercase text-slate-300">
+                          Number of nights
+                        </label>
+                        <input
+                          id="booking-nights"
+                          type="number"
+                          min={1}
+                          step={1}
+                          value={lodgingNights}
+                          onChange={(event) => setLodgingNights(Math.max(1, Number(event.target.value) || 1))}
+                          className="w-full rounded-xl border border-white/15 bg-slate-900 px-3.5 py-3 text-sm text-white focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/30"
+                        />
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -352,7 +420,8 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
 
                 <div className="space-y-3 rounded-2xl border border-cyan-400/25 bg-slate-950/80 p-5 text-sm">
                   <div className="flex justify-between gap-4 text-slate-300"><span>{currentOffering.title} ({diverCount}x):</span><span className="text-lg font-bold">{formatPrice(courseBasePrice)}</span></div>
-                  {selectedRoom && <div className="flex justify-between gap-4 text-slate-300"><span>Sea Lodge ({selectedRoom.title} × {lodgingNights} nights):</span><span className="text-lg font-bold">{formatPrice(lodgingCost)}</span></div>}
+                  {selectedRoom && <div className="flex justify-between gap-4 text-slate-300"><span>Sea Lodge ({selectedRoom.title} · {lodgingRoomCount} {lodgingRoomCount === 1 ? 'room' : 'rooms'} · {lodgingNights} nights):</span><span className="text-lg font-bold">{formatPrice(lodgingSubtotal)}</span></div>}
+                  {selectedRoom && lodgingDiscountRate > 0 && <div className="flex justify-between gap-4 text-cyan-100"><span>Long-stay discount ({Math.round(lodgingDiscountRate * 100)}%)</span><span>−{formatPrice(lodgingSubtotal - lodgingCost)}</span></div>}
                   <div className="flex justify-between gap-4 border-t border-white/10 pt-3 text-slate-400"><span>{currentOffering.rateNote ? 'Brochure-rate estimate:' : 'Total Calculated:'}</span><span className="text-2xl font-bold text-white">{formatPrice(totalEur)}</span></div>
                   <div className="flex justify-between gap-4 font-semibold text-emerald-400"><span>{currentOffering.rateNote ? 'Indicative 30% deposit:' : '30% Deposit to Secure Slot:'}</span><span className="text-2xl font-bold">{formatPrice(depositEur)}</span></div>
                   <p className="text-xs text-slate-400">{currentOffering.rateNote ? 'This estimate uses a historical brochure rate. Confirm the current quote, included services and payment terms with our team.' : `*Remaining balance of ${formatPrice(balanceEur)} is paid on arrival in Dahab. Free date changes up to 14 days before start.`}</p>
@@ -360,12 +429,21 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
               </section>
             )}
 
+            {currentStep === 1 && dateError && (
+              <div role="alert" className="flex flex-col gap-3 rounded-xl border border-rose-300/30 bg-rose-950/30 p-4 text-sm text-rose-100 sm:flex-row sm:items-center sm:justify-between">
+                <p>Choose an arrival date on the reservation step before sending your request.</p>
+                <button type="button" onClick={() => { setCurrentStep(0); setDateError(false); }} className="min-h-11 shrink-0 rounded-lg border border-rose-200/50 px-4 py-2 font-semibold hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+                  Back to reservation
+                </button>
+              </div>
+            )}
+
             <div className="flex flex-col-reverse gap-3 border-t border-white/10 pt-5 sm:flex-row sm:justify-between">
               {currentStep === 1 ? (
                 <button type="button" onClick={() => setCurrentStep(0)} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-white/20 px-5 text-sm text-white transition-colors hover:bg-white/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300">Back</button>
               ) : <span />}
               {currentStep === 0 ? (
-                <button type="button" onClick={continueToReservation} className="fd-button inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-6 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Continue to Reservation <ChevronRight className="h-4 w-4" aria-hidden="true" /></button>
+                <button type="button" onClick={() => setCurrentStep(1)} className="fd-button inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-6 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Continue to Your Details <ChevronRight className="h-4 w-4" aria-hidden="true" /></button>
               ) : (
                 <button type="submit" className="fd-button inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-6 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"><Send className="h-4 w-4" aria-hidden="true" /><span>{t.booking.submit}</span></button>
               )}
