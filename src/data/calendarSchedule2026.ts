@@ -1,4 +1,5 @@
 import { EventTypeId } from '../types';
+import { siteConfig } from './site';
 export type { EventTypeId };
 
 export interface EventDateSchedule {
@@ -13,11 +14,11 @@ export interface EventDateSchedule {
   monthNum: number;  // 1 - 12
   year: number;      // 2026
   durationDays: number;
-  priceEur: number;
-  spotsTotal: number;
-  spotsAvailable: number;
+  priceEur?: number;
+  spotsTotal?: number;
+  spotsAvailable?: number;
   status: 'past' | 'current' | 'upcoming';
-  location: string;
+  location?: string;
 }
 
 export interface EventTypeDetail {
@@ -478,15 +479,43 @@ export const MONTHS_2026 = [
   { num: 12, name: 'December', short: 'Dec', days: 31 },
 ];
 
-// Helper to determine status given 2026-09-21 current simulated date
-function computeStatus(startIso: string, endIso: string): 'past' | 'current' | 'upcoming' {
-  const simNow = '2026-09-21';
-  if (endIso < simNow) return 'past';
-  if (startIso <= simNow && endIso >= simNow) return 'current';
+export function getEventStatus(startIso: string, endIso: string): 'past' | 'current' | 'upcoming' {
+  const today = new Date();
+  const todayIso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  if (endIso < todayIso) return 'past';
+  if (startIso <= todayIso && endIso >= todayIso) return 'current';
   return 'upcoming';
 }
 
-// Complete Normalized Schedule of Events for 2026
+function createScheduledEvent(
+  eventTypeId: EventTypeId,
+  startIso: string,
+  endIso: string,
+  dateLabel: string,
+  eventTitle = EVENT_TYPES_DATA[eventTypeId].title,
+): EventDateSchedule {
+  const [year, month, day] = startIso.split('-').map(Number);
+  const [endYear, endMonth, endDay] = endIso.split('-').map(Number);
+  const startUtc = Date.UTC(year, month - 1, day);
+  const endUtc = Date.UTC(endYear, endMonth - 1, endDay);
+
+  return {
+    id: `${eventTypeId}-${startIso}`,
+    eventTypeId,
+    eventTitle,
+    category: EVENT_TYPES_DATA[eventTypeId].category,
+    dateLabel,
+    startIso,
+    endIso,
+    monthName: new Date(startUtc).toLocaleString('en-US', { month: 'long', timeZone: 'UTC' }),
+    monthNum: month,
+    year,
+    durationDays: (endUtc - startUtc) / 86_400_000 + 1,
+    status: getEventStatus(startIso, endIso),
+  };
+}
+
+// Confirmed Schedule of Events for 2026-2027
 export const SCHEDULE_2026_EVENTS: EventDateSchedule[] = [
   // ----------------------------------------------------
   // JANUARY 2026
@@ -1898,292 +1927,91 @@ export const SCHEDULE_2026_EVENTS: EventDateSchedule[] = [
 
   // ----------------------------------------------------
   // NOVEMBER 2026
-  // ----------------------------------------------------
-  {
-    id: 'itc-2026-11-01',
-    eventTypeId: 'instructor-course',
-    eventTitle: 'Instructor Course (Autumn ITC)',
-    category: 'Instructor Course',
-    dateLabel: '1-15 Nov',
-    startIso: '2026-11-01',
-    endIso: '2026-11-15',
-    monthName: 'November',
-    monthNum: 11,
-    year: 2026,
-    durationDays: 15,
-    priceEur: 1250,
-    spotsTotal: 6,
-    spotsAvailable: 3,
-    status: 'upcoming',
-    location: 'SSI ITC Academy #720079',
-  },
-  {
-    id: 'beg-2026-11-01',
-    eventTypeId: 'beginner-week',
-    eventTitle: 'Beginner Week',
-    category: 'Beginner',
-    dateLabel: '6-12 Nov',
-    startIso: '2026-11-06',
-    endIso: '2026-11-12',
-    monthName: 'November',
-    monthNum: 11,
-    year: 2026,
-    durationDays: 7,
-    priceEur: 420,
-    spotsTotal: 6,
-    spotsAvailable: 5,
-    status: 'upcoming',
-    location: 'Lighthouse Bay, Dahab',
-  },
-  {
-    id: 'zth-2026-11-01',
-    eventTypeId: 'zero-to-hero',
-    eventTitle: 'Zero to Hero',
-    category: 'Zero to Hero',
-    dateLabel: '6 Nov (4-6 Wks)',
-    startIso: '2026-11-06',
-    endIso: '2026-12-18',
-    monthName: 'November',
-    monthNum: 11,
-    year: 2026,
-    durationDays: 35,
-    priceEur: 1650,
-    spotsTotal: 4,
-    spotsAvailable: 3,
-    status: 'upcoming',
-    location: 'Dahab Sanctuary Base',
-  },
-  {
-    id: 'adv-2026-11-01',
-    eventTypeId: 'advanced-week',
-    eventTitle: 'Advanced Week',
-    category: 'Advanced',
-    dateLabel: '8-14 Nov',
-    startIso: '2026-11-08',
-    endIso: '2026-11-14',
-    monthName: 'November',
-    monthNum: 11,
-    year: 2026,
-    durationDays: 7,
-    priceEur: 490,
-    spotsTotal: 4,
-    spotsAvailable: 3,
-    status: 'upcoming',
-    location: 'Lighthouse Bay & Blue Hole',
-  },
-  {
-    id: 'ras-2026-11-01',
-    eventTypeId: 'ras-mohamed',
-    eventTitle: 'Ras Mohamed Trip',
-    category: 'Ras Mohamed trip',
-    dateLabel: '10 Nov',
-    startIso: '2026-11-10',
-    endIso: '2026-11-10',
-    monthName: 'November',
-    monthNum: 11,
-    year: 2026,
-    durationDays: 1,
-    priceEur: 160,
-    spotsTotal: 12,
-    spotsAvailable: 8,
-    status: 'upcoming',
-    location: 'Ras Mohamed National Park',
-  },
-  {
-    id: 'train-2026-11-01',
-    eventTypeId: 'training-week',
-    eventTitle: 'Training Week',
-    category: 'Training',
-    dateLabel: '15-21 Nov',
-    startIso: '2026-11-15',
-    endIso: '2026-11-21',
-    monthName: 'November',
-    monthNum: 11,
-    year: 2026,
-    durationDays: 7,
-    priceEur: 390,
-    spotsTotal: 6,
-    spotsAvailable: 5,
-    status: 'upcoming',
-    location: 'The Blue Hole, Dahab',
-  },
-  {
-    id: 'zth-2026-11-02',
-    eventTypeId: 'zero-to-hero',
-    eventTitle: 'Zero to Hero',
-    category: 'Zero to Hero',
-    dateLabel: '21 Nov (4-6 Wks)',
-    startIso: '2026-11-21',
-    endIso: '2027-01-02',
-    monthName: 'November',
-    monthNum: 11,
-    year: 2026,
-    durationDays: 35,
-    priceEur: 1650,
-    spotsTotal: 4,
-    spotsAvailable: 4,
-    status: 'upcoming',
-    location: 'Dahab Sanctuary Base',
-  },
+  createScheduledEvent('beginner-week', '2026-11-07', '2026-11-13', '7-13 Nov'),
+  createScheduledEvent('advanced-week', '2026-11-09', '2026-11-15', '9-15 Nov'),
+  createScheduledEvent('training-week', '2026-11-09', '2026-11-15', '9-15 Nov'),
+  createScheduledEvent('zero-to-hero', '2026-11-14', '2026-11-14', '14 Nov'),
+  createScheduledEvent('beginner-week', '2026-11-14', '2026-11-20', '14-20 Nov'),
+  createScheduledEvent('advanced-week', '2026-11-16', '2026-11-22', '16-22 Nov'),
+  createScheduledEvent('training-week', '2026-11-16', '2026-11-22', '16-22 Nov'),
+  createScheduledEvent('ras-mohamed', '2026-11-17', '2026-11-17', '17 Nov'),
 
-  // ----------------------------------------------------
   // DECEMBER 2026
-  // ----------------------------------------------------
-  {
-    id: 'train-2026-12-01',
-    eventTypeId: 'training-week',
-    eventTitle: 'Training Week',
-    category: 'Training',
-    dateLabel: '6-12 Dec',
-    startIso: '2026-12-06',
-    endIso: '2026-12-12',
-    monthName: 'December',
-    monthNum: 12,
-    year: 2026,
-    durationDays: 7,
-    priceEur: 390,
-    spotsTotal: 6,
-    spotsAvailable: 5,
-    status: 'upcoming',
-    location: 'The Blue Hole, Dahab',
-  },
-  {
-    id: 'beg-2026-12-01',
-    eventTypeId: 'beginner-week',
-    eventTitle: 'Beginner Week',
-    category: 'Beginner',
-    dateLabel: '11-17 Dec',
-    startIso: '2026-12-11',
-    endIso: '2026-12-17',
-    monthName: 'December',
-    monthNum: 12,
-    year: 2026,
-    durationDays: 7,
-    priceEur: 420,
-    spotsTotal: 6,
-    spotsAvailable: 4,
-    status: 'upcoming',
-    location: 'Lighthouse Bay, Dahab',
-  },
-  {
-    id: 'adv-2026-12-01',
-    eventTypeId: 'advanced-week',
-    eventTitle: 'Advanced Week',
-    category: 'Advanced',
-    dateLabel: '13-19 Dec',
-    startIso: '2026-12-13',
-    endIso: '2026-12-19',
-    monthName: 'December',
-    monthNum: 12,
-    year: 2026,
-    durationDays: 7,
-    priceEur: 490,
-    spotsTotal: 4,
-    spotsAvailable: 4,
-    status: 'upcoming',
-    location: 'Lighthouse Bay & Blue Hole',
-  },
-  {
-    id: 'ras-2026-12-01',
-    eventTypeId: 'ras-mohamed',
-    eventTitle: 'Ras Mohamed Trip',
-    category: 'Ras Mohamed trip',
-    dateLabel: '15 Dec',
-    startIso: '2026-12-15',
-    endIso: '2026-12-15',
-    monthName: 'December',
-    monthNum: 12,
-    year: 2026,
-    durationDays: 1,
-    priceEur: 160,
-    spotsTotal: 12,
-    spotsAvailable: 9,
-    status: 'upcoming',
-    location: 'Ras Mohamed National Park',
-  },
-  {
-    id: 'beg-2026-12-02',
-    eventTypeId: 'beginner-week',
-    eventTitle: 'Beginner Week',
-    category: 'Beginner',
-    dateLabel: '29 Dec 2026 - 4 Jan 2027',
-    startIso: '2026-12-29',
-    endIso: '2027-01-04',
-    monthName: 'December',
-    monthNum: 12,
-    year: 2026,
-    durationDays: 7,
-    priceEur: 420,
-    spotsTotal: 6,
-    spotsAvailable: 6,
-    status: 'upcoming',
-    location: 'Lighthouse Bay, Dahab',
-  },
-  {
-    id: 'zth-2026-12-01',
-    eventTypeId: 'zero-to-hero',
-    eventTitle: 'Zero to Hero',
-    category: 'Zero to Hero',
-    dateLabel: '29 Dec (4-6 Wks)',
-    startIso: '2026-12-29',
-    endIso: '2027-02-09',
-    monthName: 'December',
-    monthNum: 12,
-    year: 2026,
-    durationDays: 35,
-    priceEur: 1650,
-    spotsTotal: 4,
-    spotsAvailable: 4,
-    status: 'upcoming',
-    location: 'Dahab Sanctuary Base',
-  },
-  {
-    id: 'adv-2026-12-02',
-    eventTypeId: 'advanced-week',
-    eventTitle: 'Advanced Week',
-    category: 'Advanced',
-    dateLabel: '31 Dec 2026 - 6 Jan 2027',
-    startIso: '2026-12-31',
-    endIso: '2027-01-06',
-    monthName: 'December',
-    monthNum: 12,
-    year: 2026,
-    durationDays: 7,
-    priceEur: 490,
-    spotsTotal: 4,
-    spotsAvailable: 4,
-    status: 'upcoming',
-    location: 'Lighthouse Bay & Blue Hole',
-  },
+  createScheduledEvent('zero-to-hero', '2026-12-06', '2026-12-06', '6 Dec'),
+  createScheduledEvent('beginner-week', '2026-12-06', '2026-12-12', '6-12 Dec'),
+  createScheduledEvent('advanced-week', '2026-12-08', '2026-12-14', '8-14 Dec'),
+  createScheduledEvent('training-week', '2026-12-08', '2026-12-14', '8-14 Dec'),
+  createScheduledEvent('ras-mohamed', '2026-12-10', '2026-12-10', '10 Dec'),
+  createScheduledEvent('zero-to-hero', '2026-12-21', '2026-12-21', '21 Dec'),
+  createScheduledEvent('beginner-week', '2026-12-21', '2026-12-27', '21-27 Dec'),
+  createScheduledEvent('advanced-week', '2026-12-23', '2026-12-29', '23-29 Dec'),
+  createScheduledEvent('training-week', '2026-12-23', '2026-12-29', '23-29 Dec'),
+  createScheduledEvent('ras-mohamed', '2026-12-25', '2026-12-25', '25 Dec'),
+  createScheduledEvent('zero-to-hero', '2026-12-29', '2026-12-29', '29 Dec'),
+  createScheduledEvent('beginner-week', '2026-12-29', '2027-01-04', '29 Dec 2026 - 4 Jan 2027'),
+  createScheduledEvent('advanced-week', '2026-12-31', '2027-01-06', '31 Dec 2026 - 6 Jan 2027'),
+  createScheduledEvent('training-week', '2026-12-31', '2027-01-06', '31 Dec 2026 - 6 Jan 2027'),
+];
+
+export const SCHEDULE_2027_EVENTS: EventDateSchedule[] = [
+  createScheduledEvent('zero-to-hero', '2027-01-22', '2027-01-22', '22 Jan'),
+  createScheduledEvent('beginner-week', '2027-01-22', '2027-01-28', '22-28 Jan'),
+  createScheduledEvent('advanced-week', '2027-01-24', '2027-01-30', '24-30 Jan'),
+  createScheduledEvent('training-week', '2027-01-24', '2027-01-30', '24-30 Jan'),
+  createScheduledEvent('ras-mohamed', '2027-01-25', '2027-01-25', '25 Jan'),
+
+  createScheduledEvent('zero-to-hero', '2027-02-06', '2027-02-06', '6 Feb'),
+  createScheduledEvent('beginner-week', '2027-02-06', '2027-02-12', '6-12 Feb'),
+  createScheduledEvent('advanced-week', '2027-02-08', '2027-02-14', '8-14 Feb'),
+  createScheduledEvent('training-week', '2027-02-08', '2027-02-14', '8-14 Feb'),
+  createScheduledEvent('ras-mohamed', '2027-02-09', '2027-02-09', '9 Feb'),
+  createScheduledEvent('zero-to-hero', '2027-02-11', '2027-02-11', '11 Feb'),
+  createScheduledEvent('beginner-week', '2027-02-11', '2027-02-17', '11-17 Feb'),
+  createScheduledEvent('advanced-week', '2027-02-13', '2027-02-19', '13-19 Feb'),
+  createScheduledEvent('training-week', '2027-02-13', '2027-02-19', '13-19 Feb'),
+  createScheduledEvent('ras-mohamed', '2027-02-14', '2027-02-14', '14 Feb'),
+
+  createScheduledEvent('instructor-course', '2027-03-01', '2027-03-15', '1-15 Mar', 'Instructor Course'),
+  createScheduledEvent('zero-to-hero', '2027-03-12', '2027-03-12', '12 Mar'),
+  createScheduledEvent('beginner-week', '2027-03-12', '2027-03-18', '12-18 Mar'),
+  createScheduledEvent('advanced-week', '2027-03-14', '2027-03-20', '14-20 Mar'),
+  createScheduledEvent('training-week', '2027-03-14', '2027-03-20', '14-20 Mar'),
+  createScheduledEvent('ras-mohamed', '2027-03-15', '2027-03-15', '15 Mar'),
 ];
 
 // Helper: Generate Google Calendar Link
 export function createGoogleCalendarUrl(event: EventDateSchedule): string {
   const startParam = event.startIso.replace(/-/g, '');
-  // Google Calendar all-day end date is exclusive, so add 1 day or use endIso
-  const endParam = event.endIso.replace(/-/g, '');
+  const exclusiveEnd = new Date(`${event.endIso}T00:00:00Z`);
+  exclusiveEnd.setUTCDate(exclusiveEnd.getUTCDate() + 1);
+  const endParam = exclusiveEnd.toISOString().slice(0, 10).replace(/-/g, '');
+  const location = event.location ?? siteConfig.location.town;
+  const price = event.priceEur === undefined ? 'Confirm with us' : `€${event.priceEur}`;
   const url = new URL('https://calendar.google.com/calendar/render');
   url.searchParams.set('action', 'TEMPLATE');
   url.searchParams.set('text', `Freedive Dahab - ${event.eventTitle} (${event.dateLabel})`);
   url.searchParams.set('dates', `${startParam}/${endParam}`);
   url.searchParams.set(
     'details',
-    `Freedive Dahab Official 2026 Scheduled Event: ${event.eventTitle}\nDuration: ${event.durationDays} days\nPrice: €${event.priceEur}\nLocation: ${event.location}\nBook online at: https://freedivedahab.com/#calendar\nDirect WhatsApp / Contact: +20 100 123 4567 | info@freedivedahab.com`
+    `Freedive Dahab Scheduled Event: ${event.eventTitle}\nDuration: ${event.durationDays} days\nPrice: ${price}\nLocation: ${location}\nBook online at: https://freedivedahab.com/#calendar\nContact: ${siteConfig.contact.phone} | ${siteConfig.contact.email}`
   );
-  url.searchParams.set('location', `${event.location}, Dahab, South Sinai, Egypt`);
+  url.searchParams.set('location', location);
   return url.toString();
 }
 
 // Helper: Download iCal (.ics) file
 export function exportToIcs(event: EventDateSchedule) {
   const startParam = event.startIso.replace(/-/g, '');
-  const endParam = event.endIso.replace(/-/g, '');
+  const exclusiveEnd = new Date(`${event.endIso}T00:00:00Z`);
+  exclusiveEnd.setUTCDate(exclusiveEnd.getUTCDate() + 1);
+  const endParam = exclusiveEnd.toISOString().slice(0, 10).replace(/-/g, '');
   const nowStamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+  const location = event.location ?? siteConfig.location.town;
 
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Freedive Dahab//2026 Events Calendar//EN',
+    'PRODID:-//Freedive Dahab//Events Calendar//EN',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     'BEGIN:VEVENT',
@@ -2192,8 +2020,8 @@ export function exportToIcs(event: EventDateSchedule) {
     `DTSTART;VALUE=DATE:${startParam}`,
     `DTEND;VALUE=DATE:${endParam}`,
     `SUMMARY:Freedive Dahab: ${event.eventTitle}`,
-    `DESCRIPTION:${event.eventTitle} - ${event.dateLabel}. Location: ${event.location}. Bookings: info@freedivedahab.com`,
-    `LOCATION:${event.location}, Dahab, Egypt`,
+    `DESCRIPTION:${event.eventTitle} - ${event.dateLabel}. Location: ${location}. Bookings: ${siteConfig.contact.email}`,
+    `LOCATION:${location}`,
     'STATUS:CONFIRMED',
     'END:VEVENT',
     'END:VCALENDAR',

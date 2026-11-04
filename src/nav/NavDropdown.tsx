@@ -7,14 +7,12 @@ import {
   type ReactNode,
 } from 'react';
 import { AnimatePresence, MotionConfig, motion, type Variants } from 'framer-motion';
-import { MapPin } from 'lucide-react';
 import type { PageType } from '../types';
 
 export interface MenuLink {
   label: string;
   page?: PageType;
   sectionId?: string;
-  icon?: 'brand' | 'location';
 }
 
 export interface MenuGroup {
@@ -28,7 +26,6 @@ export interface MenuDefinition {
   id: string;
   label: string;
   page: PageType;
-  icon: string;
   columns: MenuBlock[][];
   wide?: boolean;
   right?: boolean;
@@ -38,8 +35,7 @@ export const L = (
   label: string,
   page?: PageType,
   sectionId?: string,
-  icon?: MenuLink['icon'],
-): MenuLink => ({ label, page, sectionId, icon });
+): MenuLink => ({ label, page, sectionId });
 
 export const G = (group: string, items: MenuLink[]): MenuGroup => ({ group, items });
 
@@ -50,21 +46,6 @@ export const FOCUS =
   'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0a5c8c]';
 const HEADER_FOCUS =
   'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#6bbbe8]';
-
-const MENU_ICONS = [
-  '/icons/diver.png',
-  '/icons/mask-snorkel.png',
-  '/icons/diving-goggles.png',
-  '/icons/diving-watch.png',
-  '/icons/wet-suit.png',
-  '/icons/swimmer.png',
-  '/icons/diving-suit.png',
-];
-
-export function menuItemIcon(menuId: string, index: number): string {
-  const menuOffset = [...menuId].reduce((total, character) => total + character.charCodeAt(0), 0);
-  return MENU_ICONS[(menuOffset + index) % MENU_ICONS.length];
-}
 
 interface NavigationContextValue {
   openId: string | null;
@@ -108,49 +89,6 @@ function useNavigationContext() {
   const context = useContext(NavigationContext);
   if (!context) throw new Error('Navigation menus must be rendered inside NavProvider.');
   return context;
-}
-
-export function MaskIcon({
-  src,
-  className = 'size-[18px]',
-}: {
-  src: string;
-  className?: string;
-}) {
-  return (
-    <span
-      aria-hidden="true"
-      className={`inline-block shrink-0 bg-current ${className}`}
-      style={{
-        WebkitMaskImage: `url("${src}")`,
-        maskImage: `url("${src}")`,
-        WebkitMaskRepeat: 'no-repeat',
-        maskRepeat: 'no-repeat',
-        WebkitMaskPosition: 'center',
-        maskPosition: 'center',
-        WebkitMaskSize: 'contain',
-        maskSize: 'contain',
-      }}
-    />
-  );
-}
-
-export function MenuItemIcon({
-  menuId,
-  index,
-  icon,
-}: {
-  menuId: string;
-  index: number;
-  icon?: MenuLink['icon'];
-}) {
-  if (icon === 'brand') {
-    return <img src="/logo-freedive-dahab.png" alt="" className="size-[18px] shrink-0 object-contain" />;
-  }
-  if (icon === 'location') {
-    return <MapPin className="size-[18px] shrink-0 text-current" aria-hidden="true" />;
-  }
-  return <MaskIcon src={menuItemIcon(menuId, index)} className="size-[18px] shrink-0" />;
 }
 
 const panelVariants: Variants = {
@@ -198,11 +136,8 @@ function Panel({
               onSelect(item);
             }
           }}
-          className={`group/row flex min-h-11 items-center gap-2.5 rounded-lg px-3 py-2.5 font-alata text-sm font-semibold leading-tight tracking-[0.06em] transition-colors uppercase ${OCEAN_TEXT} ${HOVER_BG} ${FOCUS}`}
+          className={`group/row flex min-h-11 items-center rounded-lg px-3 py-2.5 font-alata text-sm font-semibold leading-tight tracking-[0.06em] transition-colors uppercase ${OCEAN_TEXT} ${HOVER_BG} ${FOCUS}`}
         >
-          <span className="transition-transform duration-200 group-hover/row:scale-110 motion-reduce:transition-none">
-            <MenuItemIcon menuId={menu.id} index={index} icon={item.icon} />
-          </span>
           {item.label}
         </a>
       </motion.li>

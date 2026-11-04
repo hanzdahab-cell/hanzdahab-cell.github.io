@@ -8,9 +8,8 @@ import {
   freedivingGalleryPhotos,
 } from '../../data/courseMedia';
 import { Activity, Package, PackageProgram, PageType, RoomType } from '../../types';
-import { PhotoCarousel } from '../ui/PhotoCarousel';
 import { SectionHero } from '../ui/SectionHero';
-import { OfferingCardStack } from '../ui/OfferingCardStack';
+import { GalleryCarousel, type GallerySlide } from '../ui/GalleryCarousel';
 import { getPackageDetailGalleryItems } from '../../data/detailGalleries';
 
 type OfferingKind = 'package' | 'room' | 'activity';
@@ -34,6 +33,7 @@ interface OfferingContent {
   bookingId: string;
   programs?: PackageProgram[];
   rateNote?: string;
+  longDescription?: string[];
   extraActivities?: { title: string; priceEur: number }[];
   bookingNotes?: string[];
 }
@@ -93,7 +93,7 @@ function activityContent(
     subtitle: activity.duration,
     description: activity.description,
     duration: activity.duration,
-    price: formatPrice(activity.priceEur, currency),
+    price: activity.priceLabel ?? formatPrice(activity.priceEur, currency),
     images: [
       toGalleryImage(activity.image.url, activity.image.alt),
       ...additionalPhotos.slice(0, 3),
@@ -104,6 +104,7 @@ function activityContent(
     ],
     bookingId: activity.id,
     rateNote: activity.rateNote,
+    longDescription: activity.longDescription,
     bookingNotes: activity.bookingNotes,
   };
 }
@@ -225,19 +226,26 @@ export function OfferingDetailPage({
 
       <div className="mx-auto max-w-7xl px-5 pt-10 sm:px-6 sm:pt-14">
         {kind === 'package' ? (
-          <OfferingCardStack
-            label="Package photo gallery"
-            title={`${content.title} gallery`}
-            description="Swipe or use the controls to view the package photos."
-            items={packageGalleryItems}
-          />
+          <GalleryCarousel items={packageGalleryItems} label={`${content.title} photo gallery`} />
         ) : (
           <section aria-label={`${content.title} photo gallery`} className="mb-12">
-            <PhotoCarousel
-              images={content.images}
+            <GalleryCarousel
+              items={content.images.map((image, index): GallerySlide => ({
+                id: `${slug}-gallery-${index + 1}`,
+                title: content.title,
+                imageSrc: image.src,
+                imageAlt: image.alt,
+              }))}
               label={`${content.title} photo gallery`}
-              className="aspect-[4/3] min-h-[280px] rounded-2xl sm:aspect-[16/10]"
             />
+          </section>
+        )}
+
+        {content.longDescription && (
+          <section aria-label={`${content.title} details`} className="mx-auto mt-10 max-w-4xl space-y-5">
+            {content.longDescription.map((paragraph) => (
+              <p key={paragraph} className="text-base leading-relaxed text-white/80">{paragraph}</p>
+            ))}
           </section>
         )}
 
@@ -256,7 +264,7 @@ export function OfferingDetailPage({
                   <p className="mt-3 text-sm leading-relaxed text-white/75">{program.overview}</p>
                   {program.prices.length > 0 && (
                     <div className="mt-5 space-y-2 border-y border-white/10 py-4">
-                      <h4 className="text-xs font-semibold uppercase tracking-wide text-white/60">Rates in the supplied brochure</h4>
+                      <h4 className="text-xs font-semibold uppercase tracking-wide text-white/60">Prices</h4>
                       {program.prices.map((price) => (
                         <div key={price.label} className="flex items-center justify-between gap-4 text-sm">
                           <span className="text-white/75">{price.label}</span>
@@ -265,10 +273,12 @@ export function OfferingDetailPage({
                       ))}
                     </div>
                   )}
-                  <h4 className="mt-5 text-xs font-semibold uppercase tracking-wide text-white/60">
-                    Day-by-day outline
-                  </h4>
-                  <ol className="mt-3 space-y-3">
+                  {program.schedule.length > 0 && (
+                    <>
+                      <h4 className="mt-5 text-xs font-semibold uppercase tracking-wide text-white/60">
+                        Day-by-day outline
+                      </h4>
+                      <ol className="mt-3 space-y-3">
                     {program.schedule.map((day, index) => {
                       const period = day.match(/^(Day \d+|Month \d+|Months \d+[–-]\d+)/)?.[0];
                       const description = period
@@ -282,7 +292,9 @@ export function OfferingDetailPage({
                         <span>{description}</span>
                       </li>
                     )})}
-                  </ol>
+                      </ol>
+                    </>
+                  )}
                 </section>
               ))}
             </div>
@@ -291,7 +303,7 @@ export function OfferingDetailPage({
 
         {content.extraActivities && (
           <section className="mt-6 rounded-2xl border border-white/10 bg-[#0A2943] p-6 sm:p-8">
-            <h2 className="font-bebas text-3xl">Optional activities listed in the brochure</h2>
+            <h2 className="font-bebas text-3xl">Optional activities</h2>
             <ul className="mt-5 grid gap-3 sm:grid-cols-2">
               {content.extraActivities.map((activity) => (
                 <li key={activity.title} className="flex items-center justify-between gap-4 text-sm">

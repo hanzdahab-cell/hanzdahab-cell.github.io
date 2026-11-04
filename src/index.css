@@ -519,7 +519,7 @@ html[dir="rtl"] .font-arabic-body {
     backdrop-filter 360ms ease;
 }
 
-.site-header--home {
+.site-header--overlay {
   margin-bottom: -4rem;
   border-bottom: 0;
   background: linear-gradient(180deg, rgb(8 31 53 / 0.72), rgb(8 31 53 / 0.42));
@@ -528,7 +528,7 @@ html[dir="rtl"] .font-arabic-body {
   backdrop-filter: blur(10px);
 }
 
-.site-header--home[data-scrolled='true'] {
+.site-header--overlay[data-scrolled='true'] {
   border-bottom: 0;
   background-color: rgb(8 31 53 / 0.9);
   box-shadow: 0 12px 28px rgb(0 0 0 / 0.26);
