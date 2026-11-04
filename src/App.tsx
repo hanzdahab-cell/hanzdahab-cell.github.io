@@ -305,16 +305,6 @@ export default function App() {
         {/* ========================================================= */}
         {currentPage === 'experience' && (
           <div className="page-dive-in">
-            <PageHeader
-              title="Red Sea Expeditions & Safaris"
-              subtitle="Immerse yourself in world-class boat expeditions to Ras Mohamed National Park, the legendary Dahab Blue Hole arch, bioluminescent night dives, and Bedouin desert camps."
-              badge="Red Sea Marine Sanctuary Expeditions"
-              currentPage="experience"
-              onNavigate={navigateTo}
-              onOpenBooking={() => handleOpenBooking()}
-              ctaText="Inquire for Safari"
-            />
-
             <ActivitiesSection
               onOpenBooking={handleOpenBooking}
               currency={currency}

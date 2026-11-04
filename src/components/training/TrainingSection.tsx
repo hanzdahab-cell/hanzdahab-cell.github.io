@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Compass, Waves, Target, Activity, ShieldCheck, CheckCircle2, ArrowRight, Clock, Award, Users, MapPin } from 'lucide-react';
 import { PageType } from '../../types';
-import { OfferingCardStack } from '../ui/OfferingCardStack';
 import { SectionHero } from '../ui/SectionHero';
 
 interface TrainingSectionProps {
@@ -24,6 +23,8 @@ interface TrainingModule {
   siteId: string;
   imageSrc: string;
   imageAlt: string;
+  cardImageSrc?: string;
+  cardImageAlt?: string;
 }
 
 export function TrainingSection({ onOpenBooking, currency = 'EUR', onNavigate }: TrainingSectionProps) {
@@ -49,6 +50,8 @@ export function TrainingSection({ onOpenBooking, currency = 'EUR', onNavigate }:
       tag: 'DAILY SESSIONS',
       imageSrc: '/images/story-carousel/training-line.jpg',
       imageAlt: 'Freediver training beside a line in the Red Sea',
+      cardImageSrc: '/images/cards/training/blue-hole-training.webp',
+      cardImageAlt: 'Freedive Dahab Blue Hole training poster',
     },
     equalization: {
       id: 'equalization-lab',
@@ -69,6 +72,8 @@ export function TrainingSection({ onOpenBooking, currency = 'EUR', onNavigate }:
       tag: 'MASTERCLASS',
       imageSrc: '/courses/mouthfill-workshop.jpg',
       imageAlt: 'Freediver practising equalisation in open water',
+      cardImageSrc: '/images/cards/training/lighthouse-training.webp',
+      cardImageAlt: 'Freedive Dahab Lighthouse training poster',
     },
     pool: {
       id: 'pool-apnea',
@@ -113,19 +118,12 @@ export function TrainingSection({ onOpenBooking, currency = 'EUR', onNavigate }:
   };
 
   const current = trainingModules[activeTab];
-  const trainingStackItems = Object.entries(trainingModules).map(([tabId, module]) => ({
-    id: module.id,
-    title: module.title,
-    description: module.description,
-    imageSrc: module.imageSrc,
-    imageAlt: module.imageAlt,
-    tag: module.tag,
-    ctaLabel: 'View training focus',
-    onAction: () => {
-      setActiveTab(tabId as typeof activeTab);
-      document.getElementById('training-active-module')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    },
-  }));
+  const trainingCards: { id: typeof activeTab; module: TrainingModule }[] = [
+    { id: 'depth', module: trainingModules.depth },
+    { id: 'equalization', module: trainingModules.equalization },
+    { id: 'pool', module: trainingModules.pool },
+    { id: 'coaching', module: trainingModules.coaching },
+  ];
 
   const handleScrollToMap = () => {
     const elem = document.getElementById('coastline-map');
@@ -157,12 +155,61 @@ export function TrainingSection({ onOpenBooking, currency = 'EUR', onNavigate }:
       </SectionHero>
 
       <div className="max-w-7xl mx-auto relative z-10">
-        <OfferingCardStack
-          label="Coached training"
-          title="Choose a training focus"
-          description="Browse the available training options, then jump to the matching focus and session information below."
-          items={trainingStackItems}
-        />
+        <div className="mb-12 grid grid-cols-1 items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          {trainingCards.map(({ id, module }) => {
+            const isActive = activeTab === id;
+            return (
+              <article
+                key={module.id}
+                className={`group flex h-full flex-col overflow-hidden rounded-2xl border bg-[#0A2943] transition-colors duration-300 ${
+                  isActive
+                    ? 'border-cyan-300/60'
+                    : 'border-ocean-pale/10 hover:border-ocean-light/50'
+                }`}
+              >
+                <div className="relative aspect-[16/10] overflow-hidden rounded-t-2xl bg-[#081F35]">
+                  <img
+                    src={module.cardImageSrc ?? module.imageSrc}
+                    alt={module.cardImageAlt ?? module.imageAlt}
+                    className="h-full w-full object-contain"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <span className="absolute left-3 top-3 rounded-full border border-white/35 bg-[#081F35]/75 px-3 py-1 text-[10px] font-mono uppercase tracking-widest text-white backdrop-blur">
+                    {module.tag}
+                  </span>
+                </div>
+                <div className="flex flex-1 flex-col p-5">
+                  <h2 className="font-serif text-xl font-bold leading-snug text-white sm:text-2xl">
+                    {module.title}
+                  </h2>
+                  <p className="mt-2 text-xs uppercase tracking-wide text-cyan-200">
+                    {module.subtitle}
+                  </p>
+                  <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-slate-300">
+                    {module.description}
+                  </p>
+                  <div className="mt-auto flex flex-wrap gap-x-4 gap-y-2 border-t border-ocean-pale/10 pt-4 text-xs text-slate-300">
+                    <span>{module.duration}</span>
+                    <span>{module.depth}</span>
+                  </div>
+                  <button
+                    type="button"
+                    aria-pressed={isActive}
+                    onClick={() => {
+                      setActiveTab(id);
+                      document.getElementById('training-active-module')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }}
+                    className="mt-4 inline-flex min-h-11 items-center justify-between gap-3 rounded-lg border border-white/45 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-white transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  >
+                    <span>View training focus</span>
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                </div>
+              </article>
+            );
+          })}
+        </div>
 
         {/* Tab Navigation */}
         <div id="training-modules" className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-12 scroll-mt-32">
@@ -178,7 +225,7 @@ export function TrainingSection({ onOpenBooking, currency = 'EUR', onNavigate }:
               <button
                 key={tab.id}
                 id={tab.anchor}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as typeof activeTab)}
                 className={`flex items-center gap-2 px-5 py-3 rounded-xl text-xs sm:text-sm font-sans font-medium transition-all duration-200 cursor-pointer ${
                   isActive
                     ? 'bg-cyan-500/20 border border-cyan-400 text-white shadow-[0_0_20px_rgba(56,189,248,0.25)]'
@@ -248,7 +295,7 @@ export function TrainingSection({ onOpenBooking, currency = 'EUR', onNavigate }:
               </div>
 
               <div className="pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
-                <div className="text-xs text-slate-400">
+                <div className="text-xs text-cyan-100/80">
                   <span className="text-slate-300 font-semibold">Recommended for:</span> {current.recommendedFor}
                 </div>
 

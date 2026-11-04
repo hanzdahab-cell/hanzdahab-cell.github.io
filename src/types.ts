@@ -144,6 +144,7 @@ export interface Activity {
   description: string;
   duration: string;
   priceEur: number;
+  priceEgp?: number;
   image: ImageAsset;
   includes: string[];
   highlights: string[];

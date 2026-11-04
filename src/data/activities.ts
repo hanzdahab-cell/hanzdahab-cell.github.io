@@ -7,7 +7,7 @@ export const activitiesData: Activity[] = [
     description: "A full-day shore-based freediving trip from Dahab to Ras Mohamed National Park, about 100 km from town. Explore the shallow entry cave at Shark Observatory, reef caves along the coast, and Yolanda Reef, where schools of fish, turtles, rays, moray eels and napoleons may be encountered. Confident freedivers can explore deeper sections while beginners can stay shallow.",
     duration: "Full day; early morning departure",
     priceEur: 78,
-    image: { url: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=80", alt: "Ras Mohamed coral reef with freedivers" },
+    image: { url: "/images/cards/activities/ras-mohamed.webp", alt: "Freedive Dahab Ras Mohammed reef trip poster" },
     includes: [
       "Marine park entrance fees included",
       "At least one Freedive Dahab instructor as freediving guide",
@@ -56,7 +56,7 @@ export const activitiesData: Activity[] = [
     description: "Experience the Red Sea's nocturnal transformation. Bioluminescent plankton trails, hunting lionfish, sleeping parrotfish in protective mucus cocoons, and the eerie meditative beauty of the reef at night. Limited to 4 divers per guide.",
     duration: "Evening (19:30 - 21:30)",
     priceEur: 65,
-    image: { url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80", alt: "Night freediving with bioluminescence trails" },
+    image: { url: "/images/cards/activities/night-dive.webp", alt: "Freedive Dahab night dive poster with a sea turtle" },
     includes: [
       "Powerful underwater dive torches (primary + backup)",
       "Professional night diving instructor guide",
@@ -78,7 +78,7 @@ export const activitiesData: Activity[] = [
     description: "4x4 mountain expedition into the Sinai canyons for an authentic Bedouin evening. Sunset over golden granite peaks, camel ride, stargazing under zero light pollution with astronomer guide, and underground slow-roasted Zarb dinner.",
     duration: "Evening (15:00 - 22:00)",
     priceEur: 75,
-    image: { url: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1200&q=80", alt: "Bedouin camp in Sinai mountains at sunset" },
+    image: { url: "/images/cards/activities/desert-bbq.webp", alt: "Freedive Dahab BBQ night in the Sinai desert poster" },
     includes: [
       "4x4 Land Cruiser transport from Dahab",
       "Camel ride at sunset over dunes",
@@ -94,5 +94,29 @@ export const activitiesData: Activity[] = [
       "Perfect rest day activity for freedivers",
       "Great for non-diving companions"
     ]
+  },
+  {
+    id: "ice-bath",
+    title: "Ice Bath",
+    description: "Cool off, calm your mind and end your day refreshed. A guided cold-water session where you practice slow breathing and relaxation, the same skills you use in a breath-hold.",
+    duration: "60 minutes · Wednesdays at 3:00 PM",
+    priceEur: 200 / 52,
+    priceEgp: 200,
+    image: { url: "/images/cards/activities/ice-bath.webp", alt: "Freedive Dahab rooftop ice bath session poster" },
+    includes: [
+      "Instructor guidance",
+      "The School Rooftop",
+      "Every Wednesday at 3:00 PM",
+    ],
+    highlights: [
+      "Guided by a Freedive Dahab instructor",
+      "Coaching on breathing, entry and timing",
+      "Build up gradually at your own pace",
+      "Get out whenever you want",
+      "A great way to finish a training day",
+    ],
+    bookingNotes: [
+      "This session is not suitable for everyone. If you have a heart condition, high blood pressure or any other medical condition, tell us before booking and ask your doctor first.",
+    ],
   }
 ];

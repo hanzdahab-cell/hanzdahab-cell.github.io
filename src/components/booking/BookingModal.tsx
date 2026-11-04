@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { X, Calendar, ChevronRight, Send, CheckCircle2 } from 'lucide-react';
 import { ssiCourses, specialtyCourses, instructorCourses } from '../../data/courses';
 import { packagesData } from '../../data/packages';
+import { activitiesData } from '../../data/activities';
 import { roomTypes } from '../../data/accommodation';
 import { useLanguage } from '../../context/LanguageContext';
 import { setPageScrollLocked } from '../../utils/useSmoothScroll';
@@ -92,6 +93,15 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
     {
       label: 'Trainings',
       offerings: [{ id: 'training-session', title: 'Daily Line Training Buoy Pack (5 Sessions)', priceEur: 155 }],
+    },
+    {
+      label: 'Experiences',
+      offerings: activitiesData.map(activity => ({
+        id: activity.id,
+        title: activity.title,
+        priceEur: activity.priceEur,
+        rateNote: activity.rateNote,
+      })),
     },
     {
       label: 'Packages',
