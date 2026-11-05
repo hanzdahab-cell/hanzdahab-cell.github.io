@@ -1138,3 +1138,14 @@ html[dir="rtl"] .font-arabic-body {
     opacity: 0.25;
   }
 }
+
+.fd-w{border:1px solid rgba(1,52,114,.25);border-radius:8px;overflow-x:auto;margin:0 0 1.5rem}
+.fd-t{width:100%;border-collapse:collapse;font-size:14px;text-align:left;color:#013472;background:linear-gradient(90deg,#00b4d8,#90e0ef,#caf0f8)}
+.fd-t thead{border-bottom:1px solid rgba(1,52,114,.35)}
+.fd-t th,.fd-t td{padding:12px 24px;color:#013472}
+.fd-t thead th{font-weight:600}
+.fd-t tbody tr{border-bottom:1px solid rgba(1,52,114,.18)}
+.fd-t tbody tr:last-child{border-bottom:0}
+.fd-t tbody tr:hover{background:rgba(1,52,114,.12)}
+.fd-t tbody th{font-weight:500;white-space:nowrap}
+.fd-c{font-size:13px;color:var(--text-secondary);margin:0 0 6px}

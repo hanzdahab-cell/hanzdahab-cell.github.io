@@ -107,7 +107,7 @@ export function StoryHeroCarousel({ onNavigate }: StoryHeroCarouselProps) {
     <section
       aria-label="Freedive Dahab school story"
       aria-roledescription="carousel"
-      className="relative isolate flex min-h-[620px] items-end overflow-hidden border-b border-white/10 bg-[#081F35]/70 px-5 pb-10 pt-32 sm:min-h-[680px] sm:px-8 sm:pb-14 lg:min-h-[740px] lg:items-center lg:px-12"
+      className="relative isolate flex min-h-[50svh] items-end overflow-hidden border-b border-white/10 bg-[#081F35]/70 px-5 pb-10 pt-32 sm:px-8 sm:pb-14 lg:items-center lg:px-12"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onFocus={() => setIsFocused(true)}

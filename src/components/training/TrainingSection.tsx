@@ -1,54 +1,12 @@
 import { ArrowRight, CheckCircle2, MapPin, Waves } from 'lucide-react';
 import { PageType } from '../../types';
 import { SectionHero } from '../ui/SectionHero';
+import { PricingTable } from '../ui/PricingTable';
 
 interface TrainingSectionProps {
   onOpenBooking: (courseId?: string) => void;
   currency?: 'EUR' | 'USD' | 'EGP';
   onNavigate?: (page: PageType) => void;
-}
-
-const groupRates = [
-  { location: 'Lighthouse Bay', rows: [{ divers: '1 person', one: '€45', two: '€75' }, { divers: '2 people', one: '€45', two: '€75' }, { divers: '3 people', one: '€40 per person', two: '€70 per person' }] },
-  { location: 'Blue Hole', rows: [{ divers: '1 person', one: '€64', two: '€94' }, { divers: '2 people', one: '€64', two: '€94' }, { divers: '3 people', one: '€50 per person', two: '€80 per person' }] },
-];
-
-const trainingPackages = [
-  { duration: '2 weeks', sessions: '10 sessions', price: '€375' },
-  { duration: '3 weeks', sessions: '15 sessions', price: '€535' },
-  { duration: '4 weeks', sessions: '20 sessions', price: '€665' },
-];
-
-function RateTable({
-  caption,
-  headers,
-  rows,
-}: {
-  caption: string;
-  headers: [string, string, string];
-  rows: { label: string; first: string; second: string }[];
-}) {
-  return (
-    <div className="overflow-x-auto rounded-xl border border-white/10">
-      <table className="w-full min-w-[28rem] border-collapse text-left text-sm">
-        <caption className="bg-white/5 px-4 py-3 text-left font-semibold text-white">{caption}</caption>
-        <thead className="bg-[#071E32] text-xs uppercase tracking-wide text-slate-300">
-          <tr>
-            {headers.map((header) => <th key={header} scope="col" className="px-4 py-3 font-semibold">{header}</th>)}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr key={row.label} className="border-t border-white/10 text-slate-200">
-              <th scope="row" className="px-4 py-3 font-medium">{row.label}</th>
-              <td className="px-4 py-3">{row.first}</td>
-              <td className="px-4 py-3">{row.second}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
 }
 
 export function TrainingSection({ onOpenBooking, onNavigate }: TrainingSectionProps) {
@@ -157,14 +115,8 @@ export function TrainingSection({ onOpenBooking, onNavigate }: TrainingSectionPr
             <p className="mt-3 text-sm text-slate-300">Equipment is not included. You can rent freediving equipment at our center.</p>
           </div>
           <div className="grid gap-5 lg:grid-cols-2">
-            {groupRates.map((rate) => (
-              <RateTable
-                key={rate.location}
-                caption={rate.location}
-                headers={['Group size', '1 session', '2 sessions']}
-                rows={rate.rows.map((row) => ({ label: row.divers, first: row.one, second: row.two }))}
-              />
-            ))}
+            <PricingTable table="lighthouse-group-training" />
+            <PricingTable table="blue-hole-group-training" />
           </div>
           <p className="mt-4 rounded-xl border border-amber-200/20 bg-amber-950/20 p-4 text-sm leading-relaxed text-amber-100">
             Blue Hole prices do not include the $20 National Park entrance fee, which you pay at the gate.
@@ -177,14 +129,7 @@ export function TrainingSection({ onOpenBooking, onNavigate }: TrainingSectionPr
             <h2 id="private-rates-heading" className="mt-2 font-bebas text-4xl text-white sm:text-5xl">Private sessions</h2>
             <p className="mt-4 leading-relaxed text-slate-300">Your own instructor, your own pace.</p>
           </div>
-          <RateTable
-            caption="Private session rates, per person"
-            headers={['Location', 'One session', 'Two sessions']}
-            rows={[
-              { label: 'Lighthouse', first: '€60 per person', second: '€105 per person' },
-              { label: 'Blue Hole', first: '€80 per person', second: '€125 per person' },
-            ]}
-          />
+          <PricingTable table="private-sessions" />
         </section>
 
         <section id="training-modules" aria-labelledby="advanced-training-heading" className="scroll-mt-28 rounded-3xl border border-cyan-200/15 bg-gradient-to-br from-[#0B2C4A] to-[#081F35] p-6 sm:p-10">
@@ -193,24 +138,8 @@ export function TrainingSection({ onOpenBooking, onNavigate }: TrainingSectionPr
           <p className="mt-4 max-w-3xl leading-relaxed text-slate-300">
             Dive as much as you want at a convenient rate. You need to be at least an Advanced Freediver (Level 2) or equivalent. Packages use group sessions already on the schedule, so training locations may vary with availability. On rest days, you can still dive with other trainees from our center and enjoy the community.
           </p>
-          <div className="mt-7 overflow-x-auto rounded-xl border border-white/10">
-            <table className="w-full min-w-[32rem] text-left text-sm">
-              <caption className="sr-only">Advanced training packages and prices</caption>
-              <thead className="bg-[#071E32] text-xs uppercase tracking-wide text-slate-300">
-                <tr>
-                  {['Duration', 'Sessions with an instructor', 'Price'].map((head) => <th key={head} scope="col" className="px-4 py-3">{head}</th>)}
-                </tr>
-              </thead>
-              <tbody>
-                {trainingPackages.map((item) => (
-                  <tr key={item.duration} className="border-t border-white/10 text-slate-200">
-                    <th scope="row" className="px-4 py-3 font-medium">{item.duration}</th>
-                    <td className="px-4 py-3">{item.sessions}</td>
-                    <td className="px-4 py-3 font-semibold text-white">{item.price}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="mt-7">
+            <PricingTable table="advanced-training-packages" />
           </div>
           <p className="mt-5 text-sm leading-relaxed text-slate-300">
             Looking for something more structured? Explore the{' '}

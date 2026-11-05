@@ -2,8 +2,6 @@ import { ArrowRight } from 'lucide-react';
 import { packagesData } from '../../data/packages';
 import { PageType } from '../../types';
 import { SectionHero } from '../ui/SectionHero';
-import { PhotoParallaxGallery } from '../ui/HorizontalParallaxGallery/PhotoParallaxGallery';
-import { freedivingGalleryPhotos } from '../../data/courseMedia';
 
 interface PackagesSectionProps {
   onOpenBooking: (pkgId?: string) => void;
@@ -237,12 +235,6 @@ export function PackagesSection({ onNavigate, onOpenBooking, currency, headingLe
           })}
         </div>
 
-        <div className="mt-16 sm:mt-24">
-          <PhotoParallaxGallery
-            label="Freedive Dahab package photos"
-            photos={freedivingGalleryPhotos}
-          />
-        </div>
       </div>
     </section>
   );

@@ -13,7 +13,6 @@ import { TrainingSection } from './components/training/TrainingSection';
 import { CalendarSection } from './components/calendar/CalendarSection';
 import { AccommodationSection } from './components/accommodation/AccommodationSection';
 import { PackagesSection } from './components/packages/PackagesSection';
-import { DepthShowcase } from './components/home/DepthShowcase';
 import { ActivitiesSection } from './components/activities/ActivitiesSection';
 import { BlogSection } from './components/blog/BlogSection';
 import { TestimonialsSection } from './components/testimonials/TestimonialsSection';
@@ -28,7 +27,6 @@ import { OurStoryPage } from './components/story/OurStoryPage';
 import { StoryHeroCarousel } from './components/story/StoryHeroCarousel';
 import { OfferingDetailPage } from './components/catalog/OfferingDetailPage';
 import { AccommodationBookingModal } from './components/booking/AccommodationBookingModal';
-import { PhotoParallaxGallery } from './components/ui/HorizontalParallaxGallery/PhotoParallaxGallery';
 import { scrollPageElementIntoView, scrollPageTo, useSmoothScroll } from './utils/useSmoothScroll';
 import { PageType, EventTypeId } from './types';
 import { LanguageProvider } from './context/LanguageContext';
@@ -191,31 +189,6 @@ export default function App() {
             />
 
             <FAQSection />
-            <PhotoParallaxGallery
-              label="Freedive Dahab courses and specialties photos"
-              photos={[
-                {
-                  src: '/images/detail-galleries/courses/ssi-level-1-blue-hole.webp',
-                  alt: 'Freediver training in the Blue Hole at Dahab',
-                },
-                {
-                  src: '/images/detail-galleries/courses/ssi-level-2-level2-main.jpg',
-                  alt: 'Freediving course session in the Red Sea',
-                },
-                {
-                  src: '/images/detail-galleries/courses/monofin-course.jpg',
-                  alt: 'Freediver practising monofin technique',
-                },
-                {
-                  src: '/images/detail-galleries/courses/training-techniques-dahab.webp',
-                  alt: 'Freediving training techniques in Dahab',
-                },
-                {
-                  src: '/images/detail-galleries/courses/ssi-instructor-freediving.jpg',
-                  alt: 'Freediving instructor guiding a student',
-                },
-              ]}
-            />
           </div>
         )}
 
@@ -230,34 +203,6 @@ export default function App() {
               onNavigate={navigateTo}
             />
 
-            <DepthShowcase
-              onOpenBooking={handleOpenBooking}
-            />
-            <PhotoParallaxGallery
-              label="Freedive Dahab training photos"
-              photos={[
-                {
-                  src: '/images/story-carousel/training-line.jpg',
-                  alt: 'Freediver training beside a line in the Red Sea',
-                },
-                {
-                  src: '/images/story-carousel/blue-hole-freediver.jpg',
-                  alt: 'Freediver descending on a training line at the Blue Hole',
-                },
-                {
-                  src: '/images/story-carousel/surface-session.jpg',
-                  alt: 'Freedivers practising together in calm water',
-                },
-                {
-                  src: '/images/story-carousel/training-buoy.jpg',
-                  alt: 'Freediving training buoy on the Dahab reef',
-                },
-                {
-                  src: '/images/dahab-story/line-coaching.jpg',
-                  alt: 'Instructor coaching a freediver on the line',
-                },
-              ]}
-            />
           </div>
         )}
 
@@ -353,6 +298,7 @@ export default function App() {
               onNavigate={navigateTo}
               onOpenBooking={() => handleOpenBooking()}
               ctaText="Join an Academy"
+              backgroundImages={['/images/blog/dahab-lighthouse-bay-freediving-reef.webp']}
             />
 
             <BlogSection />

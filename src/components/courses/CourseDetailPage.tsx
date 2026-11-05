@@ -19,6 +19,7 @@ import { courseCardArtworkById, ssiCourseArtworkBySlug } from '../../data/course
 import { GalleryCarousel } from '../ui/GalleryCarousel';
 import { getCourseDetailGalleryItems } from '../../data/detailGalleries';
 import { scrollPageElementIntoView } from '../../utils/useSmoothScroll';
+import { PricingTable } from '../ui/PricingTable';
 
 interface CourseDetailPageProps {
   courseSlug: string;
@@ -400,6 +401,9 @@ export function CourseDetailPage({
                   </div>
                 </div>
 
+                {course.id === 'spec-monofin' && <PricingTable table="monofin-course" />}
+                {course.id === 'spec-no-fins' && <PricingTable table="no-fins-course" />}
+
                 <button
                   onClick={() => onOpenBooking(course.id)}
                   className="fd-button flex w-full items-center justify-center gap-2 rounded-xl py-4 text-xs font-bold uppercase tracking-[0.15em]"
@@ -407,7 +411,7 @@ export function CourseDetailPage({
                   <span>{isInstructor ? 'Apply Now' : 'Reserve Your Spot'}</span>
                   <ChevronRight className="w-4 h-4" />
                 </button>
-                {'priceNote' in course && course.priceNote && (
+                {'priceNote' in course && course.priceNote && course.id !== 'spec-monofin' && course.id !== 'spec-no-fins' && (
                   <p className="text-xs leading-relaxed text-slate-300">{course.priceNote}</p>
                 )}
 

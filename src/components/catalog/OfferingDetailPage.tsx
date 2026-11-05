@@ -10,6 +10,7 @@ import {
 import { Activity, Package, PackageProgram, PageType, RoomType } from '../../types';
 import { SectionHero } from '../ui/SectionHero';
 import { GalleryCarousel, type GallerySlide } from '../ui/GalleryCarousel';
+import { PricingTable } from '../ui/PricingTable';
 import { getPackageDetailGalleryItems } from '../../data/detailGalleries';
 
 type OfferingKind = 'package' | 'room' | 'activity';
@@ -324,7 +325,15 @@ export function OfferingDetailPage({
                   <p className="text-xs font-medium text-[#A9D2EC]">{program.duration}</p>
                   <h3 className="mt-2 font-bebas text-3xl">{program.title}</h3>
                   <p className="mt-3 text-sm leading-relaxed text-white/75">{program.overview}</p>
-                  {program.prices.length > 0 && (
+                  {kind === 'package' && slug === 'depth-training-week' && program.title === 'Training Week' ? (
+                    <div className="mt-5">
+                      <PricingTable table="training-week" />
+                    </div>
+                  ) : kind === 'package' && slug === 'master-freediver-immersion' && program.title === 'Basic Master' ? (
+                    <div className="mt-5">
+                      <PricingTable table="basic-master" />
+                    </div>
+                  ) : program.prices.length > 0 && (
                     <div className="mt-5 space-y-2 border-y border-white/10 py-4">
                       <h4 className="text-xs font-semibold uppercase tracking-wide text-white/60">Prices</h4>
                       {program.prices.map((price) => (
@@ -389,6 +398,9 @@ export function OfferingDetailPage({
                 </li>
               ))}
             </ul>
+            {kind === 'package' && slug === 'master-freediver-immersion' && (
+              <PricingTable table="master-equipment-rental" />
+            )}
           </section>
         )}
 
@@ -397,7 +409,9 @@ export function OfferingDetailPage({
             <section key={section.title} className="rounded-2xl border border-white/10 bg-[#0A2943] p-6 sm:p-8">
               <h2 className="font-bebas text-3xl tracking-wide">{section.title}</h2>
               <ul className="mt-5 space-y-3">
-                {section.items.map((item) => (
+                {section.items
+                  .filter((item) => !(kind === 'package' && slug === 'master-freediver-immersion' && item.startsWith('Optional equipment rental:')))
+                  .map((item) => (
                   <li key={item} className="flex items-start gap-3 text-sm leading-relaxed text-white/75">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#A9D2EC]" aria-hidden="true" />
                     <span>{item}</span>

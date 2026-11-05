@@ -1,8 +1,6 @@
 import { activitiesData } from '../../data/activities';
 import { Compass, Clock, Check, ArrowRight } from 'lucide-react';
 import { PageType } from '../../types';
-import { desertExperiencePhotos, freedivingGalleryPhotos } from '../../data/courseMedia';
-import { PhotoParallaxGallery } from '../ui/HorizontalParallaxGallery/PhotoParallaxGallery';
 import { SectionHero } from '../ui/SectionHero';
 
 interface ActivitiesSectionProps {
@@ -143,12 +141,6 @@ export function ActivitiesSection({ onOpenBooking, currency, onNavigate }: Activ
           )})}
         </div>
 
-        <div className="mt-16 sm:mt-24">
-          <PhotoParallaxGallery
-            label="Freedive Dahab activities photos"
-            photos={[...freedivingGalleryPhotos.slice(0, 3), ...desertExperiencePhotos]}
-          />
-        </div>
       </div>
     </section>
   );
