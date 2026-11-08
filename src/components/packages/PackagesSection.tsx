@@ -126,7 +126,7 @@ export function PackagesSection({ onNavigate, onOpenBooking, currency, headingLe
             Freediving programs &amp; training weeks
           </div>
           <PageHeading className="font-bebas text-5xl leading-tight tracking-[0.05em] text-white sm:text-6xl md:text-7xl">
-            Freediving packages in <span className="text-cyan-200">Dahab</span>
+            WHY FREEDIVE DAHAB PACKAGES ?
           </PageHeading>
           <div className="max-w-3xl space-y-4">
             <p className="text-left text-base leading-relaxed text-slate-100 sm:text-lg">
@@ -168,7 +168,7 @@ export function PackagesSection({ onNavigate, onOpenBooking, currency, headingLe
           </p>
         </div>
 
-        <div className="grid auto-rows-fr grid-cols-1 items-stretch gap-4 sm:gap-5 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-6xl auto-rows-fr grid-cols-1 items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {PACKAGE_CARDS.map((card) => {
             const packageInfo = packagesData.find((pkg) => pkg.id === card.packageId);
             if (!packageInfo) return null;
@@ -176,7 +176,9 @@ export function PackagesSection({ onNavigate, onOpenBooking, currency, headingLe
             const program = card.programIndex === undefined
               ? undefined
               : packageInfo.programs?.[card.programIndex];
-            const detailPage = `package-${packageInfo.slug}` as PageType;
+            const detailPage = `package-${packageInfo.slug}${
+              card.programIndex === undefined ? '' : `-program-${card.programIndex}`
+            }` as PageType;
 
             return (
               <a

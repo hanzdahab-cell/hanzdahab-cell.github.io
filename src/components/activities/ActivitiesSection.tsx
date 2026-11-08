@@ -73,15 +73,22 @@ export function ActivitiesSection({ onOpenBooking, currency, onNavigate }: Activ
             >
               <div className="flex flex-1 flex-col">
                 <div className="relative aspect-[16/10] overflow-hidden">
-                  <img
-                    src={act.image.url}
-                    alt={act.image.alt}
-                    className="absolute inset-0 h-full w-full object-contain"
-                    loading="lazy"
-                    decoding="async"
-                  />
+                  <button
+                    type="button"
+                    onClick={() => onNavigate(`activity-${act.id}`)}
+                    aria-label={`View ${act.title} details`}
+                    className="absolute inset-0 h-full w-full focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-white"
+                  >
+                    <img
+                      src={act.image.url}
+                      alt=""
+                      className="absolute inset-0 h-full w-full object-contain"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </button>
                   
-                  <div className="absolute top-4 left-4">
+                  <div className="pointer-events-none absolute top-4 left-4">
                     <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-xs font-mono text-cyan-300 flex items-center gap-1.5">
                       <Clock className="w-3.5 h-3.5 text-cyan-400" />
                       {act.duration}
@@ -91,7 +98,13 @@ export function ActivitiesSection({ onOpenBooking, currency, onNavigate }: Activ
 
                 <div className="flex flex-1 flex-col space-y-4 p-6 sm:p-8">
                   <h3 className="font-serif text-2xl font-bold text-white group-hover:text-cyan-300 transition-colors">
-                    {act.title}
+                    <button
+                      type="button"
+                      onClick={() => onNavigate(`activity-${act.id}`)}
+                      className="text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    >
+                      {act.title}
+                    </button>
                   </h3>
 
                   <p className="text-xs sm:text-sm text-slate-400 leading-relaxed font-light">

@@ -72,7 +72,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
       .filter((course) =>
         course.id === 'ssi-itc' ||
         course.id === 'ssi-advanced-instructor' ||
-        course.id === 'ssi-level-3-instructor-update',
+        course.id === 'ssi-performance-freediving-instructor',
       )
       .map((course) => ({
         id: course.id,
@@ -88,16 +88,6 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
         courseId: course.id,
         courseSlug: course.slug,
       })),
-    {
-      id: 'ssi-performance-freediving-instructor',
-      title: 'SSI Performance Freediving Instructor Course',
-      duration: 'Schedule on request',
-      description: 'Ask our team about course format, prerequisites, and upcoming dates.',
-      image: {
-        src: '/courses/uploaded/ssi-performance-freediving-instructor-course.jpg',
-        alt: 'Artwork for the SSI Performance Freediving Instructor Course',
-      },
-    },
   ];
 
   return (
@@ -129,7 +119,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
           <GroupHeading title="Our Core Courses" />
 
           {/* Core SSI Freediver certifications */}
-          <div className="mx-auto grid max-w-6xl grid-cols-1 items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="mx-auto grid max-w-6xl auto-rows-fr grid-cols-1 items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {coreCards.map((course, idx) => (
             <TiltSurface
               key={course.id}
@@ -139,13 +129,20 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
               <>
                 {/* Card Image */}
                 <div className="fd-tilt-photo-layer relative aspect-[16/10] overflow-hidden rounded-t-2xl bg-[#081F35]">
-                  <img
-                    src={(courseCardArtworkById[course.id] ?? coreCoursePhotoById[course.id] ?? course.image).src}
-                    alt={(courseCardArtworkById[course.id] ?? coreCoursePhotoById[course.id] ?? course.image).alt}
-                    className="h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105"
-                    loading="lazy"
-                  />
-                  <div className="absolute top-4 left-4">
+                  <button
+                    type="button"
+                    onClick={() => navigateToCourse(course.slug)}
+                    aria-label={`View ${course.title} details`}
+                    className="absolute inset-0 h-full w-full focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-white"
+                  >
+                    <img
+                      src={(courseCardArtworkById[course.id] ?? coreCoursePhotoById[course.id] ?? course.image).src}
+                      alt=""
+                      className="h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </button>
+                  <div className="pointer-events-none absolute top-4 left-4">
                     <span className="rounded-full border border-white/35 bg-[#081F35]/75 px-3 py-1 text-[10px] font-mono uppercase tracking-widest text-white backdrop-blur">
                       {course.level}
                     </span>
@@ -213,7 +210,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
           <GroupHeading title="Professional Courses" />
 
           {/* Professional instructor path */}
-          <div className="mb-12 grid grid-cols-1 items-stretch gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="mb-12 grid auto-rows-fr grid-cols-1 items-stretch gap-6 md:grid-cols-2 xl:grid-cols-3">
             {professionalCards.map((course, idx) => (
               <TiltSurface
                 key={course.id}
@@ -221,13 +218,20 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
                 className="group flex h-full flex-col rounded-2xl border border-ocean-pale/10 bg-[#0A2943] transition-colors duration-300 hover:border-ocean-light/50"
               >
                 <div className="fd-tilt-photo-layer relative aspect-[16/10] overflow-hidden rounded-t-2xl bg-[#081F35]">
-                  <img
-                    src={course.image.src}
-                    alt={course.image.alt}
-                    className="h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105"
-                    loading="lazy"
-                  />
-                  <span className="absolute left-3 top-3 rounded-full border border-ocean-pale/25 bg-[#081F35]/70 px-2.5 py-1 text-[9px] font-mono uppercase tracking-widest text-ocean-pale backdrop-blur-md">
+                  <button
+                    type="button"
+                    onClick={() => course.courseSlug && navigateToCourse(course.courseSlug)}
+                    aria-label={`View ${course.title} details`}
+                    className="absolute inset-0 h-full w-full focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-white"
+                  >
+                    <img
+                      src={course.image.src}
+                      alt=""
+                      className="h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </button>
+                  <span className="pointer-events-none absolute left-3 top-3 rounded-full border border-ocean-pale/25 bg-[#081F35]/70 px-2.5 py-1 text-[9px] font-mono uppercase tracking-widest text-ocean-pale backdrop-blur-md">
                     {course.duration}
                   </span>
                 </div>
@@ -307,7 +311,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
         <div id="chapter-try" className="relative z-10 mt-24 scroll-mt-28 sm:mt-32">
           <GroupHeading title="Specialties" />
 
-          <div className="grid grid-cols-1 items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid auto-rows-fr grid-cols-1 items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {specialtyCards.map((course, idx) => (
               <TiltSurface
                 key={course.id}
@@ -315,13 +319,20 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
                 className="group flex h-full flex-col rounded-2xl border border-ocean-pale/10 bg-[#0A2943] transition-colors duration-300 hover:border-ocean-light/50"
               >
                 <div className="fd-tilt-photo-layer relative aspect-[16/10] overflow-hidden rounded-t-2xl">
-                  <img
-                    src={(courseCardArtworkById[course.id] ?? coursePhotoById[course.id] ?? course.image).src}
-                    alt={(courseCardArtworkById[course.id] ?? coursePhotoById[course.id] ?? course.image).alt}
-                    className="h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105"
-                    loading="lazy"
-                  />
-                  <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-[#081F35]/70 backdrop-blur-md border border-ocean-pale/25 text-ocean-pale text-[9px] font-mono tracking-widest uppercase">
+                  <button
+                    type="button"
+                    onClick={() => navigateToCourse(course.slug)}
+                    aria-label={`View ${course.title} details`}
+                    className="absolute inset-0 h-full w-full focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-white"
+                  >
+                    <img
+                      src={(courseCardArtworkById[course.id] ?? coursePhotoById[course.id] ?? course.image).src}
+                      alt=""
+                      className="h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </button>
+                  <span className="pointer-events-none absolute top-3 left-3 px-2.5 py-1 rounded-full bg-[#081F35]/70 backdrop-blur-md border border-ocean-pale/25 text-ocean-pale text-[9px] font-mono tracking-widest uppercase">
                     {course.durationDays} day{course.durationDays > 1 ? 's' : ''}
                   </span>
                   {(course.id === 'fdd-equalization-clinic' || course.id === 'spec-mouthfill') && (
@@ -329,7 +340,7 @@ export function CoursesSection({ onOpenBooking, onNavigate, currency }: CoursesS
                       src="/logo-freedive-dahab.png"
                       alt=""
                       aria-hidden="true"
-                      className="absolute right-3 top-3 z-10 h-16 w-20 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.75)]"
+                      className="pointer-events-none absolute right-3 top-3 z-10 h-16 w-20 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.75)]"
                     />
                   )}
                 </div>

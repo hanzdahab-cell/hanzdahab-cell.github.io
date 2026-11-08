@@ -18,7 +18,7 @@ export function BlogCard({ post, onSelect }: BlogCardProps) {
         aria-label={`Read article: ${post.title}`}
         className="group flex h-full w-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0A2943] text-left text-white shadow-[0_1px_2px_rgba(0,0,0,0.2)] transition-[transform,border-color,box-shadow] duration-[450ms] ease-out hover:-translate-y-1.5 hover:border-cyan-300/60 hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.5)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-200 motion-reduce:transform-none motion-reduce:transition-none"
       >
-        <div className="relative aspect-[1.55] w-full overflow-hidden bg-[#081F35]">
+        <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#081F35]">
           <img
             src={post.image.url}
             alt={post.image.alt}

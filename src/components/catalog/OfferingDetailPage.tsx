@@ -1,5 +1,6 @@
 import { ArrowLeft, ArrowRight, CheckCircle2, Clock, Users } from 'lucide-react';
 import { activitiesData } from '../../data/activities';
+import { specialtyCourses } from '../../data/courses';
 import { roomTypes } from '../../data/accommodation';
 import { packagesData } from '../../data/packages';
 import {
@@ -18,6 +19,7 @@ type OfferingKind = 'package' | 'room' | 'activity';
 interface OfferingDetailPageProps {
   kind: OfferingKind;
   slug: string;
+  programIndex?: number;
   currency: 'EUR' | 'USD' | 'EGP';
   onNavigate: (page: PageType) => void;
   onOpenBooking: (offeringId?: string) => void;
@@ -36,10 +38,76 @@ interface OfferingContent {
   programs?: PackageProgram[];
   rateNote?: string;
   longDescription?: string[];
-  extraActivities?: { title: string; priceEur: number }[];
   bookingNotes?: string[];
   roomDetails?: RoomType;
 }
+
+interface PackageOptionalActivity {
+  title: string;
+  priceEur: number;
+  duration: string;
+  description: string;
+  image: { url: string; alt: string };
+  highlights: string[];
+}
+
+function getActivity(id: string): Activity {
+  const activity = activitiesData.find((item) => item.id === id);
+  if (!activity) throw new Error(`Missing package optional activity: ${id}`);
+  return activity;
+}
+
+const rasMohamed = getActivity('ras-mohamed');
+const nightFreedive = getActivity('night-freediving');
+const desertBbq = getActivity('desert-sunset');
+const monofinCourse = specialtyCourses.find((course) => course.id === 'spec-monofin');
+if (!monofinCourse) throw new Error('Missing SSI Monofin Course for package optional activities.');
+
+const packageOptionalActivities: PackageOptionalActivity[] = [
+  {
+    title: 'Ras Mohamed trip',
+    priceEur: 43,
+    duration: rasMohamed.duration,
+    description: rasMohamed.description,
+    image: rasMohamed.image,
+    highlights: rasMohamed.highlights.slice(0, 2),
+  },
+  {
+    title: 'Additional training session',
+    priceEur: 18,
+    duration: 'Coached freediving session',
+    description: 'Add an extra coached freediving session to your package.',
+    image: {
+      url: '/images/story-carousel/training-line.jpg',
+      alt: 'Freediver training on a line in Dahab',
+    },
+    highlights: ['For certified freedivers', 'Shore-based training in Dahab'],
+  },
+  {
+    title: 'Night freedive',
+    priceEur: 38,
+    duration: nightFreedive.duration,
+    description: nightFreedive.description,
+    image: nightFreedive.image,
+    highlights: nightFreedive.highlights.slice(0, 2),
+  },
+  {
+    title: 'Monofin course',
+    priceEur: 60,
+    duration: `${monofinCourse.durationDays} days`,
+    description: monofinCourse.shortDesc,
+    image: monofinCourse.image,
+    highlights: monofinCourse.keySkills.slice(0, 2),
+  },
+  {
+    title: 'Desert BBQ',
+    priceEur: 20,
+    duration: desertBbq.duration,
+    description: desertBbq.description,
+    image: desertBbq.image,
+    highlights: desertBbq.highlights.slice(0, 2),
+  },
+];
 
 function formatPrice(eur: number, currency: 'EUR' | 'USD' | 'EGP') {
   if (currency === 'USD') return `$${Math.round(eur * 1.08)}`;
@@ -51,22 +119,23 @@ function toGalleryImage(src: string, alt: string): CourseGalleryImage {
   return { src, alt };
 }
 
-function packageContent(pkg: Package, currency: OfferingDetailPageProps['currency']): OfferingContent {
+function packageContent(
+  pkg: Package,
+  currency: OfferingDetailPageProps['currency'],
+  programIndex?: number,
+): OfferingContent {
+  const selectedProgram = programIndex === undefined ? undefined : pkg.programs?.[programIndex];
   return {
-    title: pkg.title,
-    subtitle: pkg.subtitle,
-    description: pkg.description ?? `A curated ${pkg.duration.toLowerCase()} Freedive Dahab stay, with coaching and logistics arranged around your time in the Red Sea.`,
-    duration: pkg.duration,
-    price: formatPrice(pkg.priceEur, currency),
-    images: [
-      toGalleryImage(pkg.image.url, pkg.image.alt),
-      ...freedivingGalleryPhotos.slice(0, 3),
-    ],
+    title: selectedProgram?.title ?? pkg.title,
+    subtitle: selectedProgram?.duration ?? pkg.subtitle,
+    description: selectedProgram?.overview ?? pkg.description ?? `A curated ${pkg.duration.toLowerCase()} Freedive Dahab stay, with coaching and logistics arranged around your time in the Red Sea.`,
+    duration: selectedProgram?.duration ?? pkg.duration,
+    price: formatPrice(selectedProgram?.prices[0]?.priceEur ?? pkg.priceEur, currency),
+    images: freedivingGalleryPhotos.slice(0, 4),
     sections: [{ title: 'Included in your package', items: pkg.includedList }],
     bookingId: pkg.id,
-    programs: pkg.programs,
+    programs: selectedProgram ? [selectedProgram] : pkg.programs,
     rateNote: pkg.rateNote,
-    extraActivities: pkg.extraActivities,
     bookingNotes: pkg.bookingNotes,
   };
 }
@@ -117,10 +186,12 @@ function getOfferingContent(
   kind: OfferingKind,
   slug: string,
   currency: OfferingDetailPageProps['currency'],
+  programIndex?: number,
 ): OfferingContent | undefined {
   if (kind === 'package') {
     const pkg = packagesData.find((item) => item.slug === slug);
-    return pkg ? packageContent(pkg, currency) : undefined;
+    if (!pkg || (programIndex !== undefined && !pkg.programs?.[programIndex])) return undefined;
+    return packageContent(pkg, currency, programIndex);
   }
   if (kind === 'room') {
     const room = roomTypes.find((item) => item.id === slug);
@@ -133,13 +204,19 @@ function getOfferingContent(
 export function OfferingDetailPage({
   kind,
   slug,
+  programIndex,
   currency,
   onNavigate,
   onOpenBooking,
   onBookStay,
 }: OfferingDetailPageProps) {
-  const content = getOfferingContent(kind, slug, currency);
+  const content = getOfferingContent(kind, slug, currency, programIndex);
   const backPage: PageType = kind === 'package' ? 'packages' : kind === 'room' ? 'accommodation' : 'experience';
+  const offeringLabel = kind === 'room'
+    ? 'stay'
+    : kind === 'package' && programIndex !== undefined
+      ? 'program'
+      : kind;
 
   if (!content) {
     return (
@@ -163,21 +240,20 @@ export function OfferingDetailPage({
     : [];
   const roomDetails = content.roomDetails;
   if (kind === 'package' && packageGalleryItems.length === 0 && content.images[0]) {
-    packageGalleryItems.push({
-      id: `${slug}-gallery-cover`,
-      title: content.title,
-      description: 'Package cover photo',
-      imageSrc: content.images[0].src,
-      imageAlt: content.images[0].alt,
-      tag: 'Package gallery',
+    content.images.forEach((image, index) => {
+      packageGalleryItems.push({
+        id: `${slug}-gallery-${index + 1}`,
+        title: content.title,
+        imageSrc: image.src,
+        imageAlt: image.alt,
+      });
     });
   }
-
   return (
     <article className="ocean-surface min-h-screen pb-24 pt-28 text-white sm:pt-36">
       <SectionHero
-        imageSrc={content.images[0]?.src ?? ''}
-        imageAlt={content.images[0]?.alt ?? ''}
+        imageSrc={kind === 'package' ? packageGalleryItems[0]?.imageSrc ?? '' : content.images[0]?.src ?? ''}
+        imageAlt={kind === 'package' ? packageGalleryItems[0]?.imageAlt ?? '' : content.images[0]?.alt ?? ''}
         className={`min-h-[50svh] ${kind === 'room' ? 'bg-[#081F35]' : ''}`}
         imageFit={kind === 'room' ? 'contain' : 'cover'}
         contentClassName="py-10 sm:py-14"
@@ -194,7 +270,9 @@ export function OfferingDetailPage({
           <div className="max-w-2xl space-y-6 rounded-2xl border border-white/15 bg-[#061A2B]/70 p-6 shadow-xl backdrop-blur-sm sm:p-8">
             <div className="space-y-3">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#A9D2EC]">
-                {kind === 'package' ? 'Freedive Dahab package' : kind === 'room' ? 'Sea Lodge stay' : 'Dahab experience'}
+                {kind === 'package'
+                  ? programIndex === undefined ? 'Freedive Dahab package' : 'Freedive Dahab program'
+                  : kind === 'room' ? 'Sea Lodge stay' : 'Dahab experience'}
               </p>
               <h1 className="font-bebas text-5xl leading-[0.95] sm:text-6xl">{content.title}</h1>
               <p className="text-sm leading-relaxed text-white/70">{content.subtitle}</p>
@@ -224,7 +302,7 @@ export function OfferingDetailPage({
               onClick={() => kind === 'room' ? onBookStay(content.bookingId) : onOpenBooking(content.bookingId)}
               className="fd-button inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
-              Enquire about this {kind === 'room' ? 'stay' : kind}
+              Enquire about this {offeringLabel}
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>
@@ -233,7 +311,13 @@ export function OfferingDetailPage({
 
       <div className="mx-auto max-w-7xl px-5 pt-10 sm:px-6 sm:pt-14">
         {content.images.length > 0 && kind === 'package' ? (
-          <GalleryCarousel items={packageGalleryItems} label={`${content.title} photo gallery`} />
+          <GalleryCarousel
+            items={packageGalleryItems}
+            label={`${content.title} photo gallery`}
+            layout="story"
+            storyDescription={content.description}
+            showBackdrop={false}
+          />
         ) : content.images.length > 0 ? (
           <section aria-label={`${content.title} photo gallery`} className="mb-12">
             <GalleryCarousel
@@ -315,8 +399,12 @@ export function OfferingDetailPage({
         {content.programs && (
           <div className="mt-12 space-y-6">
             <div className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#A9D2EC]">Program options</p>
-              <h2 className="font-bebas text-4xl">Schedules &amp; planning</h2>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#A9D2EC]">
+                {programIndex === undefined ? 'Program options' : 'Selected program'}
+              </p>
+              <h2 className="font-bebas text-4xl">
+                {programIndex === undefined ? 'Schedules & planning' : 'Schedule & pricing'}
+              </h2>
               {content.rateNote && <p className="max-w-3xl text-sm leading-relaxed text-white/65">{content.rateNote}</p>}
             </div>
             <div className="grid gap-5 lg:grid-cols-2">
@@ -372,21 +460,6 @@ export function OfferingDetailPage({
           </div>
         )}
 
-        {content.extraActivities && (
-          <section className="mt-6 rounded-2xl border border-white/10 bg-[#0A2943] p-6 sm:p-8">
-            <h2 className="font-bebas text-3xl">Optional activities</h2>
-            <ul className="mt-5 grid gap-3 sm:grid-cols-2">
-              {content.extraActivities.map((activity) => (
-                <li key={activity.title} className="flex items-center justify-between gap-4 text-sm">
-                  <span className="text-white/75">{activity.title}</span>
-                  <span className="shrink-0 font-semibold text-white">{formatPrice(activity.priceEur, currency)}</span>
-                </li>
-              ))}
-            </ul>
-            {content.rateNote && <p className="mt-5 text-sm leading-relaxed text-white/60">{content.rateNote}</p>}
-          </section>
-        )}
-
         {content.bookingNotes && (
           <section className="mt-6 rounded-2xl border border-white/10 bg-[#0A2943] p-6 sm:p-8">
             <h2 className="font-bebas text-3xl">Before you book</h2>
@@ -421,6 +494,58 @@ export function OfferingDetailPage({
             </section>
           ))}
         </div>
+
+        {kind === 'package' && (
+          <section aria-labelledby="optional-activities-heading" className="mt-10">
+            <h2 id="optional-activities-heading" className="font-bebas text-3xl">
+              Optional activities
+            </h2>
+            <ul className="mt-4 grid auto-rows-fr grid-cols-1 items-stretch gap-4 min-[540px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+              {packageOptionalActivities.map((activity) => (
+                <li
+                  key={activity.title}
+                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0A2943] transition-colors hover:border-cyan-300/35"
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden bg-[#081F35]">
+                    <img
+                      src={activity.image.url}
+                      alt={activity.image.alt}
+                      className="h-full w-full object-contain"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/70 px-3 py-1 text-[11px] text-white">
+                      <Clock className="h-3.5 w-3.5 text-cyan-300" aria-hidden="true" />
+                      {activity.duration}
+                    </span>
+                  </div>
+                  <div className="flex flex-1 flex-col p-4">
+                    <h3 className="font-serif text-xl font-bold text-white transition-colors group-hover:text-cyan-200">
+                      {activity.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-300">
+                      {activity.description}
+                    </p>
+                    {activity.highlights.length > 0 && (
+                      <ul className="mt-3 space-y-2 border-t border-white/10 pt-3">
+                        {activity.highlights.map((highlight) => (
+                          <li key={highlight} className="flex items-start gap-2 text-xs leading-relaxed text-slate-200">
+                            <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-cyan-300" aria-hidden="true" />
+                            <span>{highlight}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <div className="mt-auto border-t border-white/10 pt-3">
+                      <p className="text-[10px] font-mono uppercase tracking-widest text-slate-300">Package add-on</p>
+                      <p className="mt-1 text-lg font-semibold text-white">{formatPrice(activity.priceEur, currency)}</p>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </div>
     </article>
   );

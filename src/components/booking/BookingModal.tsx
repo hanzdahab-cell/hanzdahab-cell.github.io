@@ -7,11 +7,13 @@ import { getRoomNightlyPrice, roomTypes } from '../../data/accommodation';
 import { useLanguage } from '../../context/LanguageContext';
 import { setPageScrollLocked } from '../../utils/useSmoothScroll';
 import { CalendarPicker } from '../ui/CalendarPicker';
+import type { TrainingCartItem } from '../../types';
 
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialSelectedId?: string;
+  initialTrainingCartItems?: TrainingCartItem[];
   currency: 'EUR' | 'USD' | 'EGP';
 }
 
@@ -27,9 +29,10 @@ interface BookingOfferingGroup {
   offerings: BookingOffering[];
 }
 
-export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: BookingModalProps) {
+export function BookingModal({ isOpen, onClose, initialSelectedId, initialTrainingCartItems, currency }: BookingModalProps) {
   const { t, isRtl } = useLanguage();
   const [selectedId, setSelectedId] = useState<string>('ssi-level-1');
+  const [trainingCartItems, setTrainingCartItems] = useState<TrainingCartItem[]>([]);
   const [diverCount, setDiverCount] = useState<number>(1);
   const [startDate, setStartDate] = useState<string>('');
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -62,6 +65,7 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
     setContactErrors({});
     setDateError(false);
     setIsSuccess(false);
+    setTrainingCartItems(initialTrainingCartItems ?? []);
   }, [isOpen]);
 
   // Freeze Lenis while the modal is open so the wheel scrolls the form instead
@@ -144,7 +148,16 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
   const allOfferings = offeringGroups.flatMap(group => group.offerings);
 
   const currentOffering = allOfferings.find(o => o.id === selectedId) || allOfferings[0];
+  const isTrainingCart = trainingCartItems.length > 0;
+  const trainingCartSubtotal = trainingCartItems.reduce(
+    (total, item) => total + item.unitPriceEur * (item.perDiver ? diverCount : item.quantity),
+    0,
+  );
+  const hasBlueHoleTraining = trainingCartItems.some((item) => item.title.includes('Blue Hole'));
   const selectedRoom = roomTypes.find(r => r.id === lodgingId);
+  const showDiverCount = !isTrainingCart
+    || trainingCartItems.some((item) => item.perDiver)
+    || Boolean(selectedRoom);
   const today = new Date();
   const minBookingDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
   const lodgingNightlyRate = selectedRoom
@@ -160,7 +173,7 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
       : 0;
 
   // Price math
-  const courseBasePrice = currentOffering.priceEur * diverCount;
+  const courseBasePrice = isTrainingCart ? trainingCartSubtotal : currentOffering.priceEur * diverCount;
   const lodgingSubtotal = lodgingNightlyRate * lodgingNights;
   const lodgingCost = selectedRoom
     ? Math.round(lodgingSubtotal * (1 - lodgingDiscountRate))
@@ -225,18 +238,55 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
             </div>
             <div className="space-y-2">
               <span className="text-xs tracking-widest text-cyan-400 uppercase">
-                RESERVATION RECEIVED
+                {isTrainingCart ? 'REQUEST SUMMARY' : 'RESERVATION RECEIVED'}
               </span>
               <h3 id="booking-modal-title" className="text-3xl font-bold text-white sm:text-4xl">
-                See You in Dahab, {[firstName, lastName].filter(Boolean).join(' ') || 'Adventurer'}
+                {isTrainingCart
+                  ? 'Your training request'
+                  : `See You in Dahab, ${[firstName, lastName].filter(Boolean).join(' ') || 'Adventurer'}`}
               </h3>
               <p className="text-slate-300 max-w-md mx-auto text-sm font-light leading-relaxed">
-                Your reservation for <strong className="text-white">{currentOffering.title}</strong> has been logged. 
-                Our instructor team will contact you within 6 hours by email with your confirmation package.
+                {isTrainingCart
+                  ? 'Your selections and estimated total are summarized below. This website does not send the request to the team yet.'
+                  : <>Your reservation for <strong className="text-white">{currentOffering.title}</strong> has been logged. Our instructor team will contact you within 6 hours by email with your confirmation package.</>}
               </p>
             </div>
 
             <div className="p-6 rounded-2xl bg-slate-900/60 border border-white/10 max-w-md mx-auto text-left text-xs space-y-2 text-slate-300">
+              {isTrainingCart ? (
+                <>
+                  <ul className="space-y-2">
+                    {trainingCartItems.map((item) => {
+                      const quantity = item.perDiver ? diverCount : item.quantity;
+                      return (
+                        <li key={item.id} className="flex justify-between gap-4">
+                          <span>{item.title} ({quantity}x):</span>
+                          <span className="shrink-0">{formatPrice(item.unitPriceEur * quantity)}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  {selectedRoom && (
+                    <div className="flex justify-between gap-4 border-t border-white/10 pt-2">
+                      <span>Sea Lodge ({selectedRoom.title} · {lodgingNights} nights):</span>
+                      <span>{formatPrice(lodgingCost)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between gap-4 border-t border-white/10 pt-3 font-semibold text-white">
+                    <span>Estimated total:</span>
+                    <span>{formatPrice(totalEur)}</span>
+                  </div>
+                  <p className="text-xs leading-relaxed text-slate-400">
+                    No payment is collected and this request has not been sent.
+                  </p>
+                  {hasBlueHoleTraining && (
+                    <p className="text-xs leading-relaxed text-amber-100">
+                      Blue Hole prices exclude the $20 National Park entrance fee, payable at the gate.
+                    </p>
+                  )}
+                </>
+              ) : (
+                <>
               {currentOffering.rateNote && (
                 <p className="mb-3 text-xs leading-relaxed text-[#A9D2EC]">
                   The displayed amount is based on a historical brochure rate. Our team will confirm the current quote before you proceed.
@@ -258,6 +308,8 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
                 <span className="text-slate-500">{currentOffering.rateNote ? 'Indicative 30% deposit:' : '30% Deposit Due:'}</span>
                 <span className="font-bebas text-2xl text-emerald-400">{formatPrice(depositEur)}</span>
               </div>
+                </>
+              )}
             </div>
 
             <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
@@ -343,6 +395,7 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
                   <p className="mt-1 text-sm text-slate-400">Choose your program, dates, and any extras.</p>
                 </div>
 
+                {!isTrainingCart ? (
                 <div className="space-y-2">
                   <label htmlFor="booking-offering" className="block text-xs uppercase text-slate-300">{t.booking.offering}</label>
                   <select id="booking-offering" value={selectedId} onChange={(e) => setSelectedId(e.target.value)} className="w-full rounded-xl border border-white/15 bg-slate-900 px-3.5 py-3 text-sm text-white focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/30" required>
@@ -350,8 +403,34 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
                   </select>
                   {currentOffering.rateNote && <p className="text-xs leading-relaxed text-[#A9D2EC]">This displayed amount is based on a historical brochure rate. We will confirm the current price and availability with you.</p>}
                 </div>
+                ) : (
+                  <section aria-labelledby="booking-training-cart-title" className="space-y-3 rounded-2xl border border-cyan-400/25 bg-slate-950/60 p-4">
+                    <h5 id="booking-training-cart-title" className="text-sm font-semibold text-white">Selected training options</h5>
+                    <ul className="space-y-2 text-sm">
+                      {trainingCartItems.map((item) => {
+                        const quantity = item.perDiver ? diverCount : item.quantity;
+                        return (
+                          <li key={item.id} className="flex justify-between gap-4">
+                            <span className="text-slate-200">{item.title} ({quantity}x)</span>
+                            <span className="shrink-0 font-semibold text-white">{formatPrice(item.unitPriceEur * quantity)}</span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                    <p className="text-xs leading-relaxed text-slate-400">
+                      {trainingCartItems.some((item) => item.perDiver)
+                        ? 'Group totals use the selected group size; per-diver rates use the number of divers below.'
+                        : 'Group totals use the selected group size. A diver count is only needed if you add accommodation.'}
+                    </p>
+                    {hasBlueHoleTraining && (
+                      <p className="text-xs leading-relaxed text-amber-100">
+                        Blue Hole prices exclude the $20 National Park entrance fee, payable at the gate.
+                      </p>
+                    )}
+                  </section>
+                )}
 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className={`grid grid-cols-1 gap-4 ${showDiverCount ? 'sm:grid-cols-2' : ''}`}>
                   <div className="space-y-2">
                     <label htmlFor="booking-date" className="flex items-center gap-1.5 text-xs uppercase text-slate-300"><Calendar className="h-3.5 w-3.5 text-cyan-300" aria-hidden="true" />{t.booking.dates}</label>
                     <div className="relative">
@@ -376,12 +455,12 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
                     </div>
                     {dateError && <p id="booking-date-error" role="alert" className="text-xs text-rose-300">Choose an arrival date before sending your request.</p>}
                   </div>
-                  <div className="space-y-2">
+                  {showDiverCount && <div className="space-y-2">
                     <label htmlFor="booking-divers" className="block text-xs uppercase text-slate-300">Number of Divers</label>
                     <select id="booking-divers" value={diverCount} onChange={(e) => setDiverCount(Number(e.target.value))} className="w-full rounded-xl border border-white/15 bg-slate-900 px-3.5 py-3 text-sm text-white focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/30">
                       <option value={1}>1 Diver (Individual)</option><option value={2}>2 Divers (Buddy Pair)</option><option value={3}>3 Divers (Full Private Group - Max 3)</option><option value={4}>4 Divers (Two Instructor Groups)</option>
                     </select>
-                  </div>
+                  </div>}
                 </div>
 
                 <div className="space-y-2 border-t border-white/10 pt-4">
@@ -419,12 +498,17 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
                 </div>
 
                 <div className="space-y-3 rounded-2xl border border-cyan-400/25 bg-slate-950/80 p-5 text-sm">
-                  <div className="flex justify-between gap-4 text-slate-300"><span>{currentOffering.title} ({diverCount}x):</span><span className="text-lg font-bold">{formatPrice(courseBasePrice)}</span></div>
+                  {!isTrainingCart && <div className="flex justify-between gap-4 text-slate-300"><span>{currentOffering.title} ({diverCount}x):</span><span className="text-lg font-bold">{formatPrice(courseBasePrice)}</span></div>}
                   {selectedRoom && <div className="flex justify-between gap-4 text-slate-300"><span>Sea Lodge ({selectedRoom.title} · {lodgingRoomCount} {lodgingRoomCount === 1 ? 'room' : 'rooms'} · {lodgingNights} nights):</span><span className="text-lg font-bold">{formatPrice(lodgingSubtotal)}</span></div>}
                   {selectedRoom && lodgingDiscountRate > 0 && <div className="flex justify-between gap-4 text-cyan-100"><span>Long-stay discount ({Math.round(lodgingDiscountRate * 100)}%)</span><span>−{formatPrice(lodgingSubtotal - lodgingCost)}</span></div>}
-                  <div className="flex justify-between gap-4 border-t border-white/10 pt-3 text-slate-400"><span>{currentOffering.rateNote ? 'Brochure-rate estimate:' : 'Total Calculated:'}</span><span className="text-2xl font-bold text-white">{formatPrice(totalEur)}</span></div>
-                  <div className="flex justify-between gap-4 font-semibold text-emerald-400"><span>{currentOffering.rateNote ? 'Indicative 30% deposit:' : '30% Deposit to Secure Slot:'}</span><span className="text-2xl font-bold">{formatPrice(depositEur)}</span></div>
-                  <p className="text-xs text-slate-400">{currentOffering.rateNote ? 'This estimate uses a historical brochure rate. Confirm the current quote, included services and payment terms with our team.' : `*Remaining balance of ${formatPrice(balanceEur)} is paid on arrival in Dahab. Free date changes up to 14 days before start.`}</p>
+                  <div className="flex justify-between gap-4 border-t border-white/10 pt-3 text-slate-400"><span>{isTrainingCart ? 'Estimated total:' : currentOffering.rateNote ? 'Brochure-rate estimate:' : 'Total Calculated:'}</span><span className="text-2xl font-bold text-white">{formatPrice(totalEur)}</span></div>
+                  {!isTrainingCart && (
+                    <>
+                      <div className="flex justify-between gap-4 font-semibold text-emerald-400"><span>{currentOffering.rateNote ? 'Indicative 30% deposit:' : '30% Deposit to Secure Slot:'}</span><span className="text-2xl font-bold">{formatPrice(depositEur)}</span></div>
+                      <p className="text-xs text-slate-400">{currentOffering.rateNote ? 'This estimate uses a historical brochure rate. Confirm the current quote, included services and payment terms with our team.' : `*Remaining balance of ${formatPrice(balanceEur)} is paid on arrival in Dahab. Free date changes up to 14 days before start.`}</p>
+                    </>
+                  )}
+                  {isTrainingCart && <p className="text-xs text-slate-400">This is an estimate only. No payment is collected and this website does not send the request yet.</p>}
                 </div>
               </section>
             )}
@@ -445,7 +529,7 @@ export function BookingModal({ isOpen, onClose, initialSelectedId, currency }: B
               {currentStep === 0 ? (
                 <button type="button" onClick={() => setCurrentStep(1)} className="fd-button inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-6 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Continue to Your Details <ChevronRight className="h-4 w-4" aria-hidden="true" /></button>
               ) : (
-                <button type="submit" className="fd-button inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-6 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"><Send className="h-4 w-4" aria-hidden="true" /><span>{t.booking.submit}</span></button>
+                <button type="submit" className="fd-button inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-6 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"><Send className="h-4 w-4" aria-hidden="true" /><span>{isTrainingCart ? 'Prepare request' : t.booking.submit}</span></button>
               )}
             </div>
             <p className="text-center text-xs text-slate-500">Step {currentStep + 1} of 2 · No payment is collected here</p>

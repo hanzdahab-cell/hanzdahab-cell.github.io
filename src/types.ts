@@ -1,5 +1,13 @@
 export type CourseLevel = 'Beginner' | 'Intermediate' | 'Advanced' | 'Instructor / Pro' | 'All Levels' | 'Open to Level 1+' | 'Certified Divers';
 
+export interface TrainingCartItem {
+  id: string;
+  title: string;
+  unitPriceEur: number;
+  quantity: number;
+  perDiver: boolean;
+}
+
 export interface ImageAsset {
   url: string;
   alt: string;

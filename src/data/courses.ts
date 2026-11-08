@@ -583,14 +583,14 @@ export const instructorCourses: InstructorCourse[] = [
     }
   },
   {
-    id: "ssi-level-3-instructor-update",
-    slug: "ssi-level-3-instructor-update",
-    title: "SSI Level 3 Instructor Update",
+    id: "ssi-performance-freediving-instructor",
+    slug: "ssi-performance-freediving-instructor",
+    title: "SSI Performance Freediving Instructor Course",
     durationWeeksOrDays: "2 to 3 days",
     priceEur: 120,
     priceNote: "€120 per day for a minimum of 2 to 3 days, plus a €60 certification fee.",
     prerequisites: "SSI Level 2 Instructor, at least 50 Level 1 and 2 certifications, and the SSI Performance Freediver student course completed.",
-    description: "A focused update for SSI Level 2 Freediving Instructors. Demonstrate and teach advanced techniques such as mouthfill and exhale diving in the classroom and open water, and show a solid understanding of freediving physiology and psychology.",
+    description: "A focused course for SSI Level 2 Freediving Instructors. Demonstrate and teach advanced techniques such as mouthfill and exhale diving in the classroom and open water, and show a solid understanding of freediving physiology and psychology.",
     modules: [
       "Demonstrate and teach mouthfill techniques",
       "Demonstrate and teach exhale diving",

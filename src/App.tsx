@@ -28,15 +28,24 @@ import { StoryHeroCarousel } from './components/story/StoryHeroCarousel';
 import { OfferingDetailPage } from './components/catalog/OfferingDetailPage';
 import { AccommodationBookingModal } from './components/booking/AccommodationBookingModal';
 import { scrollPageElementIntoView, scrollPageTo, useSmoothScroll } from './utils/useSmoothScroll';
-import { PageType, EventTypeId } from './types';
+import type { PageType, EventTypeId, TrainingCartItem } from './types';
 import { LanguageProvider } from './context/LanguageContext';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n';
+
+function getPackageDetailRoute(page: PageType) {
+  const match = /^package-(.+?)(?:-program-(\d+))?$/.exec(page);
+  return {
+    slug: match?.[1] ?? page.replace(/^package-/, ''),
+    programIndex: match?.[2] === undefined ? undefined : Number(match[2]),
+  };
+}
 
 export default function App() {
   const [currency, setCurrency] = useState<'EUR' | 'USD' | 'EGP'>('EUR');
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [bookingOfferingId, setBookingOfferingId] = useState<string | undefined>();
+  const [bookingTrainingCartItems, setBookingTrainingCartItems] = useState<TrainingCartItem[]>([]);
   const [isStayBookingOpen, setIsStayBookingOpen] = useState(false);
   const [stayRoomId, setStayRoomId] = useState('lighthouse-room');
 
@@ -61,6 +70,9 @@ export default function App() {
   };
 
   const [currentPage, setCurrentPage] = useState<PageType>(getInitialPage);
+  const packageDetailRoute = currentPage.startsWith('package-')
+    ? getPackageDetailRoute(currentPage)
+    : undefined;
 
   // Initialize smooth inertia scrolling
   useSmoothScroll();
@@ -112,8 +124,9 @@ export default function App() {
     scroll();
   };
 
-  const handleOpenBooking = (offeringId?: string) => {
+  const handleOpenBooking = (offeringId?: string, trainingCartItems?: TrainingCartItem[]) => {
     setBookingOfferingId(offeringId);
+    setBookingTrainingCartItems(trainingCartItems ?? []);
     setIsBookingOpen(true);
   };
 
@@ -363,7 +376,8 @@ export default function App() {
                   ? 'room'
                   : 'activity'
             }
-            slug={currentPage.replace(/^(package|room|activity)-/, '')}
+            slug={packageDetailRoute?.slug ?? currentPage.replace(/^(package|room|activity)-/, '')}
+            programIndex={packageDetailRoute?.programIndex}
             currency={currency}
             onNavigate={navigateTo}
             onOpenBooking={handleOpenBooking}
@@ -396,6 +410,7 @@ export default function App() {
         isOpen={isBookingOpen}
         onClose={() => setIsBookingOpen(false)}
         initialSelectedId={bookingOfferingId}
+        initialTrainingCartItems={bookingTrainingCartItems}
         currency={currency}
       />
       <AccommodationBookingModal
